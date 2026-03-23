@@ -64,16 +64,16 @@ header{padding:max(20px,env(safe-area-inset-top,20px)) 0 20px;display:flex;align
 .tl-track{display:flex;gap:0;min-width:max-content;position:relative;padding-top:4px;}
 /* horizontal line */
 .tl-track::before{content:'';position:absolute;top:12px;left:0;right:0;height:1px;background:var(--b2);z-index:0;}
-.tl-slot{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:88px;max-width:88px;position:relative;z-index:1;}
-.tl-slot.important{min-width:100px;max-width:100px;}
-.tl-dot-h{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:2px solid var(--bg);position:relative;z-index:2;}
+.tl-slot{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:120px;position:relative;z-index:1;}
+.tl-slot.important{min-width:136px;max-width:136px;}
+.tl-dot-h{width:13px;height:13px;border-radius:50%;flex-shrink:0;border:2px solid var(--bg);position:relative;z-index:2;}
 .tl-dot-h.now{box-shadow:0 0 0 4px rgba(0,212,170,.25);animation:glow 1.5s infinite;}
-.tl-card-h{width:calc(100% - 8px);background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:8px 10px;text-align:center;transition:all .2s;cursor:default;}
+.tl-card-h{width:calc(100% - 8px);background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:11px 12px;text-align:center;transition:all .2s;cursor:default;}
 .tl-card-h.now{border-color:var(--teal);background:var(--tdim);}
 .tl-card-h.imp{border-left-width:2px;}
-.tl-time-h{font-size:9px;color:var(--sub);margin-bottom:2px;}
-.tl-name-h{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;line-height:1.2;}
-.tl-sub-h{font-size:9px;color:var(--sub);margin-top:3px;line-height:1.3;}
+.tl-time-h{font-size:11px;color:var(--sub);margin-bottom:3px;}
+.tl-name-h{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;line-height:1.2;}
+.tl-sub-h{font-size:11px;color:var(--sub);margin-top:4px;line-height:1.3;}
 
 /* ── METRICS ── */
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
