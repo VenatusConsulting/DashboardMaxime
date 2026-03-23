@@ -176,7 +176,24 @@ header { padding:max(24px,env(safe-area-inset-top,24px)) 0 24px; display:flex; a
 .soiree-btns { display:flex; gap:8px; }
 .soiree-btn { width:50px; height:44px; border-radius:10px; border:1px solid var(--b2); background:var(--s2); color:var(--sub); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center; }
 
-/* ── INPUT ── */
+/* ── CHECKS ── */
+.check-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:10px; border:1px solid var(--b1); background:var(--s2); cursor:pointer; transition:all .2s; user-select:none; }
+.check-item:hover { border-color:var(--b2); filter:brightness(1.1); }
+.check-item.done { border-color:var(--green); background:var(--gdim); }
+.check-item.fail { border-color:var(--coral); background:var(--cdim); }
+.check-icon { width:28px; height:28px; border-radius:8px; border:1.5px solid var(--b2); background:var(--s3); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; transition:all .2s; }
+.check-item.done .check-icon { background:var(--green); border-color:var(--green); }
+.check-item.fail .check-icon { background:var(--coral); border-color:var(--coral); }
+.check-label { font-family:'Syne',sans-serif; font-size:12px; font-weight:600; flex:1; }
+.check-item.done .check-label { color:var(--green); }
+.check-item.fail .check-label { color:var(--coral); }
+.check-time { font-size:10px; color:var(--sub); }
+
+/* ── WEEKLY CHART ── */
+.wbar { flex:1; border-radius:3px 3px 0 0; min-width:6px; cursor:pointer; transition:filter .2s; }
+.wbar:hover { filter:brightness(1.4); }
+
+
 input[type=number] { background:var(--s2); border:1px solid var(--b2); border-radius:10px; color:var(--text); font-family:'DM Mono',monospace; font-size:14px; padding:10px 14px; outline:none; transition:border-color .2s; width:100%; }
 input[type=number]:focus { border-color:var(--teal); }
 
@@ -284,6 +301,32 @@ input[type=number]:focus { border-color:var(--teal); }
         <div class="card-title"><div class="cdot" style="background:var(--amber)"></div>Snus du jour <span style="margin-left:auto;color:var(--amber);font-family:'Syne',sans-serif;font-size:14px;font-weight:700" id="snus-ct">0/5</span></div>
         <div class="snus-wrap" id="snus-row"></div>
         <div style="font-size:11px;color:var(--sub)">10h · 13h · 14h30 · 20h30 · 22h</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- DAILY CHECK -->
+  <div class="sec"><span>Bilan de la journée</span></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title"><div class="cdot" style="background:var(--green)"></div>Check du soir <span style="margin-left:auto;font-size:10px;color:var(--sub2)" id="check-score-label">0/6</span></div>
+      <div id="checks-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b1);display:flex;align-items:center;gap:12px">
+        <div style="flex:1;height:6px;background:var(--b2);border-radius:3px;overflow:hidden">
+          <div id="check-bar" style="height:100%;background:var(--green);border-radius:3px;transition:width .4s;width:0%"></div>
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--green);min-width:36px;text-align:right" id="check-score-big">0/6</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="cdot" style="background:var(--blue)"></div>Récap 30 derniers jours</div>
+      <div id="weekly-chart" style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-bottom:8px"></div>
+      <div id="weekly-labels" style="display:flex;gap:3px;font-size:9px;color:var(--sub)"></div>
+      <div style="display:flex;gap:16px;margin-top:12px">
+        <div><div style="font-size:10px;color:var(--sub)">CETTE SEMAINE</div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--teal)" id="week-avg">—</div></div>
+        <div><div style="font-size:10px;color:var(--sub)">MEILLEURE SÉRIE</div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--amber)" id="best-streak">—</div></div>
+        <div><div style="font-size:10px;color:var(--sub)">CE MOIS</div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--purple)" id="month-score">—</div></div>
       </div>
     </div>
   </div>
@@ -617,7 +660,124 @@ function renderSoiree(n){
     b.style.borderColor=a?(n<=1?'var(--green)':'var(--coral)'):'';
   });
 }
-initReview();
+
+// ── DAILY CHECKS ──
+const CHECKS = [
+  { id:'sleep',   label:'Dodo avant 0h30',        icon:'😴', time:'0h00' },
+  { id:'wake',    label:'Levé à 7h30',             icon:'⏰', time:'7h30' },
+  { id:'sport',   label:'Salle faite',             icon:'🏃', time:'8h30' },
+  { id:'food',    label:'Bien mangé (pas junk)',   icon:'🥗', time:'midi'  },
+  { id:'discord', label:'Bloc Discord fait',       icon:'💬', time:'10h–16h' },
+  { id:'ofm',     label:'Bloc OFM fait',           icon:'💜', time:'20h30' },
+];
+
+let CD = {};
+
+async function initChecks() {
+  CD = await loadD('checks/' + todayKey());
+  renderChecks();
+  await loadWeeklyChart();
+}
+
+function renderChecks() {
+  const list = document.getElementById('checks-list');
+  list.innerHTML = CHECKS.map(c => {
+    const state = CD[c.id]; // true=done, false=fail, undefined=neutral
+    const cls = state === true ? 'done' : state === false ? 'fail' : '';
+    const ico = state === true ? '✓' : state === false ? '✗' : c.icon;
+    return `<div class="check-item ${cls}" onclick="toggleCheck('${c.id}')">
+      <div class="check-icon">${ico}</div>
+      <div class="check-label">${c.label}</div>
+      <div class="check-time">${c.time}</div>
+    </div>`;
+  }).join('');
+  updateCheckScore();
+}
+
+function updateCheckScore() {
+  const done = CHECKS.filter(c => CD[c.id] === true).length;
+  const total = CHECKS.length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('check-score-label').textContent = done + '/' + total;
+  document.getElementById('check-score-big').textContent = done + '/' + total;
+  document.getElementById('check-bar').style.width = pct + '%';
+  const color = done >= 5 ? 'var(--green)' : done >= 3 ? 'var(--amber)' : 'var(--coral)';
+  document.getElementById('check-bar').style.background = color;
+  document.getElementById('check-score-big').style.color = color;
+}
+
+window.toggleCheck = async (id) => {
+  const cur = CD[id];
+  // cycle: undefined → true → false → undefined
+  if (cur === undefined) CD[id] = true;
+  else if (cur === true) CD[id] = false;
+  else delete CD[id];
+  renderChecks();
+  await saveD('checks/' + todayKey(), CD);
+  await loadWeeklyChart();
+};
+
+async function loadWeeklyChart() {
+  // Load last 30 days
+  const days = [];
+  const now = new Date();
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+
+  // Fetch all in parallel (cached locally after first load)
+  const results = await Promise.all(days.map(day => loadD('checks/' + day)));
+
+  const scores = results.map(data => {
+    if (!data || Object.keys(data).length === 0) return null;
+    return CHECKS.filter(c => data[c.id] === true).length;
+  });
+
+  renderWeeklyChart(days, scores);
+}
+
+function renderWeeklyChart(days, scores) {
+  const chart = document.getElementById('weekly-chart');
+  const labels = document.getElementById('weekly-labels');
+  const max = 6;
+
+  chart.innerHTML = scores.map((s, i) => {
+    if (s === null) return `<div class="wbar" style="height:4px;background:var(--b2);opacity:.4"></div>`;
+    const h = Math.max(6, Math.round((s / max) * 76));
+    const color = s >= 5 ? 'var(--green)' : s >= 3 ? 'var(--amber)' : 'var(--coral)';
+    const day = new Date(days[i]).toLocaleDateString('fr-FR', { weekday:'short' });
+    return `<div class="wbar" style="height:${h}px;background:${color}" title="${day}: ${s}/6"></div>`;
+  }).join('');
+
+  // Show only every 5th label
+  labels.innerHTML = days.map((d, i) => {
+    if (i % 5 !== 0) return `<span style="flex:1"></span>`;
+    const lbl = new Date(d).toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+    return `<span style="flex:1;white-space:nowrap">${lbl}</span>`;
+  }).join('');
+
+  // Stats
+  const validScores = scores.filter(s => s !== null);
+  const thisWeek = scores.slice(-7).filter(s => s !== null);
+  const weekAvg = thisWeek.length ? Math.round(thisWeek.reduce((a,b)=>a+b,0)/thisWeek.length*10)/10 : null;
+
+  // Best streak of 5+ days
+  let streak = 0, best = 0, cur = 0;
+  scores.forEach(s => {
+    if (s !== null && s >= 5) { cur++; best = Math.max(best, cur); }
+    else cur = 0;
+  });
+
+  const monthDone = validScores.filter(s => s >= 5).length;
+
+  document.getElementById('week-avg').textContent = weekAvg !== null ? weekAvg + '/6' : '—';
+  document.getElementById('best-streak').textContent = best > 0 ? best + 'j' : '—';
+  document.getElementById('month-score').textContent = monthDone > 0 ? monthDone + 'j ✓' : '—';
+}
+
+initChecks();
 </script>
 </body>
 </html>
