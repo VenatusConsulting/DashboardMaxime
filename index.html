@@ -1237,7 +1237,7 @@ function updateObjBar(rd) {
   const target = 50000;
   const pct = Math.min(100, Math.round((total / target) * 100));
   document.getElementById('obj-bar').style.width = pct + '%';
-  document.getElementById('obj-pct').textContent = pct + '% de l'objectif annuel';
+  document.getElementById('obj-pct').textContent = pct + "% de l'objectif annuel";
   document.getElementById('obj-total').textContent = total.toLocaleString('fr-FR') + ' €';
 }
 
