@@ -419,6 +419,49 @@ header {
   </div>
 </div>
 
+
+
+<!-- PAST MONTHS MODAL -->
+<div class="overlay hidden" id="past-modal">
+  <div class="past-modal-box">
+    <div class="past-modal-title">
+      <span>Revenus par mois</span>
+      <button class="day-modal-close" onclick="closePastModal()">×</button>
+    </div>
+    <div class="past-grid" id="past-grid"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn bsm" style="border-color:var(--sub);color:var(--sub);background:transparent" onclick="closePastModal()">Annuler</button>
+      <button class="btn bsm" onclick="savePastMonths()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLOT MODAL -->
+<div class="overlay hidden" id="slot-modal">
+  <div class="slot-modal-box" style="position:relative;">
+    <button class="slot-modal-close-btn" onclick="closeSlotModal()">×</button>
+    <div class="slot-modal-header">
+      <div class="slot-modal-time" id="sm-time"></div>
+      <div class="slot-modal-title" id="sm-title"></div>
+      <div class="slot-modal-dur" id="sm-dur"></div>
+    </div>
+    <div class="slot-modal-body">
+      <div>
+        <div class="slot-section-lbl">📋 Description</div>
+        <div class="slot-desc" id="sm-desc"></div>
+      </div>
+      <div>
+        <div class="slot-section-lbl">💡 Pourquoi c'est important</div>
+        <div class="slot-why" id="sm-why"></div>
+      </div>
+      <div>
+        <div class="slot-section-lbl">⚡ Tips</div>
+        <div class="slot-tips" id="sm-tips"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="shell">
 
 <!-- HEADER -->
@@ -1032,7 +1075,7 @@ window.switchTab=tab=>{
 // ── revenus ──────────────────────────────────────────────────────────────────
 const MO=[{m:'Jan',t:3000},{m:'Fév',t:5000},{m:'Mar',t:7000},{m:'Avr',t:8000},{m:'Mai',t:9000},{m:'Jun',t:10000},{m:'Jul',t:15000},{m:'Aoû',t:20000},{m:'Sep',t:28000},{m:'Oct',t:35000},{m:'Nov',t:42000},{m:'Déc',t:50000}];
 let RD={};
-async function initRev(){RD=await loadD('revenus/2025');renderRev();const c=RD[new Date().getMonth()];if(c)document.getElementById('rev-in').value=c;}
+async function initRev(){RD=await loadD('revenus/2025');renderRev();updateObjBar(RD);const c=RD[new Date().getMonth()];if(c)document.getElementById('rev-in').value=c;}
 function renderRev(){
   const cur=new Date().getMonth(),max=50000;
   document.getElementById('rev-chart').innerHTML=MO.map((r,i)=>{
@@ -1052,7 +1095,7 @@ function renderRev(){
   const c=RD[new Date().getMonth()];
   document.getElementById('rev-cur').textContent=c?(c>=1000?(c/1000).toFixed(1)+'k':c+'€'):'—';
 }
-window.saveRevenu=async()=>{const v=parseInt(document.getElementById('rev-in').value);if(isNaN(v))return;RD[new Date().getMonth()]=v;renderRev();await saveD('revenus/2025',RD);};
+window.saveRevenu=async()=>{const v=parseInt(document.getElementById('rev-in').value);if(isNaN(v))return;RD[new Date().getMonth()]=v;renderRev();updateObjBar(RD);await saveD('revenus/2025',RD);};
 initRev();
 
 // ── review ───────────────────────────────────────────────────────────────────
@@ -1080,6 +1123,184 @@ function renderSoiree(n){
   });
 }
 initReview();
+
+// ── SLOT DETAILS ──────────────────────────────────────────────────────────
+const SLOT_DETAILS = [
+  {
+    dur: '~5 min',
+    desc: "Premier geste de la journée : boire un grand verre d'eau avant tout. Ton corps est déshydraté après 7-8h de sommeil.",
+    why: "Réhydrater le corps dès le réveil améliore la clarté mentale et l'énergie dès les premières minutes. Pas de téléphone les 10 premières minutes — tu protèges ton état mental de départ.",
+    tips: ["Prépare le verre d'eau la veille au bord du lit", "10 min sans téléphone = tu choisis ton humeur toi-même", "Ouvre les volets, laisse entrer la lumière naturelle"]
+  },
+  {
+    dur: '~10 min',
+    desc: "Café + éventuellement un pre-workout léger avant la salle. Pas de vrai repas — tu vas t'entraîner à jeun.",
+    why: "La caféine avant le cardio à jeun augmente la lipolyse (brûlage de graisses) et booste les performances. L'entraînement à jeun avec glycogènes bas force le corps à puiser dans les réserves lipidiques.",
+    tips: ["Café noir sans sucre pour maximiser l'effet", "Prépare ta tenue la veille pour pas perdre de temps", "Hydrate-toi bien aussi — eau + café"]
+  },
+  {
+    dur: '~60 min (transport inclus)',
+    desc: "Tapis de marche incliné, 30 minutes, vitesse 3.5. Cardio zone 2 — tu dois pouvoir parler sans être essoufflé.",
+    why: "Le cardio zone 2 à jeun est optimal pour la perte de graisses sans catabolisme musculaire excessif. C'est aussi le meilleur investissement mental de ta journée — clarté, dopamine, discipline.",
+    tips: ["Écoute un podcast business ou de la musique motivante", "Inclinaison entre 8 et 12 — plus c'est incliné, plus tu brûles sans impact articulaire", "Régularité > intensité : 6j/7 à vitesse 3.5 bat 2j/7 à fond"]
+  },
+  {
+    dur: '~15 min',
+    desc: "Douche normale + 30 secondes d'eau froide à la fin. Pas plus, pas moins.",
+    why: "L'eau froide en fin de douche libère de la noradrénaline, réduit l'inflammation musculaire post-effort et te met dans un état d'alerte optimal pour démarrer le travail.",
+    tips: ["Commence tiède, finis froid progressivement", "30 sec froid c'est suffisant — pas besoin d'en faire plus", "Respire lentement pendant le froid pour rester calme"]
+  },
+  {
+    dur: '~5 min',
+    desc: "Shaker de whey protéine dans les 30 minutes post-entraînement. 1 scoop (25-30g) dans 250ml d'eau froide.",
+    why: "La fenêtre anabolique post-effort : ton corps est en phase de reconstruction musculaire. Les protéines stoppent le catabolisme et lancent la synthèse protéique. Sans ça, ton cardio à jeun détruit autant de muscle que de graisse.",
+    tips: ["MyProtein ou Foodspring — whey basique, pas besoin de payer cher", "Bois le shaker avant le café, pas après", "Saveur chocolat ou vanille pour que ce soit pas une corvée"]
+  },
+  {
+    dur: '2h (10h–12h)',
+    desc: "Premier bloc de travail Discord. Focus sur le pilotage (métriques, membres actifs, churn), la création de contenu à valeur ajoutée, et l'acquisition de nouveaux membres.",
+    why: "Le matin c'est ton pic cognitif — réserve ce temps pour les tâches qui demandent de la réflexion et de la créativité. L'acquisition le matin = résultats visibles dans la journée.",
+    tips: ["Lance le bloc sans checker les notifs d'abord", "Une seule tâche prioritaire avant 11h", "Si t'as une idée de contenu qui convertit, note-la immédiatement"]
+  },
+  {
+    dur: '~30 min',
+    desc: "Repas cuisiné, pas de livraison. Idéalement préparé en batch cook le dimanche pour ne pas avoir à réfléchir le midi.",
+    why: "La junk food te plombe l'énergie cognitive pendant 2-3h après le repas. Un repas propre maintient ta glycémie stable et ta concentration pour l'aprèm. Tu économises aussi 400-600€/mois.",
+    tips: ["Riz + poulet + légumes — simple et efficace", "Batch cook le dimanche = zéro effort lundi au vendredi", "Mange loin de ton écran, c'est ta vraie pause"]
+  },
+  {
+    dur: '30 min (12h30–13h)',
+    desc: "Pause libre et déconnectée. Réseaux sociaux, réponses aux amis, musique, sortie rapide. Pose une alarme pour 13h.",
+    why: "Le cerveau a besoin de décompresser entre deux blocs de travail intensifs. Une vraie pause améliore la concentration du bloc suivant. Sans coupure, tu travailles mais tu n'es plus vraiment là.",
+    tips: ["Alarme obligatoire à 13h — sans ça 30 min deviennent 1h30", "Pas de contenu business pendant cette pause — vrai repos", "Si possible, marche 10 min dehors — ça recharge mieux que le scroll"]
+  },
+  {
+    dur: '2h+ (14h–16h ou plus)',
+    desc: "Second bloc Discord — approfondissement des tâches commencées le matin, prospection active, réponses membres. Si Discord est calé, switch OFM directement.",
+    why: "Le Red Bull à 14h30 recharge l'énergie pour ce bloc. C'est le moment où tu peux faire les tâches plus mécaniques — répondre, prospecter, exécuter — sans avoir besoin du pic cognitif du matin.",
+    tips: ["Si Discord tourne bien à 15h30-16h, switch OFM sans hésiter", "Bats-toi contre la procrastination post-déjeuner avec une micro-tâche de 2 min pour démarrer", "Ferme les onglets non nécessaires avant de commencer"]
+  },
+  {
+    dur: '~5 min',
+    desc: "Red Bull classique, 250ml. Pris au début du bloc aprèm pour maximiser l'effet sur la durée du bloc.",
+    why: "La caféine met 20-30 min à agir. En le prenant à 14h30, tu es au pic d'effet à 15h-15h30 — exactement quand la fatigue post-déjeuner commence à peser. Combiné avec le café du matin, surveille l'accumulation de caféine.",
+    tips: ["Bois de l'eau en parallèle — la caféine déshydrate", "Pas de Red Bull après 18h sinon le sommeil est impacté", "Si tu sens que ça devient une dépendance, remplace 2-3 fois/semaine par un café froid"]
+  },
+  {
+    dur: 'Variable (16h–18h)',
+    desc: "Bloc OFM anticipé si Discord est calé avant 16h. Recrutement modèles, optimisation DMs, analytics.",
+    why: "Le timing US : en France à 16h il est 10h à New York, 7h en Californie. Les modèles commencent à être actives, les fans aussi. C'est le meilleur moment pour les DMs avant le pic du soir.",
+    tips: ["Prépare tes scripts DMs à l'avance pour aller vite", "Analyse les performances de la veille avant de commencer", "Focus sur 1-2 modèles max si tu démarres — qualité > quantité"]
+  },
+  {
+    dur: '1h30 (18h–19h30)',
+    desc: "Tu cuisines et tu dînes avec ta mère. Coupure totale des écrans professionnels. Ce créneau est sacré.",
+    why: "C'est ton ancre quotidienne. Un entrepreneur qui tient sur la durée a besoin de rituels humains en dehors du boulot. Ce moment te recentre, te nourrit (au sens propre et figuré) et protège ta santé mentale sur le long terme.",
+    tips: ["Téléphone en silencieux pendant le repas", "Cuisine simple — pas besoin de recettes complexes", "Ce créneau NE SE DÉPLACE PAS même si Discord est chaud"]
+  },
+  {
+    dur: '1h (19h30–20h30)',
+    desc: "Télé avec ta mère. Déconnexion totale. Aucun écran de travail, aucune notification.",
+    why: "Ce n'est pas du temps perdu — c'est de la récupération active. Ton cerveau traite les informations de la journée en mode passif. Tu vas démarrer le bloc OFM bien plus frais qu'en travaillant non-stop.",
+    tips: ["Résiste à l'envie de 'jeter un œil' aux stats pendant la pub", "C'est aussi le moment où tu recharges émotionnellement", "Si tu veux préparer mentalement le bloc OFM, fais-le dans ta tête — pas sur l'écran"]
+  },
+  {
+    dur: '3h (20h30–23h30)',
+    desc: "Bloc OFM principal. DMs avec les fans (heure US optimale), gestion des modèles, contenu PPV, analytics revenus.",
+    why: "20h30 en France = 14h30 New York = 11h30 Los Angeles. C'est le pic d'activité des fans sur OnlyFans. Les DMs envoyés maintenant ont le meilleur taux de réponse et de conversion de la journée.",
+    tips: ["Scripts DMs préparés = 3x plus de volume à qualité égale", "Analyse le taux de conversion par modèle chaque semaine", "Délègue les DMs répétitifs à des chatters dès que possible pour scaler"]
+  },
+  {
+    dur: '~15 min',
+    desc: "Routine skincare complète. Nettoyage, hydratation, contour des yeux si tu en as. Déconnexion totale des écrans business.",
+    why: "Le skincare c'est pas vanité — c'est un signal à ton cerveau que la journée de travail est terminée. Ce rituel de transition est psychologiquement important pour la qualité du sommeil.",
+    tips: ["Garder la routine simple : nettoyant + hydratant = suffit", "Lumière tamisée pendant ce rituel pour préparer le sommeil", "C'est le moment où tu mentalement 'fermes' la journée"]
+  },
+  {
+    dur: '15 min (23h45–0h00)',
+    desc: "15 minutes de lecture, livre physique uniquement. Pas d'écran, pas de podcast. Un vrai livre.",
+    why: "La lecture avant le sommeil réduit le temps d'endormissement de 40% selon les études. Elle remplace le scroll qui maintient le cerveau en état d'alerte. C'est aussi un investissement intellectuel — 15 min/jour = 5-6 livres par an.",
+    tips: ["Livre de chevet — toujours le même endroit pour créer le rituel", "Business, biographie, développement : du contenu qui nourrit", "Si tu t'endors en lisant c'est parfait — le sommeil arrive naturellement"]
+  },
+  {
+    dur: 'Toute la nuit',
+    desc: "Téléphone en charge hors de la chambre ou en mode avion. Objectif : 7h à 7h30 de sommeil.",
+    why: "Le sommeil c'est quand ton cerveau consolide tout ce que t'as appris et décidé dans la journée. Un entrepreneur qui dort mal prend de mauvaises décisions. C'est littéralement ton investissement le plus rentable.",
+    tips: ["Téléphone hors de portée du lit — règle non-négociable", "Chambre fraîche (18-19°C) pour un sommeil plus profond", "Si tu t'endors pas en 20 min, c'est probablement trop de caféine ou d'écran le soir"]
+  },
+];
+
+
+// ── OBJECTIVE BAR ─────────────────────────────────────────────────────────
+function updateObjBar(rd) {
+  const total = Object.values(rd).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0);
+  const target = 50000;
+  const pct = Math.min(100, Math.round((total / target) * 100));
+  document.getElementById('obj-bar').style.width = pct + '%';
+  document.getElementById('obj-pct').textContent = pct + '% de l'objectif annuel';
+  document.getElementById('obj-total').textContent = total.toLocaleString('fr-FR') + ' €';
+}
+
+// ── PAST MONTHS MODAL ─────────────────────────────────────────────────────
+const MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+window.openPastModal = () => {
+  const curMonth = new Date().getMonth();
+  const grid = document.getElementById('past-grid');
+  grid.innerHTML = MONTH_NAMES.slice(0, curMonth + 1).map((name, i) => {
+    const val = RD[i] || '';
+    return `<div class="past-item">
+      <div class="past-item-month">${name}</div>
+      <input type="number" id="pm-${i}" placeholder="0 €" value="${val}">
+      ${val ? `<div class="past-item-val">${(val/1000).toFixed(1)}k €</div>` : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('past-modal').classList.remove('hidden');
+};
+
+window.closePastModal = () => document.getElementById('past-modal').classList.add('hidden');
+
+window.savePastMonths = async () => {
+  const curMonth = new Date().getMonth();
+  for (let i = 0; i <= curMonth; i++) {
+    const input = document.getElementById('pm-' + i);
+    if (input) {
+      const v = parseInt(input.value);
+      if (!isNaN(v) && v > 0) RD[i] = v;
+      else if (input.value === '' || v === 0) delete RD[i];
+    }
+  }
+  renderRev();
+  updateObjBar(RD);
+  await saveD('revenus/2025', RD);
+  closePastModal();
+};
+
+window.openSlotModal = idx => {
+  const r = R[idx];
+  const detail = SLOT_DETAILS[idx];
+  if (!detail) return;
+  const color = r.c;
+
+  document.getElementById('sm-time').textContent = r.t;
+  document.getElementById('sm-time').style.color = color;
+  document.getElementById('sm-title').textContent = r.l;
+  document.getElementById('sm-title').style.color = color;
+  document.getElementById('sm-dur').textContent = '⏱ ' + detail.dur;
+  document.getElementById('sm-desc').textContent = detail.desc;
+  document.getElementById('sm-why').textContent = detail.why;
+  document.getElementById('sm-tips').innerHTML = detail.tips.map(tip =>
+    `<div class="slot-tip"><div class="slot-tip-dot" style="background:${color}"></div><span>${tip}</span></div>`
+  ).join('');
+
+  // Color the header
+  document.querySelector('.slot-modal-header').style.borderBottom = '1px solid ' + color + '33';
+  document.querySelector('.slot-modal-header').style.background = color + '0d';
+
+  document.getElementById('slot-modal').classList.remove('hidden');
+};
+window.closeSlotModal = () => document.getElementById('slot-modal').classList.add('hidden');
+
 </script>
 </body>
 </html>
