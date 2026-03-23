@@ -3,434 +3,586 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>EMPIRE</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>EMPIRE — Maxime</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0f0d0b; --s1:#171410; --s2:#1e1a15; --s3:#26211a;
-  --b1:#2e2820; --b2:#3a3228;
-  --teal:#00d4aa; --teal2:#00ffcc; --tdim:rgba(0,212,170,0.11);
-  --purple:#b197fc; --pdim:rgba(177,151,252,0.11);
-  --amber:#fcd34d; --adim:rgba(252,211,77,0.11);
-  --coral:#fb7185; --cdim:rgba(251,113,133,0.11);
-  --green:#4ade80; --gdim:rgba(74,222,128,0.11);
-  --blue:#60a5fa; --bdim:rgba(96,165,250,0.11);
-  --text:#ede8e0; --sub:#6b6256; --sub2:#4a4038;
-  --r:12px;
+  --bg:      #111009;
+  --s1:      #1a1713;
+  --s2:      #21201a;
+  --s3:      #2a2820;
+  --b1:      #312e24;
+  --b2:      #3e3a2e;
+  --teal:    #00d4aa;
+  --tdim:    rgba(0,212,170,.10);
+  --purple:  #a78bfa;
+  --pdim:    rgba(167,139,250,.10);
+  --amber:   #f59e0b;
+  --adim:    rgba(245,158,11,.10);
+  --coral:   #f43f5e;
+  --cdim:    rgba(244,63,94,.10);
+  --green:   #22c55e;
+  --gdim:    rgba(34,197,94,.10);
+  --blue:    #3b82f6;
+  --bdim:    rgba(59,130,246,.10);
+  --text:    #ede8df;
+  --sub:     #6b6456;
+  --sub2:    #453f34;
+  --r:       12px;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.5;min-height:100vh;padding-bottom:env(safe-area-inset-bottom,80px);}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding-bottom: max(80px, env(safe-area-inset-bottom, 80px));
+}
 
-.shell{max-width:1280px;margin:0 auto;padding:0 24px 100px;}
-@media(min-width:768px){.shell{padding:0 36px 60px;}}
+/* ─── SHELL ─── */
+.shell { max-width: 1280px; margin: 0 auto; padding: 0 20px 40px; }
+@media(min-width:768px){ .shell { padding: 0 32px 40px; } }
 
-/* SYNC */
-#sync{position:fixed;top:max(14px,env(safe-area-inset-top));right:20px;font-size:10px;color:var(--sub);display:flex;align-items:center;gap:5px;z-index:200;background:var(--s1);padding:5px 10px;border-radius:20px;border:1px solid var(--b1);}
-.sdot{width:5px;height:5px;border-radius:50%;background:var(--sub2);}
-.sdot.on{background:var(--teal);animation:glow 2s infinite;}
-.sdot.sv{background:var(--amber);animation:glow .4s infinite;}
-@keyframes glow{0%,100%{opacity:1}50%{opacity:.3}}
+/* ─── SYNC ─── */
+#sync {
+  position: fixed; top: max(14px, env(safe-area-inset-top)); right: 18px;
+  font-size: 10px; color: var(--sub); display: flex; align-items: center; gap: 5px;
+  z-index: 300; background: var(--s1); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--b1);
+}
+.sdot { width: 5px; height: 5px; border-radius: 50%; background: var(--sub2); }
+.sdot.on  { background: var(--teal); animation: pulse 2s infinite; }
+.sdot.sv  { background: var(--amber); animation: pulse .4s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-/* TOAST */
-#toast{position:fixed;bottom:max(28px,env(safe-area-inset-bottom,28px));left:50%;transform:translateX(-50%) translateY(16px);background:var(--teal);color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:11px 24px;border-radius:30px;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;pointer-events:none;}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* ─── TOAST ─── */
+#toast {
+  position: fixed; bottom: max(28px, env(safe-area-inset-bottom, 28px));
+  left: 50%; transform: translateX(-50%) translateY(16px);
+  background: var(--teal); color: #000; font-family: 'Syne', sans-serif;
+  font-size: 12px; font-weight: 800; padding: 10px 22px; border-radius: 30px;
+  opacity: 0; transition: all .3s; z-index: 400; white-space: nowrap; pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* HEADER */
-header{padding:max(20px,env(safe-area-inset-top,20px)) 0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--b1);margin-bottom:20px;}
-.logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,var(--amber),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.logo-sub{font-size:11px;color:var(--sub);margin-top:2px;letter-spacing:1px;}
-#clock{font-family:'DM Mono',monospace;font-size:17px;color:var(--teal);letter-spacing:1px;text-align:right;}
-#datestr{font-size:10px;color:var(--sub);margin-top:2px;text-align:right;}
+/* ─── MODAL (rule) ─── */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.80);
+  z-index: 500; display: flex; align-items: center; justify-content: center;
+  padding: 24px; backdrop-filter: blur(6px);
+}
+.overlay.hidden { display: none; }
+.modal {
+  background: var(--s1); border: 1px solid var(--b2); border-radius: 18px;
+  padding: 36px 32px; max-width: 460px; width: 100%; text-align: center;
+}
+.modal-emoji { font-size: 44px; margin-bottom: 18px; display: block; }
+.modal-eyebrow { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--sub); margin-bottom: 10px; }
+.modal-headline {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; line-height: 1.25;
+  background: linear-gradient(135deg, var(--amber), var(--coral));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-bottom: 6px;
+}
+.modal-hint { font-size: 12px; color: var(--sub); margin-bottom: 28px; }
+.modal-cta {
+  padding: 13px 36px; border-radius: 10px; border: none;
+  background: linear-gradient(135deg, var(--amber), var(--coral));
+  color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+  cursor: pointer; letter-spacing: .3px;
+}
+.modal-edit-link { display: block; font-size: 11px; color: var(--sub); margin-top: 14px; cursor: pointer; }
+.modal-edit-link:hover { color: var(--text); }
+.edit-area { display: none; margin-top: 16px; text-align: left; }
+.edit-area.vis { display: block; }
+.edit-area textarea {
+  width: 100%; background: var(--s2); border: 1px solid var(--b2); border-radius: 9px;
+  color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px;
+  padding: 11px 13px; resize: none; outline: none; margin-bottom: 8px; line-height: 1.5;
+}
+.edit-area textarea:focus { border-color: var(--teal); }
+.edit-save {
+  padding: 8px 18px; border-radius: 8px; border: 1px solid var(--teal);
+  background: var(--tdim); color: var(--teal); font-family: 'Syne', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+}
 
-/* OBJ */
-.obj{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,var(--adim),transparent 70%);border:1px solid rgba(252,211,77,.18);border-radius:var(--r);padding:12px 18px;margin-bottom:20px;flex-wrap:wrap;}
-.odot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;animation:glow 2s infinite;}
-.obj span{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;}
+/* ─── DAY DETAIL MODAL ─── */
+.day-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.75);
+  z-index: 500; display: flex; align-items: center; justify-content: center;
+  padding: 24px; backdrop-filter: blur(4px);
+}
+.day-overlay.hidden { display: none; }
+.day-modal {
+  background: var(--s1); border: 1px solid var(--b2); border-radius: 16px;
+  padding: 24px; max-width: 420px; width: 100%;
+}
+.day-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.day-modal-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+.day-close { background: none; border: none; color: var(--sub); font-size: 22px; cursor: pointer; line-height: 1; }
+.day-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
+.day-stat { background: var(--s2); border-radius: 9px; padding: 10px 8px; text-align: center; }
+.day-stat-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; }
+.day-stat-lbl { font-size: 9px; color: var(--sub); margin-top: 3px; letter-spacing: .3px; }
+.day-checks { display: flex; flex-direction: column; gap: 6px; }
+.day-check-row { display: flex; align-items: center; gap: 10px; font-size: 12px; padding: 7px 10px; background: var(--s2); border-radius: 8px; }
 
-/* SECTION TITLE */
-.sec{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin:24px 0 10px;display:flex;align-items:center;gap:10px;}
-.sec::after{content:'';flex:1;height:1px;background:var(--b1);}
+/* ─── HEADER ─── */
+header {
+  padding: max(22px, env(safe-area-inset-top, 22px)) 0 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--b1); margin-bottom: 22px; gap: 12px;
+}
+.logo { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, var(--amber) 30%, var(--coral)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.logo-sub { font-size: 11px; color: var(--sub); margin-top: 2px; letter-spacing: 1.5px; text-transform: uppercase; }
+.header-right { text-align: right; }
+#clock { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--teal); letter-spacing: .5px; }
+#datestr { font-size: 11px; color: var(--sub); margin-top: 2px; }
 
-/* CARD */
-.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:18px;}
-.ct{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
-.cdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+/* ─── OBJ BANNER ─── */
+.obj {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: linear-gradient(90deg, var(--adim), transparent 70%);
+  border: 1px solid rgba(245,158,11,.2); border-radius: var(--r);
+  padding: 12px 18px; margin-bottom: 24px;
+}
+.obj-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; animation: pulse 2s infinite; }
+.obj span { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; }
 
-/* ── HORIZONTAL TIMELINE ── */
-.tl-h{overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;}
-.tl-h::-webkit-scrollbar{height:3px;}
-.tl-h::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
-.tl-track{display:flex;gap:0;min-width:max-content;position:relative;padding-top:4px;}
-/* horizontal line */
-.tl-track::before{content:'';position:absolute;top:12px;left:0;right:0;height:1px;background:var(--b2);z-index:0;}
-.tl-slot{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:120px;position:relative;z-index:1;}
-.tl-slot.important{min-width:136px;max-width:136px;}
-.tl-dot-h{width:13px;height:13px;border-radius:50%;flex-shrink:0;border:2px solid var(--bg);position:relative;z-index:2;}
-.tl-dot-h.now{box-shadow:0 0 0 4px rgba(0,212,170,.25);animation:glow 1.5s infinite;}
-.tl-card-h{width:calc(100% - 8px);background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:11px 12px;text-align:center;transition:all .2s;cursor:default;}
-.tl-card-h.now{border-color:var(--teal);background:var(--tdim);}
-.tl-card-h.imp{border-left-width:2px;}
-.tl-time-h{font-size:11px;color:var(--sub);margin-bottom:3px;}
-.tl-name-h{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;line-height:1.2;}
-.tl-sub-h{font-size:11px;color:var(--sub);margin-top:4px;line-height:1.3;}
+/* ─── SECTION LABEL ─── */
+.sec-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--sub); margin: 24px 0 12px; display: flex; align-items: center; gap: 10px;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--b1); }
 
-/* ── METRICS ── */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
-@media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr);}}
-.metric{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden;}
-.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.metric.c-teal::before{background:linear-gradient(90deg,var(--teal),var(--teal2));}
-.metric.c-purple::before{background:var(--purple);}
-.metric.c-amber::before{background:var(--amber);}
-.metric.c-coral::before{background:var(--coral);}
-.m-label{font-size:10px;color:var(--sub);letter-spacing:.5px;margin-bottom:4px;}
-.m-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;line-height:1;}
-.m-sub{font-size:10px;color:var(--sub);margin-top:3px;}
+/* ─── CARD ─── */
+.card { background: var(--s1); border: 1px solid var(--b1); border-radius: var(--r); padding: 18px 20px; }
+.card + .card { margin-top: 12px; }
+.card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.card-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .5px; }
+.card-right { margin-left: auto; }
+.cbar { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 
-/* ── GRID LAYOUTS ── */
-.g2{display:grid;grid-template-columns:1fr;gap:12px;}
-@media(min-width:700px){.g2{grid-template-columns:1fr 1fr;}}
-.g3{display:grid;grid-template-columns:1fr;gap:12px;}
-@media(min-width:900px){.g3{grid-template-columns:1fr 1fr 1fr;}}
+/* ─── GRIDS ─── */
+.g2 { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media(min-width:680px){ .g2 { grid-template-columns: 1fr 1fr; } }
+.g3 { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media(min-width:900px){ .g3 { grid-template-columns: 1fr 1fr 1fr; } }
 
-/* ── CHECKS ── */
-.checks-grid{display:flex;flex-direction:column;gap:6px;}
-.check-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1px solid var(--b1);background:var(--s2);cursor:pointer;transition:all .25s;user-select:none;position:relative;overflow:hidden;}
-.check-item::before{content:'';position:absolute;inset:0;background:var(--green);opacity:0;transition:opacity .3s;}
-.check-item.done::before{opacity:.07;}
-.check-item.done{border-color:var(--green);}
-.check-item.fail{border-color:var(--coral);}
-.check-glow{position:absolute;inset:0;border-radius:10px;pointer-events:none;opacity:0;transition:opacity .3s;}
-.check-item.done .check-glow{opacity:1;box-shadow:inset 0 0 20px rgba(74,222,128,.15),0 0 12px rgba(74,222,128,.2);}
-.check-icon-wrap{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--b2);background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .25s;position:relative;z-index:1;}
-.check-item.done .check-icon-wrap{background:var(--green);border-color:var(--green);box-shadow:0 0 14px rgba(74,222,128,.5);}
-.check-item.fail .check-icon-wrap{background:var(--coral);border-color:var(--coral);}
-.check-content{flex:1;position:relative;z-index:1;}
-.check-label{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;transition:color .25s;}
-.check-item.done .check-label{color:var(--green);}
-.check-item.fail .check-label{color:var(--coral);}
-.check-time{font-size:9px;color:var(--sub);margin-top:1px;}
-.check-state{font-size:11px;position:relative;z-index:1;min-width:20px;text-align:right;}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
-.check-item.done .check-icon-wrap{animation:pop .3s ease;}
+/* ─── STREAK ─── */
+.streak {
+  display: flex; align-items: center; gap: 16px;
+  background: linear-gradient(90deg, rgba(245,158,11,.1), transparent 80%);
+  border: 1px solid rgba(245,158,11,.2); border-radius: var(--r);
+  padding: 14px 20px; margin-bottom: 12px;
+}
+.streak-fire { font-size: 32px; }
+.streak-count { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800; color: var(--amber); line-height: 1; }
+.streak-lbl { font-size: 11px; color: var(--sub); margin-top: 2px; }
+.streak-best { margin-left: auto; text-align: right; }
+.streak-best-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--sub); }
+.streak-best-lbl { font-size: 10px; color: var(--sub2); }
 
-/* SCORE BAR */
-.score-bar-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1);}
-.score-bar-track{height:6px;background:var(--b2);border-radius:3px;overflow:hidden;margin-bottom:8px;}
-.score-bar-fill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.34,1.56,.64,1),background .3s;}
-.score-row{display:flex;align-items:center;justify-content:space-between;}
-.score-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
-.score-label{font-size:10px;color:var(--sub);}
+/* ─── TIMELINE (horizontal scroll) ─── */
+.tl-scroll { overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+.tl-scroll::-webkit-scrollbar { height: 3px; }
+.tl-scroll::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 2px; }
+.tl-track { display: flex; gap: 8px; min-width: max-content; position: relative; padding-top: 8px; }
+.tl-track::before { content: ''; position: absolute; top: 16px; left: 0; right: 0; height: 1px; background: var(--b2); z-index: 0; }
+.tl-item { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; flex-shrink: 0; position: relative; z-index: 1; }
+.tl-item.big { width: 126px; }
+.tl-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--bg); flex-shrink: 0; z-index: 2; }
+.tl-dot.now { box-shadow: 0 0 0 4px rgba(0,212,170,.25); animation: pulse 1.5s infinite; }
+.tl-card {
+  width: 100%; background: var(--s2); border: 1px solid var(--b1);
+  border-radius: 10px; padding: 10px 12px; text-align: center; transition: border-color .2s;
+}
+.tl-card.now { border-color: var(--teal); background: var(--tdim); }
+.tl-card.imp { border-left: 2px solid; }
+.tl-time { font-size: 10px; color: var(--sub); margin-bottom: 3px; font-weight: 500; }
+.tl-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; line-height: 1.2; margin-bottom: 3px; }
+.tl-sub  { font-size: 10px; color: var(--sub); line-height: 1.3; }
 
-/* TRACKER */
-.score-wrap{margin-bottom:14px;}
-.score-lbl{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:6px;}
-.sbrow{display:flex;gap:3px;}
-.sb{flex:1;height:34px;border-radius:7px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
-.sb:hover{transform:scale(1.08);}
-.sb.on{color:#000;font-weight:700;transform:scale(1.1);}
-.fbrow{display:flex;gap:7px;}
-.fb{flex:1;padding:10px 6px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;text-align:center;line-height:1.4;}
-.fb.junk{border-color:var(--coral);color:var(--coral);background:var(--cdim);}
-.fb.ok{border-color:var(--amber);color:var(--amber);background:var(--adim);}
-.fb.clean{border-color:var(--green);color:var(--green);background:var(--gdim);}
+/* ─── CHECKS ─── */
+.checks { display: flex; flex-direction: column; gap: 7px; }
+.check {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: 10px; border: 1px solid var(--b1); background: var(--s2);
+  cursor: pointer; transition: all .22s; user-select: none; position: relative; overflow: hidden;
+}
+.check::after {
+  content: ''; position: absolute; inset: 0;
+  background: var(--green); opacity: 0; transition: opacity .3s; pointer-events: none;
+}
+.check.done::after { opacity: .06; }
+.check.done { border-color: var(--green); box-shadow: 0 0 16px rgba(34,197,94,.15); }
+.check.fail { border-color: var(--coral); }
+.check-ico {
+  width: 32px; height: 32px; border-radius: 9px; border: 1.5px solid var(--b2);
+  background: var(--s3); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0; transition: all .22s; position: relative; z-index: 1;
+}
+.check.done .check-ico { background: var(--green); border-color: var(--green); box-shadow: 0 0 12px rgba(34,197,94,.5); }
+.check.fail .check-ico { background: var(--coral); border-color: var(--coral); }
+.check-body { flex: 1; position: relative; z-index: 1; }
+.check-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; transition: color .22s; }
+.check.done .check-name { color: var(--green); }
+.check.fail .check-name { color: var(--coral); }
+.check-time { font-size: 10px; color: var(--sub); margin-top: 1px; }
+.check-status { font-size: 14px; position: relative; z-index: 1; }
+@keyframes pop { 0%{transform:scale(1)} 45%{transform:scale(1.4)} 100%{transform:scale(1)} }
+.check.done .check-ico { animation: pop .28s ease; }
 
-/* SNUS */
-.snus-wrap{display:flex;gap:7px;margin-bottom:8px;}
-.snusbtn{flex:1;height:42px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
-.snusbtn.on{border-color:var(--amber);background:var(--adim);color:var(--amber);box-shadow:0 0 10px rgba(252,211,77,.2);}
-.snus-time{font-size:8px;opacity:.5;}
+/* ─── SCORE BAR ─── */
+.score-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--b1); }
+.score-track { height: 6px; background: var(--b2); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.score-fill { height: 100%; border-radius: 3px; transition: width .5s cubic-bezier(.34,1.56,.64,1), background .3s; }
+.score-row { display: flex; align-items: baseline; justify-content: space-between; }
+.score-msg { font-size: 12px; color: var(--sub); }
+.score-num { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
 
-/* WEEKLY CHART */
-.wchart{display:flex;align-items:flex-end;gap:3px;height:70px;margin-bottom:6px;}
-.wbar{flex:1;border-radius:3px 3px 0 0;min-width:5px;transition:filter .2s;cursor:pointer;}
-.wbar:hover{filter:brightness(1.5);}
-.wlabels{display:flex;gap:3px;font-size:9px;color:var(--sub);}
-.wstats{display:flex;gap:0;margin-top:12px;}
-.wstat{flex:1;text-align:center;padding:10px 6px;border-radius:8px;background:var(--s2);}
-.wstat+.wstat{margin-left:6px;}
-.wstat-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;line-height:1;}
-.wstat-lbl{font-size:9px;color:var(--sub);margin-top:3px;}
+/* ─── TRACKER ─── */
+.tracker-group { margin-bottom: 16px; }
+.tracker-group:last-child { margin-bottom: 0; }
+.tracker-lbl { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--sub); margin-bottom: 8px; display: block; }
+.scores { display: flex; gap: 4px; }
+.score-btn {
+  flex: 1; height: 36px; border-radius: 7px; border: 1px solid var(--b2);
+  background: var(--s2); color: var(--sub); font-family: 'Inter', sans-serif;
+  font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.score-btn:hover { transform: scale(1.08); }
+.score-btn.on { color: #000; font-weight: 700; transform: scale(1.1); }
+.food-btns { display: flex; gap: 8px; }
+.food-btn {
+  flex: 1; padding: 11px 6px; border-radius: 9px; border: 1px solid var(--b2);
+  background: var(--s2); color: var(--sub); font-family: 'Inter', sans-serif;
+  font-size: 11px; cursor: pointer; transition: all .2s; text-align: center; line-height: 1.5;
+}
+.food-btn.junk  { border-color: var(--coral);  color: var(--coral);  background: var(--cdim); }
+.food-btn.ok    { border-color: var(--amber);  color: var(--amber);  background: var(--adim); }
+.food-btn.clean { border-color: var(--green);  color: var(--green);  background: var(--gdim); }
 
-/* TABS */
-.tabs{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.tabs::-webkit-scrollbar{display:none;}
-.tab{padding:7px 14px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
-.tab.td{border-color:var(--teal);color:var(--teal);background:var(--tdim);}
-.tab.to{border-color:var(--purple);color:var(--purple);background:var(--pdim);}
-.tab.tr{border-color:var(--amber);color:var(--amber);background:var(--adim);}
-.tc{display:none;}.tc.vis{display:block;}
-.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
-@media(max-width:480px){.pgrid{grid-template-columns:repeat(3,1fr);}}
-.pd{border-radius:9px;border:1px solid var(--b1);overflow:hidden;}
-.pdh{padding:7px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-align:center;}
-.pdb{padding:9px 11px;}
-.pt{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;}
-.ps{font-size:10px;color:var(--sub);margin-top:2px;}
+/* ─── SNUS ─── */
+.snus-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.snus-btn {
+  flex: 1; height: 44px; border-radius: 9px; border: 1px solid var(--b2);
+  background: var(--s2); color: var(--sub); font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+}
+.snus-btn.on { border-color: var(--amber); background: var(--adim); color: var(--amber); box-shadow: 0 0 10px rgba(245,158,11,.2); }
+.snus-time-lbl { font-size: 8px; font-weight: 400; opacity: .55; }
 
-/* REVENUE */
-.rchart{display:flex;align-items:flex-end;gap:5px;height:80px;margin-bottom:6px;}
-.rbw{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
-.rb{width:100%;border-radius:3px 3px 0 0;cursor:pointer;transition:filter .2s;}
-.rb:hover{filter:brightness(1.4);}
+/* ─── SALES ─── */
+.sales-total-row { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 16px; }
+.sales-total-val { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--teal); line-height: 1; }
+.sales-total-lbl { font-size: 11px; color: var(--sub); padding-bottom: 4px; }
+.sales-srcs { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.sales-src { background: var(--s2); border: 1px solid var(--b1); border-radius: 9px; padding: 10px; text-align: center; }
+.sales-src-val { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; line-height: 1; }
+.sales-src-lbl { font-size: 10px; color: var(--sub); margin-top: 4px; }
+.sales-form { display: flex; gap: 6px; margin-bottom: 12px; }
+.sales-form input, .sales-form select {
+  background: var(--s2); border: 1px solid var(--b2); border-radius: 9px;
+  color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px;
+  padding: 9px 12px; outline: none; transition: border-color .2s;
+}
+.sales-form input { flex: 1; }
+.sales-form input:focus, .sales-form select:focus { border-color: var(--teal); }
+.sales-entries { display: flex; flex-direction: column; gap: 5px; max-height: 150px; overflow-y: auto; }
+.sales-entries::-webkit-scrollbar { width: 3px; }
+.sales-entries::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 2px; }
+.sale-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--s2); border-radius: 8px; border: 1px solid var(--b1); }
+.sale-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 6px; flex-shrink: 0; }
+.sale-date { font-size: 10px; color: var(--sub); }
+.sale-val { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-left: auto; }
+.sale-del { background: none; border: none; color: var(--sub2); cursor: pointer; font-size: 16px; padding: 0 2px; }
+.sale-del:hover { color: var(--coral); }
 
-/* RULES */
-.rules{display:flex;flex-direction:column;gap:7px;}
-.rule{display:flex;gap:11px;padding:11px 13px;border-radius:9px;border:1px solid var(--b1);background:var(--s2);align-items:flex-start;}
-.racc{width:3px;border-radius:2px;flex-shrink:0;align-self:stretch;min-height:18px;}
-.rt{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;}
-.rs{font-size:10px;color:var(--sub);margin-top:2px;}
+/* ─── CHART ─── */
+.chart-wrap { display: flex; align-items: flex-end; gap: 3px; height: 72px; margin-bottom: 6px; }
+.bar { flex: 1; border-radius: 3px 3px 0 0; min-width: 4px; cursor: pointer; transition: filter .15s; }
+.bar:hover { filter: brightness(1.5); }
+.chart-labels { display: flex; gap: 3px; font-size: 9px; color: var(--sub); margin-bottom: 14px; }
+.chart-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.cstat { background: var(--s2); border-radius: 9px; padding: 10px; text-align: center; }
+.cstat-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; }
+.cstat-lbl { font-size: 9px; color: var(--sub); margin-top: 3px; }
 
-/* REVIEW */
-.rvgrid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px;}
-@media(min-width:600px){.rvgrid{grid-template-columns:1fr 1fr 1fr;}}
-.rvf label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:5px;}
-.rvf textarea{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:11px 13px;resize:none;outline:none;transition:border-color .2s;line-height:1.5;}
-.rvf textarea:focus{border-color:var(--teal);}
+/* ─── PLANNING ─── */
+.tabs { display: flex; gap: 5px; margin-bottom: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--b2); background: transparent; color: var(--sub); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; white-space: nowrap; flex-shrink: 0; }
+.tab.td { border-color: var(--teal); color: var(--teal); background: var(--tdim); }
+.tab.to { border-color: var(--purple); color: var(--purple); background: var(--pdim); }
+.tab.tr { border-color: var(--amber); color: var(--amber); background: var(--adim); }
+.tc { display: none; } .tc.vis { display: block; }
+.plan-note { font-size: 11px; color: var(--sub); margin-bottom: 12px; line-height: 1.8; }
+.plan-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 7px; }
+@media(max-width:480px){ .plan-grid { grid-template-columns: repeat(3,1fr); } }
+.plan-day { border-radius: 9px; border: 1px solid var(--b1); overflow: hidden; }
+.plan-day-h { padding: 7px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-align: center; }
+.plan-day-b { padding: 9px 10px; }
+.plan-task { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; }
+.plan-sub { font-size: 10px; color: var(--sub); margin-top: 2px; }
 
-/* BUTTONS */
-.btn{padding:11px 20px;border-radius:9px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
-.btn:hover{background:var(--teal);color:#000;}
-.btn:active{transform:scale(.97);}
-.bsm{padding:9px 14px;font-size:11px;}
-.soiree-btns{display:flex;gap:7px;}
-.soiree-btn{width:46px;height:40px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
-input[type=number]{background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:9px 13px;outline:none;transition:border-color .2s;width:100%;}
-input[type=number]:focus{border-color:var(--teal);}
+/* ─── REVENUE ─── */
+.rev-chart { display: flex; align-items: flex-end; gap: 5px; height: 80px; margin-bottom: 6px; }
+.rev-bw { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.rev-bar { width: 100%; border-radius: 3px 3px 0 0; cursor: pointer; transition: filter .2s; }
+.rev-bar:hover { filter: brightness(1.4); }
+.rev-goals { display: flex; gap: 0; margin-top: 16px; }
+.rev-goal { flex: 1; text-align: center; background: var(--s2); border-radius: 9px; padding: 12px 8px; }
+.rev-goal + .rev-goal { margin-left: 8px; }
+.rev-goal-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; line-height: 1; }
+.rev-goal-lbl { font-size: 10px; color: var(--sub); margin-top: 4px; }
+.rev-input-row { display: flex; gap: 8px; margin-top: 14px; }
+.rev-input-row input { flex: 1; background: var(--s2); border: 1px solid var(--b2); border-radius: 9px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 10px 13px; outline: none; }
+.rev-input-row input:focus { border-color: var(--teal); }
 
+/* ─── RULES ─── */
+.rules { display: flex; flex-direction: column; gap: 8px; }
+.rule { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--b1); background: var(--s2); }
+.rule-acc { width: 3px; min-height: 20px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
+.rule-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; }
+.rule-desc { font-size: 11px; color: var(--sub); margin-top: 2px; }
 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px);}
-.modal-overlay.hidden{display:none;}
-.modal-box{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:32px;max-width:480px;width:100%;position:relative;text-align:center;}
-.modal-icon{font-size:40px;margin-bottom:16px;}
-.modal-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:12px;}
-.modal-rule{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.3;background:linear-gradient(135deg,var(--amber),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
-.modal-sub{font-size:12px;color:var(--sub);margin-bottom:24px;}
-.modal-btn{padding:12px 32px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--amber),var(--coral));color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.5px;}
-.modal-edit{font-size:10px;color:var(--sub);margin-top:12px;cursor:pointer;text-decoration:underline;}
-.modal-edit-area{display:none;margin-top:16px;}
-.modal-edit-area.vis{display:block;}
-.modal-edit-area textarea{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:11px 13px;resize:none;outline:none;margin-bottom:8px;}
-.modal-save{padding:8px 20px;border-radius:8px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+/* ─── REVIEW ─── */
+.review-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
+@media(min-width:600px){ .review-grid { grid-template-columns: 1fr 1fr 1fr; } }
+.rv-lbl { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--sub); margin-bottom: 6px; display: block; }
+.rv-ta { width: 100%; background: var(--s2); border: 1px solid var(--b2); border-radius: 9px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 11px 13px; resize: none; outline: none; transition: border-color .2s; line-height: 1.5; }
+.rv-ta:focus { border-color: var(--teal); }
+.soiree-wrap { display: flex; gap: 7px; }
+.soiree-btn { width: 48px; height: 40px; border-radius: 9px; border: 1px solid var(--b2); background: var(--s2); color: var(--sub); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; }
 
-/* STREAK */
-.streak-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,rgba(252,211,77,.12),transparent 80%);border:1px solid rgba(252,211,77,.2);border-radius:var(--r);padding:12px 18px;margin-bottom:16px;}
-.streak-fire{font-size:28px;animation:flicker 1.5s ease-in-out infinite;}
-@keyframes flicker{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.streak-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--amber);line-height:1;}
-.streak-label{font-size:11px;color:var(--sub);margin-top:2px;}
-.streak-best{margin-left:auto;text-align:right;}
-.streak-best-num{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--sub);}
-.streak-best-lbl{font-size:10px;color:var(--sub2);}
+/* ─── BUTTONS ─── */
+.btn { padding: 10px 20px; border-radius: 9px; border: 1px solid var(--teal); background: var(--tdim); color: var(--teal); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s; }
+.btn:hover { background: var(--teal); color: #000; }
+.btn:active { transform: scale(.97); }
+.btn-sm { padding: 8px 14px; font-size: 11px; }
 
-/* SALES TRACKER */
-.sales-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.sales-total{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--teal);line-height:1;}
-.sales-month{font-size:10px;color:var(--sub);margin-top:2px;}
-.sales-sources{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
-.sales-src{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;text-align:center;}
-.sales-src-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;line-height:1;}
-.sales-src-lbl{font-size:10px;color:var(--sub);margin-top:3px;}
-.sales-add{display:flex;gap:6px;margin-bottom:10px;}
-.sales-add input{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:9px 13px;outline:none;transition:border-color .2s;}
-.sales-add input:focus{border-color:var(--teal);}
-.sales-add select{background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:9px 13px;outline:none;cursor:pointer;}
-.sales-list{display:flex;flex-direction:column;gap:4px;max-height:140px;overflow-y:auto;}
-.sales-list::-webkit-scrollbar{width:3px;}
-.sales-list::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
-.sale-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--s2);border-radius:8px;border:1px solid var(--b1);}
-.sale-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:5px;flex-shrink:0;}
-.sale-amount{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-left:auto;}
-.sale-del{background:none;border:none;color:var(--sub2);cursor:pointer;font-size:14px;padding:0 4px;}
-.sale-del:hover{color:var(--coral);}
+/* ─── BOTTOM NAV ─── */
+.bnav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--s1); border-top: 1px solid var(--b1); padding: 8px 0 max(8px, env(safe-area-inset-bottom)); z-index: 200; }
+@media(min-width:768px){ .bnav { display: none; } }
+.bnav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px; background: none; border: none; color: var(--sub); font-family: 'Inter', sans-serif; font-size: 9px; cursor: pointer; transition: color .15s; }
+.bnav-btn.active { color: var(--teal); }
+.bnav-ico { font-size: 20px; }
 
-/* DAY DETAIL MODAL */
-.day-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px);}
-.day-modal.hidden{display:none;}
-.day-modal-box{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:24px;max-width:400px;width:100%;}
-.day-modal-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
-.day-modal-close{background:none;border:none;color:var(--sub);cursor:pointer;font-size:20px;}
-.day-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.day-detail-item{background:var(--s2);border-radius:8px;padding:10px 12px;}
-.day-detail-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;line-height:1;}
-.day-detail-lbl{font-size:10px;color:var(--sub);margin-top:3px;}
-.day-checks-list{display:flex;flex-direction:column;gap:5px;}
-.day-check-row{display:flex;align-items:center;gap:8px;font-size:12px;}
-
-/* BOTTOM NAV */
-.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--b1);padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;}
-@media(min-width:768px){.bnav{display:none;}}
-.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px;background:none;border:none;color:var(--sub);font-family:'DM Mono',monospace;font-size:9px;cursor:pointer;transition:color .15s;}
-.bnav-btn.active{color:var(--teal);}
-.bnav-icon{font-size:18px;}
-.section{display:none;}.section.vis{display:block;}
-@media(min-width:768px){.section{display:block!important;}}
+/* ─── SECTIONS ─── */
+.section { display: none; }
+.section.vis { display: block; }
+@media(min-width:768px){ .section { display: block !important; } }
 </style>
 </head>
 <body>
+
+<!-- SYNC -->
 <div id="sync"><div class="sdot" id="sdot"></div><span id="slbl">...</span></div>
 <div id="toast"></div>
+
+<!-- RULE MODAL -->
+<div class="overlay" id="rule-overlay">
+  <div class="modal">
+    <span class="modal-emoji">⚡</span>
+    <div class="modal-eyebrow">Ta règle du jour</div>
+    <div class="modal-headline" id="modal-rule">Chargement...</div>
+    <div class="modal-hint">Lis-la. Retiens-la. Applique-la aujourd'hui.</div>
+    <button class="modal-cta" onclick="closeModal()">Let's go 🔥</button>
+    <a class="modal-edit-link" onclick="toggleEdit()">Modifier cette règle</a>
+    <div class="edit-area" id="edit-area">
+      <textarea id="rule-input" rows="2" placeholder="Ta règle..."></textarea>
+      <button class="edit-save" onclick="saveRule()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- DAY DETAIL MODAL -->
+<div class="day-overlay hidden" id="day-overlay">
+  <div class="day-modal">
+    <div class="day-modal-head">
+      <div class="day-modal-title" id="day-title">—</div>
+      <button class="day-close" onclick="closeDayModal()">×</button>
+    </div>
+    <div class="day-stats" id="day-stats"></div>
+    <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px">Checks</div>
+    <div class="day-checks" id="day-checks"></div>
+  </div>
+</div>
+
 <div class="shell">
 
+<!-- HEADER -->
 <header>
   <div>
     <div class="logo">EMPIRE</div>
-    <div class="logo-sub">MAXIME · GRIND MODE</div>
+    <div class="logo-sub">Maxime · Grind Mode</div>
   </div>
-  <div>
+  <div class="header-right">
     <div id="clock">--:--:--</div>
     <div id="datestr">--</div>
   </div>
 </header>
 
+<!-- OBJ -->
 <div class="obj">
-  <div class="odot"></div>
+  <div class="obj-dot"></div>
   <span style="color:var(--sub)">OBJECTIF 2025</span>
   <span style="color:var(--teal)">3k → 10k juin</span>
   <span style="color:var(--sub2)">→</span>
   <span style="color:var(--amber)">50k décembre</span>
 </div>
 
-<!-- ══ TODAY ══ -->
+<!-- ══ AUJOURD'HUI ══ -->
 <div class="section vis" id="sec-today">
 
-  <!-- METRICS -->
-  <div class="sec"><span>Aujourd'hui</span></div>
-  <div class="metrics">
-    <div class="metric c-teal">
-      <div class="m-label">⚡ ÉNERGIE</div>
-      <div class="m-val" id="m-energie" style="color:var(--teal)">—</div>
-      <div class="m-sub">sur 10</div>
-    </div>
-    <div class="metric c-purple">
-      <div class="m-label">🧠 MENTAL</div>
-      <div class="m-val" id="m-mental" style="color:var(--purple)">—</div>
-      <div class="m-sub">sur 10</div>
-    </div>
-    <div class="metric c-amber">
-      <div class="m-label">🍽️ ALIM.</div>
-      <div class="m-val" id="m-food" style="color:var(--amber);font-size:22px">—</div>
-      <div class="m-sub" id="m-food-sub">—</div>
-    </div>
-    <div class="metric c-coral">
-      <div class="m-label">🚬 SNUS</div>
-      <div class="m-val" id="m-snus" style="color:var(--coral)">0</div>
-      <div class="m-sub">sur 5</div>
-    </div>
-  </div>
-
-
   <!-- STREAK -->
-  <div class="streak-banner" id="streak-banner">
+  <div class="streak">
     <div class="streak-fire">🔥</div>
     <div>
-      <div class="streak-num" id="streak-cur">0</div>
-      <div class="streak-label">jours consécutifs parfaits (≥5/6)</div>
+      <div class="streak-count" id="streak-cur">0</div>
+      <div class="streak-lbl">jours consécutifs ≥ 5/6</div>
     </div>
     <div class="streak-best">
-      <div class="streak-best-num" id="streak-best">—</div>
+      <div class="streak-best-val" id="streak-best">—</div>
       <div class="streak-best-lbl">meilleur streak</div>
     </div>
   </div>
 
-  <!-- SALES TRACKER -->
-  <div class="card" style="margin-bottom:12px">
-    <div class="ct"><div class="cdot" style="background:var(--teal)"></div>Ventes du mois <span style="margin-left:auto;font-size:10px;color:var(--sub)" id="sales-month-label">—</span></div>
-    <div class="sales-header">
-      <div>
-        <div class="sales-total" id="sales-total">0 €</div>
-        <div class="sales-month">total ce mois</div>
-      </div>
+  <!-- TIMELINE -->
+  <div class="sec-label"><span>Routine du jour</span></div>
+  <div class="card" style="padding:16px 18px">
+    <div class="card-head">
+      <div class="cbar" style="background:var(--teal)"></div>
+      <div class="card-title">Emploi du temps</div>
+      <div class="card-right" style="font-size:11px;color:var(--teal);font-weight:600" id="tl-now-label"></div>
     </div>
-    <div class="sales-sources">
-      <div class="sales-src">
-        <div class="sales-src-val" id="src-discord" style="color:var(--teal)">0 €</div>
-        <div class="sales-src-lbl">💬 Discord</div>
-      </div>
-      <div class="sales-src">
-        <div class="sales-src-val" id="src-ofm" style="color:var(--purple)">0 €</div>
-        <div class="sales-src-lbl">💜 OFM</div>
-      </div>
-      <div class="sales-src">
-        <div class="sales-src-val" id="src-refund" style="color:var(--amber)">0 €</div>
-        <div class="sales-src-lbl">🛡️ RefundShield</div>
-      </div>
-    </div>
-    <div class="sales-add">
-      <input type="number" id="sale-amount" placeholder="Montant (€)">
-      <select id="sale-source">
-        <option value="discord">💬 Discord</option>
-        <option value="ofm">💜 OFM</option>
-        <option value="refund">🛡️ RefundShield</option>
-      </select>
-      <button class="btn bsm" onclick="addSale()">+ Ajouter</button>
-    </div>
-    <div class="sales-list" id="sales-list"></div>
-  </div>
-
-  <!-- HORIZONTAL TIMELINE -->
-  <div class="card" style="margin-bottom:12px;padding:16px 18px 12px;">
-    <div class="ct"><div class="cdot" style="background:var(--teal)"></div>Routine du jour <span style="margin-left:auto;font-size:10px;color:var(--sub)" id="tl-current-label"></span></div>
-    <div class="tl-h">
+    <div class="tl-scroll">
       <div class="tl-track" id="timeline"></div>
     </div>
   </div>
 
-  <!-- CHECKS + TRACKER + SNUS -->
-  <div class="g3">
+  <!-- VENTES + CHECKS + TRACKER -->
+  <div class="sec-label"><span>Business & Journée</span></div>
+  <div class="g2" style="margin-bottom:12px">
 
-    <!-- DAILY CHECKS -->
+    <!-- VENTES -->
     <div class="card">
-      <div class="ct"><div class="cdot" style="background:var(--green)"></div>Check du soir</div>
-      <div class="checks-grid" id="checks-list"></div>
-      <div class="score-bar-wrap">
-        <div class="score-bar-track"><div class="score-bar-fill" id="check-bar" style="width:0%"></div></div>
+      <div class="card-head">
+        <div class="cbar" style="background:var(--teal)"></div>
+        <div class="card-title">Ventes du mois</div>
+        <div class="card-right" style="font-size:10px;color:var(--sub)" id="sales-month-lbl">—</div>
+      </div>
+      <div class="sales-total-row">
+        <div class="sales-total-val" id="sales-total">0 €</div>
+        <div class="sales-total-lbl">ce mois</div>
+      </div>
+      <div class="sales-srcs">
+        <div class="sales-src">
+          <div class="sales-src-val" id="src-discord" style="color:var(--teal)">0 €</div>
+          <div class="sales-src-lbl">💬 Discord</div>
+        </div>
+        <div class="sales-src">
+          <div class="sales-src-val" id="src-ofm" style="color:var(--purple)">0 €</div>
+          <div class="sales-src-lbl">💜 OFM</div>
+        </div>
+        <div class="sales-src">
+          <div class="sales-src-val" id="src-refund" style="color:var(--amber)">0 €</div>
+          <div class="sales-src-lbl">🛡️ Refund</div>
+        </div>
+      </div>
+      <div class="sales-form">
+        <input type="number" id="sale-amount" placeholder="Montant (€)">
+        <select id="sale-source">
+          <option value="discord">💬 Discord</option>
+          <option value="ofm">💜 OFM</option>
+          <option value="refund">🛡️ RefundShield</option>
+        </select>
+        <button class="btn btn-sm" onclick="addSale()">+</button>
+      </div>
+      <div class="sales-entries" id="sales-entries"></div>
+    </div>
+
+    <!-- CHECKS DU SOIR -->
+    <div class="card">
+      <div class="card-head">
+        <div class="cbar" style="background:var(--green)"></div>
+        <div class="card-title">Check du soir</div>
+        <div class="card-right" style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--sub)" id="check-count">0/6</div>
+      </div>
+      <div class="checks" id="checks"></div>
+      <div class="score-section">
+        <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
         <div class="score-row">
-          <div class="score-label" id="score-msg">Commence ta journée 💪</div>
-          <div class="score-num" id="check-score-big" style="color:var(--green)">0/6</div>
+          <div class="score-msg" id="score-msg">Commence ta journée 💪</div>
+          <div class="score-num" id="score-num" style="color:var(--green)">0/6</div>
         </div>
       </div>
     </div>
+
+  </div>
+
+  <!-- TRACKER + SNUS + CHART -->
+  <div class="g3">
 
     <!-- TRACKER -->
     <div class="card">
-      <div class="ct"><div class="cdot" style="background:var(--purple)"></div>Tracker <span style="margin-left:auto;font-size:9px;color:var(--sub2)" id="tdate"></span></div>
-      <div class="score-wrap">
-        <span class="score-lbl">⚡ Énergie</span>
-        <div class="sbrow" id="e-btns"></div>
+      <div class="card-head">
+        <div class="cbar" style="background:var(--purple)"></div>
+        <div class="card-title">Tracker</div>
+        <div class="card-right" style="font-size:10px;color:var(--sub2)" id="tdate">—</div>
       </div>
-      <div class="score-wrap">
-        <span class="score-lbl">🧠 Mental</span>
-        <div class="sbrow" id="m-btns"></div>
+      <div class="tracker-group">
+        <span class="tracker-lbl">⚡ Énergie</span>
+        <div class="scores" id="e-btns"></div>
       </div>
-      <div>
-        <span class="score-lbl" style="display:block;margin-bottom:6px">🍽️ Alimentation</span>
-        <div class="fbrow">
-          <button class="fb" id="fb-junk" onclick="setFood('junk')">🍔<br><span style="font-size:10px">Junk</span></button>
-          <button class="fb" id="fb-ok" onclick="setFood('ok')">🥗<br><span style="font-size:10px">Correct</span></button>
-          <button class="fb" id="fb-clean" onclick="setFood('clean')">✅<br><span style="font-size:10px">Propre</span></button>
+      <div class="tracker-group">
+        <span class="tracker-lbl">🧠 Mental</span>
+        <div class="scores" id="m-btns"></div>
+      </div>
+      <div class="tracker-group" style="margin-bottom:0">
+        <span class="tracker-lbl">🍽️ Alimentation</span>
+        <div class="food-btns">
+          <button class="food-btn" id="fb-junk" onclick="setFood('junk')">🍔<br>Junk</button>
+          <button class="food-btn" id="fb-ok" onclick="setFood('ok')">🥗<br>Correct</button>
+          <button class="food-btn" id="fb-clean" onclick="setFood('clean')">✅<br>Propre</button>
         </div>
       </div>
     </div>
 
-    <!-- SNUS + CHART -->
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div class="card">
-        <div class="ct"><div class="cdot" style="background:var(--amber)"></div>Snus <span style="margin-left:auto;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--amber)" id="snus-ct">0/5</span></div>
-        <div class="snus-wrap" id="snus-row"></div>
-        <div style="font-size:10px;color:var(--sub)">10h · 13h · 14h30 · 20h30 · 22h</div>
+    <!-- SNUS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="cbar" style="background:var(--amber)"></div>
+        <div class="card-title">Snus du jour</div>
+        <div class="card-right" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--amber)" id="snus-ct">0/5</div>
       </div>
-      <div class="card">
-        <div class="ct"><div class="cdot" style="background:var(--blue)"></div>30 derniers jours</div>
-        <div class="wchart" id="weekly-chart"></div>
-        <div class="wlabels" id="weekly-labels"></div>
-        <div class="wstats">
-          <div class="wstat"><div class="wstat-val" id="week-avg" style="color:var(--teal)">—</div><div class="wstat-lbl">cette sem.</div></div>
-          <div class="wstat"><div class="wstat-val" id="best-streak" style="color:var(--amber)">—</div><div class="wstat-lbl">best streak</div></div>
-          <div class="wstat"><div class="wstat-val" id="month-score" style="color:var(--purple)">—</div><div class="wstat-lbl">ce mois ✓</div></div>
-        </div>
+      <div class="snus-row" id="snus-row"></div>
+      <div style="font-size:10px;color:var(--sub)">10h · 13h · 14h30 · 20h30 · 22h</div>
+    </div>
+
+    <!-- CHART 30J -->
+    <div class="card">
+      <div class="card-head">
+        <div class="cbar" style="background:var(--blue)"></div>
+        <div class="card-title">30 derniers jours</div>
+        <div class="card-right" style="font-size:10px;color:var(--sub)">cliquer pour détail</div>
+      </div>
+      <div class="chart-wrap" id="chart"></div>
+      <div class="chart-labels" id="chart-labels"></div>
+      <div class="chart-stats">
+        <div class="cstat"><div class="cstat-val" id="c-week" style="color:var(--teal)">—</div><div class="cstat-lbl">moy. semaine</div></div>
+        <div class="cstat"><div class="cstat-val" id="c-streak" style="color:var(--amber)">—</div><div class="cstat-lbl">best streak</div></div>
+        <div class="cstat"><div class="cstat-val" id="c-month" style="color:var(--purple)">—</div><div class="cstat-lbl">jours parfaits</div></div>
       </div>
     </div>
 
@@ -439,65 +591,66 @@ input[type=number]:focus{border-color:var(--teal);}
 
 <!-- ══ PLANNING ══ -->
 <div class="section" id="sec-planning">
-  <div class="sec"><span>Planning hebdo</span></div>
+  <div class="sec-label"><span>Planning hebdo</span></div>
   <div class="card">
     <div class="tabs">
-      <button class="tab td" id="tb-discord" onclick="switchTab('discord')">💬 Discord</button>
-      <button class="tab" id="tb-ofm" onclick="switchTab('ofm')">💜 OFM</button>
-      <button class="tab" id="tb-refund" onclick="switchTab('refund')">🛡️ RefundShield</button>
+      <button class="tab td" id="tb-d" onclick="switchTab('d')">💬 Discord</button>
+      <button class="tab" id="tb-o" onclick="switchTab('o')">💜 OFM</button>
+      <button class="tab" id="tb-r" onclick="switchTab('r')">🛡️ RefundShield</button>
     </div>
-    <div class="tc vis" id="tc-discord">
-      <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.8">10h–12h pilotage + contenu + acquisition<br>14h–16h approfondissement · si calé → <span style="color:var(--purple)">switch OFM</span></div>
-      <div class="pgrid">
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">LUN</div><div class="pdb"><div class="pt">Pilotage</div><div class="ps">métriques · churn</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">MAR</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">posts · valeur</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">MER</div><div class="pdb"><div class="pt">Acquisition</div><div class="ps">prospection</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">JEU</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">engagement</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">VEN</div><div class="pdb"><div class="pt">Review</div><div class="ps">KPIs semaine</div></div></div>
+    <div class="tc vis" id="tc-d">
+      <div class="plan-note">10h–12h pilotage + contenu + acquisition<br>14h–16h approfondissement · si calé → <span style="color:var(--purple)">switch OFM</span></div>
+      <div class="plan-grid">
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">LUN</div><div class="plan-day-b"><div class="plan-task">Pilotage</div><div class="plan-sub">métriques · churn</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">MAR</div><div class="plan-day-b"><div class="plan-task">Contenu</div><div class="plan-sub">posts · valeur</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">MER</div><div class="plan-day-b"><div class="plan-task">Acquisition</div><div class="plan-sub">prospection</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">JEU</div><div class="plan-day-b"><div class="plan-task">Contenu</div><div class="plan-sub">engagement</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">VEN</div><div class="plan-day-b"><div class="plan-task">Review</div><div class="plan-sub">KPIs semaine</div></div></div>
       </div>
     </div>
-    <div class="tc" id="tc-ofm">
-      <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.8">20h30–23h30 · soirée FR = journée US<br><span style="color:var(--purple)">Meilleur taux de réponse</span></div>
-      <div class="pgrid">
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">LUN</div><div class="pdb"><div class="pt">Recrutement</div><div class="ps">modèles M1</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">MAR</div><div class="pdb"><div class="pt">DMs + PPV</div><div class="ps">scripts</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">MER</div><div class="pdb"><div class="pt">Analytics</div><div class="ps">revenus/modèle</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">JEU</div><div class="pdb"><div class="pt">Chatters</div><div class="ps">recrutement</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">VEN</div><div class="pdb"><div class="pt">Social</div><div class="ps">promo modèles</div></div></div>
+    <div class="tc" id="tc-o">
+      <div class="plan-note">20h30–23h30 · soirée FR = journée US · <span style="color:var(--purple)">meilleur taux de réponse</span></div>
+      <div class="plan-grid">
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">LUN</div><div class="plan-day-b"><div class="plan-task">Recrutement</div><div class="plan-sub">modèles M1</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">MAR</div><div class="plan-day-b"><div class="plan-task">DMs + PPV</div><div class="plan-sub">scripts</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">MER</div><div class="plan-day-b"><div class="plan-task">Analytics</div><div class="plan-sub">revenus/modèle</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">JEU</div><div class="plan-day-b"><div class="plan-task">Chatters</div><div class="plan-sub">recrutement</div></div></div>
+        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">VEN</div><div class="plan-day-b"><div class="plan-task">Social</div><div class="plan-sub">promo modèles</div></div></div>
       </div>
     </div>
-    <div class="tc" id="tc-refund">
-      <div style="font-size:11px;color:var(--sub);margin-bottom:12px">Vendredi aprèm · 2h · une tâche par semaine</div>
-      <div class="pd" style="max-width:240px"><div class="pdh" style="background:var(--adim);color:var(--amber)">VENDREDI</div><div class="pdb"><div class="pt">Avancement hebdo</div><div class="ps">Landing · appels PME · pitch</div></div></div>
+    <div class="tc" id="tc-r">
+      <div class="plan-note">Vendredi aprèm · 2h · une tâche concrète par semaine</div>
+      <div class="plan-day" style="max-width:220px"><div class="plan-day-h" style="background:var(--adim);color:var(--amber)">VENDREDI</div><div class="plan-day-b"><div class="plan-task">Avancement hebdo</div><div class="plan-sub">Landing · PME · pitch</div></div></div>
     </div>
   </div>
 </div>
 
 <!-- ══ REVENUS ══ -->
 <div class="section" id="sec-revenus">
-  <div class="sec"><span>Revenus 2025</span></div>
+  <div class="sec-label"><span>Revenus 2025</span></div>
   <div class="g2">
     <div class="card">
-      <div class="ct"><div class="cdot" style="background:var(--coral)"></div>Progression mensuelle</div>
-      <div class="rchart" id="rbars"></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-bottom:14px" id="rmonths"></div>
-      <div style="display:flex;gap:16px;align-items:flex-end;margin-bottom:14px">
-        <div><div style="font-size:10px;color:var(--sub);margin-bottom:3px">CE MOIS</div><div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--teal);line-height:1" id="rcur">—</div></div>
-        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--sub);margin-bottom:3px">OBJECTIF JUIN</div><div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--amber);line-height:1">10k</div></div>
+      <div class="card-head"><div class="cbar" style="background:var(--coral)"></div><div class="card-title">Progression mensuelle</div></div>
+      <div class="rev-chart" id="rev-chart"></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-bottom:16px" id="rev-months"></div>
+      <div class="rev-goals">
+        <div class="rev-goal"><div class="rev-goal-val" id="rev-cur" style="color:var(--teal)">—</div><div class="rev-goal-lbl">Ce mois</div></div>
+        <div class="rev-goal"><div class="rev-goal-val" style="color:var(--amber)">10k</div><div class="rev-goal-lbl">Objectif juin</div></div>
+        <div class="rev-goal"><div class="rev-goal-val" style="color:var(--coral)">50k</div><div class="rev-goal-lbl">Objectif déc.</div></div>
       </div>
-      <div style="display:flex;gap:8px">
+      <div class="rev-input-row">
         <input type="number" id="rev-in" placeholder="Revenu ce mois (€)">
-        <button class="btn bsm" onclick="saveRevenu()">Sauv.</button>
+        <button class="btn btn-sm" onclick="saveRevenu()">Sauv.</button>
       </div>
     </div>
     <div class="card">
-      <div class="ct"><div class="cdot" style="background:var(--coral)"></div>Règles non-négociables</div>
+      <div class="card-head"><div class="cbar" style="background:var(--coral)"></div><div class="card-title">Règles non-négociables</div></div>
       <div class="rules">
-        <div class="rule"><div class="racc" style="background:var(--coral)"></div><div><div class="rt">1 soirée max / mois</div><div class="rs">Le lendemain : travail quand même</div></div></div>
-        <div class="rule"><div class="racc" style="background:var(--teal)"></div><div><div class="rt">Pas d'Uber Eats 4x/sem</div><div class="rs">Batch cook dimanche</div></div></div>
-        <div class="rule"><div class="racc" style="background:var(--amber)"></div><div><div class="rt">Téléphone hors du lit</div><div class="rs">Chargeur dans une autre pièce</div></div></div>
-        <div class="rule"><div class="racc" style="background:var(--purple)"></div><div><div class="rt">Coupure 18h–20h30</div><div class="rs">Ce créneau appartient à ta mère et toi</div></div></div>
-        <div class="rule"><div class="racc" style="background:var(--green)"></div><div><div class="rt">Discord calé → switch OFM</div><div class="rs">Pas de procrastination</div></div></div>
+        <div class="rule"><div class="rule-acc" style="background:var(--coral)"></div><div><div class="rule-name">1 soirée max / mois</div><div class="rule-desc">Le lendemain : travail quand même</div></div></div>
+        <div class="rule"><div class="rule-acc" style="background:var(--teal)"></div><div><div class="rule-name">Pas d'Uber Eats 4x/sem</div><div class="rule-desc">Batch cook dimanche</div></div></div>
+        <div class="rule"><div class="rule-acc" style="background:var(--amber)"></div><div><div class="rule-name">Téléphone hors du lit</div><div class="rule-desc">Chargeur dans une autre pièce</div></div></div>
+        <div class="rule"><div class="rule-acc" style="background:var(--purple)"></div><div><div class="rule-name">Coupure 18h–20h30</div><div class="rule-desc">Ce créneau appartient à ta mère et toi</div></div></div>
+        <div class="rule"><div class="rule-acc" style="background:var(--green)"></div><div><div class="rule-name">Discord calé → switch OFM</div><div class="rule-desc">Pas de procrastination</div></div></div>
       </div>
     </div>
   </div>
@@ -505,18 +658,18 @@ input[type=number]:focus{border-color:var(--teal);}
 
 <!-- ══ REVIEW ══ -->
 <div class="section" id="sec-review">
-  <div class="sec"><span>Review vendredi</span></div>
+  <div class="sec-label"><span>Review vendredi</span></div>
   <div class="card">
-    <div class="ct"><div class="cdot" style="background:var(--amber)"></div>Bilan hebdo <span style="margin-left:auto;font-size:10px;color:var(--sub2)">10 min · chaque vendredi soir</span></div>
-    <div class="rvgrid">
-      <div class="rvf"><label>✅ Winning move</label><textarea id="rv-win" rows="4" placeholder="Ce qui a généré du cash..."></textarea></div>
-      <div class="rvf"><label>🚧 Ce qui a bloqué</label><textarea id="rv-block" rows="4" placeholder="Obstacles, distractions..."></textarea></div>
-      <div class="rvf"><label>🎯 Focus S+1</label><textarea id="rv-next" rows="4" placeholder="1 priorité absolue..."></textarea></div>
+    <div class="card-head"><div class="cbar" style="background:var(--amber)"></div><div class="card-title">Bilan hebdo</div><div class="card-right" style="font-size:10px;color:var(--sub2)">10 min · chaque vendredi soir</div></div>
+    <div class="review-grid">
+      <div><span class="rv-lbl">✅ Winning move</span><textarea class="rv-ta" id="rv-win" rows="4" placeholder="Ce qui a généré du cash..."></textarea></div>
+      <div><span class="rv-lbl">🚧 Ce qui a bloqué</span><textarea class="rv-ta" id="rv-block" rows="4" placeholder="Obstacles, distractions..."></textarea></div>
+      <div><span class="rv-lbl">🎯 Focus S+1</span><textarea class="rv-ta" id="rv-next" rows="4" placeholder="1 priorité absolue..."></textarea></div>
     </div>
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
       <div>
-        <div style="font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px">Soirées ce mois</div>
-        <div class="soiree-btns">
+        <span class="rv-lbl" style="margin-bottom:8px">Soirées ce mois</span>
+        <div class="soiree-wrap">
           <button class="soiree-btn" onclick="setSoiree(0)">0</button>
           <button class="soiree-btn" onclick="setSoiree(1)">1 ✓</button>
           <button class="soiree-btn" onclick="setSoiree(2)">2+</button>
@@ -527,44 +680,14 @@ input[type=number]:focus{border-color:var(--teal);}
   </div>
 </div>
 
-
-<!-- RULE MODAL -->
-<div class="modal-overlay" id="rule-modal">
-  <div class="modal-box">
-    <div class="modal-icon">⚡</div>
-    <div class="modal-title">Ta règle du jour</div>
-    <div class="modal-rule" id="modal-rule-text">Charge en cours...</div>
-    <div class="modal-sub">Lis-la. Retiens-la. Applique-la.</div>
-    <button class="modal-btn" onclick="closeModal()">Let's go 🔥</button>
-    <div class="modal-edit" onclick="toggleEditRule()">Modifier cette règle</div>
-    <div class="modal-edit-area" id="edit-area">
-      <textarea id="rule-input" rows="2" placeholder="Ta règle..."></textarea>
-      <button class="modal-save" onclick="saveRule()">Sauvegarder</button>
-    </div>
-  </div>
-</div>
-
-<!-- DAY DETAIL MODAL -->
-<div class="day-modal hidden" id="day-modal">
-  <div class="day-modal-box">
-    <div class="day-modal-title">
-      <span id="day-modal-date">—</span>
-      <button class="day-modal-close" onclick="closeDayModal()">×</button>
-    </div>
-    <div class="day-detail-grid" id="day-detail-grid"></div>
-    <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px">Checks</div>
-    <div class="day-checks-list" id="day-checks-list"></div>
-  </div>
-</div>
-
-</div>
+</div><!-- shell -->
 
 <!-- BOTTOM NAV -->
 <nav class="bnav">
-  <button class="bnav-btn active" id="nav-today" onclick="showSection('today')"><span class="bnav-icon">⚡</span>Aujourd'hui</button>
-  <button class="bnav-btn" id="nav-planning" onclick="showSection('planning')"><span class="bnav-icon">📅</span>Planning</button>
-  <button class="bnav-btn" id="nav-revenus" onclick="showSection('revenus')"><span class="bnav-icon">💰</span>Revenus</button>
-  <button class="bnav-btn" id="nav-review" onclick="showSection('review')"><span class="bnav-icon">📝</span>Review</button>
+  <button class="bnav-btn active" id="nav-today"    onclick="showSec('today')"><span class="bnav-ico">⚡</span>Aujourd'hui</button>
+  <button class="bnav-btn"        id="nav-planning" onclick="showSec('planning')"><span class="bnav-ico">📅</span>Planning</button>
+  <button class="bnav-btn"        id="nav-revenus"  onclick="showSec('revenus')"><span class="bnav-ico">💰</span>Revenus</button>
+  <button class="bnav-btn"        id="nav-review"   onclick="showSec('review')"><span class="bnav-ico">📝</span>Review</button>
 </nav>
 
 <script type="module">
@@ -579,160 +702,193 @@ const app = initializeApp({
   messagingSenderId:"922707066056",
   appId:"1:922707066056:web:4b1a5107c16b7ddd56f9fd"
 });
-const db=getFirestore(app);
-const todayKey=()=>new Date().toISOString().slice(0,10);
-const monthKey=()=>new Date().toISOString().slice(0,7);
+const db = getFirestore(app);
+const todayKey  = () => new Date().toISOString().slice(0,10);
+const monthKey  = () => new Date().toISOString().slice(0,7);
 
-function toast(msg='✓ Sauvegardé'){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-function sync(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='on'){d.className='sdot on';l.textContent='sync';}else if(s==='sv'){d.className='sdot sv';l.textContent='...';}else{d.className='sdot';l.textContent='offline';}}
-async function saveD(path,data){sync('sv');try{await setDoc(doc(db,path),data,{merge:true});sync('on');toast();}catch(e){sync('');toast('⚠ Erreur');}}
-async function loadD(path){try{const s=await getDoc(doc(db,path));sync('on');return s.exists()?s.data():{};}catch(e){sync('');return{};}}
+// ── utils ────────────────────────────────────────────────────────────────────
+function toast(msg='✓ Sauvegardé'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function syncSt(s){
+  const d=document.getElementById('sdot'),l=document.getElementById('slbl');
+  if(s==='on'){d.className='sdot on';l.textContent='sync';}
+  else if(s==='sv'){d.className='sdot sv';l.textContent='...';}
+  else{d.className='sdot';l.textContent='offline';}
+}
+async function saveD(path,data){
+  syncSt('sv');
+  try{ await setDoc(doc(db,path),data,{merge:true}); syncSt('on'); toast(); }
+  catch(e){ syncSt(''); toast('⚠ Erreur'); }
+}
+async function loadD(path){
+  try{ const s=await getDoc(doc(db,path)); syncSt('on'); return s.exists()?s.data():{}; }
+  catch(e){ syncSt(''); return {}; }
+}
 
-// NAV
-window.showSection=sec=>{
+// ── nav ──────────────────────────────────────────────────────────────────────
+window.showSec = sec => {
   ['today','planning','revenus','review'].forEach(s=>{
     document.getElementById('sec-'+s)?.classList.toggle('vis',s===sec);
     document.getElementById('nav-'+s)?.classList.toggle('active',s===sec);
   });
 };
 
-// CLOCK
+// ── clock ────────────────────────────────────────────────────────────────────
 function tick(){
   const n=new Date();
-  document.getElementById('clock').textContent=n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  document.getElementById('datestr').textContent=n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('tdate').textContent=todayKey();
+  document.getElementById('clock').textContent   = n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('datestr').textContent = n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('tdate').textContent   = todayKey();
 }
-setInterval(tick,1000);tick();
+setInterval(tick,1000); tick();
 
-// ROUTINE DATA
-const R=[
-  {t:'7:30', l:'Réveil',         s:"Eau · pas téléphone", c:'#fcd34d', i:0},
-  {t:'8:00', l:'Café ☕',        s:'Avant la salle',       c:'#fcd34d', i:0},
-  {t:'8:30', l:'Basic Fit',      s:'Tapis 30min · v3.5',   c:'#4ade80', i:1},
-  {t:'9:30', l:'Douche froide',  s:'30 sec froid',         c:'#4ade80', i:0},
-  {t:'9:45', l:'Shaker 🥤',      s:'Post-salle',           c:'#4ade80', i:0},
-  {t:'10:00',l:'DISCORD matin',  s:'Pilotage · acq.',      c:'#00d4aa', i:1},
-  {t:'12:00',l:'Déjeuner',       s:'Cuisiné · pas UE',     c:'#fcd34d', i:0},
-  {t:'12:30',l:'Pause libre',    s:'RS · amis · recharge', c:'#6b6256', i:0},
-  {t:'14:00',l:'DISCORD aprèm',  s:'→ OFM si calé',        c:'#00d4aa', i:1},
-  {t:'14:30',l:'Red Bull 🔴',     s:'Boost bloc',           c:'#fb7185', i:0},
-  {t:'16:00',l:'OFM si dispo',   s:'Selon Discord',        c:'#b197fc', i:0},
-  {t:'18:00',l:'Cuisine + repas',s:'Maman · coupure',      c:'#fb7185', i:1},
-  {t:'19:30',l:'Télé maman',     s:'Déconnexion totale',   c:'#fb7185', i:0},
-  {t:'20:30',l:'OFM soir',       s:'DMs US · modèles',     c:'#b197fc', i:1},
-  {t:'23:30',l:'Skincare 🧴',    s:'Routine soin',         c:'#60a5fa', i:0},
-  {t:'23:45',l:'Lecture 📖',     s:'15 min · pas écran',   c:'#60a5fa', i:0},
-  {t:'0:00', l:'Dodo 😴',        s:'Téléphone hors lit',   c:'#4a4038', i:0},
+// ── timeline ─────────────────────────────────────────────────────────────────
+const SLOTS=[
+  {t:'7:30', n:'Réveil',          s:"Eau · pas téléphone",   c:'#f59e0b', i:0},
+  {t:'8:00', n:'Café ☕',         s:'Avant la salle',         c:'#f59e0b', i:0},
+  {t:'8:30', n:'Basic Fit',       s:'Tapis 30min · v3.5',     c:'#22c55e', i:1},
+  {t:'9:30', n:'Douche froide',   s:'30 sec froid',           c:'#22c55e', i:0},
+  {t:'9:45', n:'Shaker whey 🥤',  s:'Post-salle',             c:'#22c55e', i:0},
+  {t:'10:00',n:'DISCORD matin',   s:'Pilotage · acq.',        c:'#00d4aa', i:1},
+  {t:'12:00',n:'Déjeuner',        s:'Cuisiné · pas UE',       c:'#f59e0b', i:0},
+  {t:'12:30',n:'Pause libre',     s:'RS · amis · recharge',   c:'#6b6456', i:0},
+  {t:'14:00',n:'DISCORD aprèm',   s:'→ OFM si calé',          c:'#00d4aa', i:1},
+  {t:'14:30',n:'Red Bull 🔴',      s:'Boost bloc',             c:'#f43f5e', i:0},
+  {t:'16:00',n:'OFM si dispo',    s:'Selon Discord',          c:'#a78bfa', i:0},
+  {t:'18:00',n:'Cuisine + repas', s:'Maman · coupure',        c:'#f43f5e', i:1},
+  {t:'19:30',n:'Télé maman',      s:'Déconnexion totale',     c:'#f43f5e', i:0},
+  {t:'20:30',n:'OFM soir',        s:'DMs US · modèles',       c:'#a78bfa', i:1},
+  {t:'23:30',n:'Skincare 🧴',     s:'Routine soin',           c:'#3b82f6', i:0},
+  {t:'23:45',n:'Lecture 📖',      s:'15 min · pas écran',     c:'#3b82f6', i:0},
+  {t:'0:00', n:'Dodo 😴',         s:'Téléphone hors du lit',  c:'#453f34', i:0},
 ];
-
 function buildTL(){
-  const n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  const n=new Date(), nm=n.getHours()*60+n.getMinutes();
   const toM=s=>{const[h,m]=s.split(':').map(Number);return h*60+(m||0);};
   let ai=-1;
-  for(let i=0;i<R.length-1;i++){if(nm>=toM(R[i].t)&&nm<toM(R[i+1].t)){ai=i;break;}}
-  if(ai>=0){
-    const cur=R[ai];
-    document.getElementById('tl-current-label').textContent='▶ '+cur.l;
+  for(let i=0;i<SLOTS.length-1;i++){
+    if(nm>=toM(SLOTS[i].t)&&nm<toM(SLOTS[i+1].t)){ai=i;break;}
   }
-  document.getElementById('timeline').innerHTML=R.map((r,i)=>`
-    <div class="tl-slot ${r.i?'important':''}">
-      <div class="tl-dot-h ${i===ai?'now':''}" style="background:${r.c}"></div>
-      <div class="tl-card-h ${i===ai?'now':''} ${r.i?'imp':''}" style="${r.i?'border-left-color:'+r.c:''}">
-        <div class="tl-time-h">${r.t}</div>
-        <div class="tl-name-h" style="color:${r.i||i===ai?r.c:'var(--text)'}">${r.l}</div>
-        <div class="tl-sub-h">${r.s}</div>
+  if(ai>=0) document.getElementById('tl-now-label').textContent='▶ '+SLOTS[ai].n;
+  document.getElementById('timeline').innerHTML=SLOTS.map((r,i)=>`
+    <div class="tl-item ${r.i?'big':''}">
+      <div class="tl-dot ${i===ai?'now':''}" style="background:${r.c}"></div>
+      <div class="tl-card ${i===ai?'now':''} ${r.i?'imp':''}" style="${r.i?'border-left-color:'+r.c:''}">
+        <div class="tl-time">${r.t}</div>
+        <div class="tl-name" style="color:${r.i||i===ai?r.c:'var(--text)'}">${r.n}</div>
+        <div class="tl-sub">${r.s}</div>
       </div>
     </div>`).join('');
 }
-buildTL();setInterval(buildTL,60000);
+buildTL(); setInterval(buildTL,60000);
 
-// TRACKER
+// ── rule modal ───────────────────────────────────────────────────────────────
+const DEFAULT_RULE = "Tu dois exécuter l'entièreté de ta routine.";
+async function initModal(){
+  const d=await loadD('settings/rule');
+  const rule=d.text||DEFAULT_RULE;
+  document.getElementById('modal-rule').textContent=rule;
+  document.getElementById('rule-input').value=rule;
+  if(!localStorage.getItem('modal_'+todayKey()))
+    document.getElementById('rule-overlay').classList.remove('hidden');
+}
+window.closeModal=()=>{
+  document.getElementById('rule-overlay').classList.add('hidden');
+  localStorage.setItem('modal_'+todayKey(),'1');
+};
+window.toggleEdit=()=>document.getElementById('edit-area').classList.toggle('vis');
+window.saveRule=async()=>{
+  const txt=document.getElementById('rule-input').value.trim();
+  if(!txt)return;
+  document.getElementById('modal-rule').textContent=txt;
+  await saveD('settings/rule',{text:txt});
+  document.getElementById('edit-area').classList.remove('vis');
+};
+initModal();
+
+// ── tracker ──────────────────────────────────────────────────────────────────
 let TD={};
 async function initTracker(){
   TD=await loadD('trackers/'+todayKey());
   renderSB('e-btns','energie','#00d4aa');
-  renderSB('m-btns','mental','#b197fc');
-  renderFood();updateMetrics();
+  renderSB('m-btns','mental','#a78bfa');
+  renderFood();
 }
 function renderSB(id,key,color){
   const v=TD[key];
   document.getElementById(id).innerHTML=Array.from({length:10},(_,i)=>{
     const n=i+1,on=v===n;
-    return `<button class="sb ${on?'on':''}" style="${on?'background:'+color+';border-color:'+color+';':''}"
+    return `<button class="score-btn${on?' on':''}" style="${on?'background:'+color+';border-color:'+color+';':''}"
       onclick="setScore('${key}',${n},'${color}','${id}')">${n}</button>`;
   }).join('');
 }
-function updateMetrics(){
-  document.getElementById('m-energie').textContent=TD.energie||'—';
-  document.getElementById('m-mental').textContent=TD.mental||'—';
-  const fmap={junk:['🍔','Junk'],ok:['🥗','Correct'],clean:['✅','Propre']};
-  const f=fmap[TD.food];
-  document.getElementById('m-food').textContent=f?f[0]:'—';
-  document.getElementById('m-food-sub').textContent=f?f[1]:'—';
-}
-window.setScore=async(key,val,color,id)=>{TD[key]=val;renderSB(id,key,color);updateMetrics();await saveD('trackers/'+todayKey(),TD);};
-window.setFood=async(v)=>{TD.food=v;renderFood();updateMetrics();await saveD('trackers/'+todayKey(),TD);};
 function renderFood(){
   const v=TD.food;
-  document.getElementById('fb-junk').className='fb'+(v==='junk'?' junk':'');
-  document.getElementById('fb-ok').className='fb'+(v==='ok'?' ok':'');
-  document.getElementById('fb-clean').className='fb'+(v==='clean'?' clean':'');
+  document.getElementById('fb-junk').className ='food-btn'+(v==='junk'?' junk':'');
+  document.getElementById('fb-ok').className   ='food-btn'+(v==='ok'?' ok':'');
+  document.getElementById('fb-clean').className='food-btn'+(v==='clean'?' clean':'');
 }
+window.setScore=async(key,val,color,id)=>{TD[key]=val;renderSB(id,key,color);await saveD('trackers/'+todayKey(),TD);};
+window.setFood=async(v)=>{TD.food=v;renderFood();await saveD('trackers/'+todayKey(),TD);};
 initTracker();
 
-// SNUS
-const SNUS_TIMES=['10h','13h','14h30','20h30','22h'];
+// ── snus ─────────────────────────────────────────────────────────────────────
+const SNUS_T=['10h','13h','14h30','20h30','22h'];
 let SC=0;
 async function initSnus(){const d=await loadD('snus/'+todayKey());SC=d.count||0;renderSnus();}
 function renderSnus(){
-  document.getElementById('snus-row').innerHTML=SNUS_TIMES.map((time,i)=>`
-    <button class="snusbtn ${i<SC?'on':''}" onclick="setSnus(${i+1})">
-      ${i+1}<span class="snus-time">${time}</span>
+  document.getElementById('snus-row').innerHTML=SNUS_T.map((t,i)=>`
+    <button class="snus-btn${i<SC?' on':''}" onclick="setSnus(${i+1})">
+      ${i+1}<span class="snus-time-lbl">${t}</span>
     </button>`).join('');
   document.getElementById('snus-ct').textContent=SC+'/5';
-  document.getElementById('m-snus').textContent=SC;
 }
 window.setSnus=async(n)=>{SC=SC===n?n-1:n;renderSnus();await saveD('snus/'+todayKey(),{count:SC});};
 initSnus();
 
-// CHECKS
+// ── checks ───────────────────────────────────────────────────────────────────
 const CHECKS=[
-  {id:'sleep',  label:'Dodo avant 0h30',      icon:'😴', time:'0h00'},
-  {id:'wake',   label:'Levé à 7h30',          icon:'⏰', time:'7h30'},
-  {id:'sport',  label:'Salle faite',          icon:'🏃', time:'8h30'},
-  {id:'food',   label:'Bien mangé (pas junk)',icon:'🥗', time:'midi'},
-  {id:'discord',label:'Bloc Discord fait',    icon:'💬', time:'10h–16h'},
-  {id:'ofm',    label:'Bloc OFM fait',        icon:'💜', time:'20h30'},
+  {id:'sleep',   n:'Dodo avant 0h30',       ico:'😴', t:'0h'},
+  {id:'wake',    n:'Levé à 7h30',           ico:'⏰', t:'7h30'},
+  {id:'sport',   n:'Salle faite',           ico:'🏃', t:'8h30'},
+  {id:'food',    n:'Bien mangé (pas junk)', ico:'🥗', t:'midi'},
+  {id:'discord', n:'Bloc Discord fait',     ico:'💬', t:'10h–16h'},
+  {id:'ofm',     n:'Bloc OFM fait',         ico:'💜', t:'20h30'},
 ];
-const MSGS=['Commence ta journée 💪','En route… 🔥','À mi-chemin 💪','Presque parfait ⚡','Belle journée 🔥','Journée parfaite 🏆'];
+const MSGS=['Commence ta journée 💪','En route… 🔥','À mi-chemin ⚡','Bien joué 💪','Presque parfait 🔥','Journée parfaite 🏆'];
 let CD={};
-async function initChecks(){CD=await loadD('checks/'+todayKey());renderChecks();await loadWeeklyChart();}
+async function initChecks(){
+  CD=await loadD('checks/'+todayKey());
+  renderChecks();
+}
 function renderChecks(){
-  document.getElementById('checks-list').innerHTML=CHECKS.map(c=>{
+  document.getElementById('checks').innerHTML=CHECKS.map(c=>{
     const s=CD[c.id];
     const cls=s===true?'done':s===false?'fail':'';
-    const ico=s===true?'✓':s===false?'✗':c.icon;
-    return `<div class="check-item ${cls}" onclick="toggleCheck('${c.id}')">
-      <div class="check-glow"></div>
-      <div class="check-icon-wrap">${ico}</div>
-      <div class="check-content">
-        <div class="check-label">${c.label}</div>
-        <div class="check-time">${c.time}</div>
+    const ico=s===true?'✓':s===false?'✗':c.ico;
+    return `<div class="check ${cls}" onclick="toggleCheck('${c.id}')">
+      <div class="check-ico">${ico}</div>
+      <div class="check-body">
+        <div class="check-name">${c.n}</div>
+        <div class="check-time">${c.t}</div>
       </div>
-      <div class="check-state">${s===true?'✅':s===false?'❌':''}</div>
+      <div class="check-status">${s===true?'✅':s===false?'❌':''}</div>
     </div>`;
   }).join('');
-  updateCheckScore();
+  updateScore();
 }
-function updateCheckScore(){
+function updateScore(){
   const done=CHECKS.filter(c=>CD[c.id]===true).length;
   const pct=Math.round((done/6)*100);
-  document.getElementById('check-bar').style.width=pct+'%';
-  const color=done>=5?'#4ade80':done>=3?'#fcd34d':'#fb7185';
-  document.getElementById('check-bar').style.background=color;
-  document.getElementById('check-score-big').textContent=done+'/6';
-  document.getElementById('check-score-big').style.color=color;
+  const color=done>=5?'var(--green)':done>=3?'var(--amber)':'var(--coral)';
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-fill').style.background=color;
+  document.getElementById('score-num').textContent=done+'/6';
+  document.getElementById('score-num').style.color=color;
+  document.getElementById('check-count').textContent=done+'/6';
   document.getElementById('score-msg').textContent=MSGS[Math.min(done,5)];
 }
 window.toggleCheck=async(id)=>{
@@ -742,217 +898,188 @@ window.toggleCheck=async(id)=>{
   else delete CD[id];
   renderChecks();
   await saveD('checks/'+todayKey(),CD);
-  await loadWeeklyChart();
+  loadChart();
 };
-// loadWeeklyChart moved below
-// renderWeeklyChart moved below
-window.closeModal = () => {
-  document.getElementById('rule-modal').classList.add('hidden');
-  localStorage.setItem('modal_seen_' + todayKey(), '1');
-};
-window.toggleEditRule = () => {
-  document.getElementById('edit-area').classList.toggle('vis');
-};
-window.saveRule = async () => {
-  const txt = document.getElementById('rule-input').value.trim();
-  if (!txt) return;
-  document.getElementById('modal-rule-text').textContent = txt;
-  await saveD('settings/rule', { text: txt });
-  document.getElementById('edit-area').classList.remove('vis');
-};
-initModal();
+initChecks();
 
-// ── STREAK ───────────────────────────────────────────────────────────────────
-async function computeStreak() {
-  const days = [];
-  const now = new Date();
-  for (let i = 59; i >= 0; i--) {
-    const d = new Date(now); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().slice(0, 10));
-  }
-  const results = await Promise.all(days.map(day => loadD('checks/' + day)));
-  const scores = results.map(data => {
-    if (!data || Object.keys(data).length === 0) return null;
-    return CHECKS.filter(c => data[c.id] === true).length;
-  });
-
-  // Current streak (from today backwards)
-  let cur = 0;
-  for (let i = scores.length - 1; i >= 0; i--) {
-    if (scores[i] !== null && scores[i] >= 5) cur++;
-    else break;
-  }
-  // Best streak
-  let best = 0, tmp = 0;
-  scores.forEach(s => { if (s !== null && s >= 5) { tmp++; best = Math.max(best, tmp); } else tmp = 0; });
-
-  document.getElementById('streak-cur').textContent = cur;
-  document.getElementById('streak-best').textContent = best > 0 ? best + 'j' : '—';
-
-  // Fire animation color based on streak
-  const fire = document.querySelector('.streak-fire');
-  if (cur >= 7) fire.style.filter = 'hue-rotate(0deg)';
-  else if (cur >= 3) fire.style.filter = 'hue-rotate(20deg)';
-  else fire.style.filter = 'grayscale(.5)';
-
-  return { scores, days };
+// ── streak ───────────────────────────────────────────────────────────────────
+async function loadStreak(){
+  const days=[];const now=new Date();
+  for(let i=59;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+  const res=await Promise.all(days.map(d=>loadD('checks/'+d)));
+  const scores=res.map(data=>(!data||!Object.keys(data).length)?null:CHECKS.filter(c=>data[c.id]===true).length);
+  let cur=0;
+  for(let i=scores.length-1;i>=0;i--){if(scores[i]!==null&&scores[i]>=5)cur++;else break;}
+  let best=0,tmp=0;
+  scores.forEach(s=>{if(s!==null&&s>=5){tmp++;best=Math.max(best,tmp);}else tmp=0;});
+  document.getElementById('streak-cur').textContent=cur;
+  document.getElementById('streak-best').textContent=best>0?best+'j':'—';
 }
+loadStreak();
 
-// ── SALES TRACKER ────────────────────────────────────────────────────────────
-let salesData = { sales: [] };
+// ── chart 30j ────────────────────────────────────────────────────────────────
+let chartDays=[],chartData=[];
+async function loadChart(){
+  const days=[],now=new Date();
+  for(let i=29;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+  const [checkRes,trackerRes]=await Promise.all([
+    Promise.all(days.map(d=>loadD('checks/'+d))),
+    Promise.all(days.map(d=>loadD('trackers/'+d))),
+  ]);
+  chartDays=days;
+  chartData=checkRes.map((ch,i)=>({checks:ch||{},tracker:trackerRes[i]||{},score:(!ch||!Object.keys(ch).length)?null:CHECKS.filter(c=>ch[c.id]===true).length}));
+  renderChart();
+}
+function renderChart(){
+  const scores=chartData.map(d=>d.score);
+  document.getElementById('chart').innerHTML=scores.map((s,i)=>{
+    if(s===null)return`<div class="bar" style="height:4px;background:var(--b2);opacity:.3" onclick="showDay(${i})"></div>`;
+    const h=Math.max(5,Math.round((s/6)*68));
+    const color=s>=5?'var(--green)':s>=3?'var(--amber)':'var(--coral)';
+    return`<div class="bar" style="height:${h}px;background:${color}" onclick="showDay(${i})"></div>`;
+  }).join('');
+  document.getElementById('chart-labels').innerHTML=chartDays.map((d,i)=>{
+    if(i%5!==0)return`<span style="flex:1"></span>`;
+    return`<span style="flex:1;white-space:nowrap">${new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>`;
+  }).join('');
+  const week=scores.slice(-7).filter(s=>s!==null);
+  const avg=week.length?Math.round(week.reduce((a,b)=>a+b,0)/week.length*10)/10:null;
+  let best=0,tmp=0;scores.forEach(s=>{if(s!==null&&s>=5){tmp++;best=Math.max(best,tmp);}else tmp=0;});
+  const good=scores.filter(s=>s!==null&&s>=5).length;
+  document.getElementById('c-week').textContent=avg!==null?avg+'/6':'—';
+  document.getElementById('c-streak').textContent=best>0?best+'j':'—';
+  document.getElementById('c-month').textContent=good>0?good+'j':'—';
+}
+window.showDay=i=>{
+  const d=chartDays[i],dat=chartData[i];
+  const dateStr=new Date(d).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('day-title').textContent=dateStr;
+  const sc=dat.score,t=dat.tracker;
+  const scColor=sc===null?'var(--sub)':sc>=5?'var(--green)':sc>=3?'var(--amber)':'var(--coral)';
+  const food={junk:'🍔 Junk',ok:'🥗 Correct',clean:'✅ Propre'};
+  document.getElementById('day-stats').innerHTML=`
+    <div class="day-stat"><div class="day-stat-val" style="color:${scColor}">${sc!==null?sc+'/6':'—'}</div><div class="day-stat-lbl">Score</div></div>
+    <div class="day-stat"><div class="day-stat-val" style="color:var(--teal)">${t.energie||'—'}</div><div class="day-stat-lbl">⚡ Énergie</div></div>
+    <div class="day-stat"><div class="day-stat-val" style="color:var(--purple)">${t.mental||'—'}</div><div class="day-stat-lbl">🧠 Mental</div></div>
+    <div class="day-stat"><div class="day-stat-val" style="font-size:14px">${food[t.food]||'—'}</div><div class="day-stat-lbl">🍽️ Alim.</div></div>`;
+  document.getElementById('day-checks').innerHTML=CHECKS.map(c=>{
+    const s=dat.checks[c.id];
+    const color=s===true?'var(--green)':s===false?'var(--coral)':'var(--sub)';
+    return`<div class="day-check-row"><span>${s===true?'✅':s===false?'❌':'○'}</span><span style="color:${color}">${c.n}</span></div>`;
+  }).join('');
+  document.getElementById('day-overlay').classList.remove('hidden');
+};
+window.closeDayModal=()=>document.getElementById('day-overlay').classList.add('hidden');
+loadChart();
 
-async function initSales() {
-  const mk = new Date().toISOString().slice(0, 7);
-  document.getElementById('sales-month-label').textContent = mk;
-  salesData = await loadD('sales/' + mk);
-  if (!salesData.sales) salesData.sales = [];
+// ── sales ─────────────────────────────────────────────────────────────────────
+let salesData={sales:[]};
+async function initSales(){
+  const mk=monthKey();
+  document.getElementById('sales-month-lbl').textContent=mk;
+  salesData=await loadD('sales/'+mk);
+  if(!salesData.sales)salesData.sales=[];
   renderSales();
 }
-
-function renderSales() {
-  const sales = salesData.sales || [];
-  const totals = { discord: 0, ofm: 0, refund: 0 };
-  sales.forEach(s => { if (totals[s.source] !== undefined) totals[s.source] += s.amount; });
-  const total = totals.discord + totals.ofm + totals.refund;
-
-  document.getElementById('sales-total').textContent = total.toLocaleString('fr-FR') + ' €';
-  document.getElementById('src-discord').textContent = totals.discord.toLocaleString('fr-FR') + ' €';
-  document.getElementById('src-ofm').textContent = totals.ofm.toLocaleString('fr-FR') + ' €';
-  document.getElementById('src-refund').textContent = totals.refund.toLocaleString('fr-FR') + ' €';
-
-  const colors = { discord: 'var(--tdim)', ofm: 'var(--pdim)', refund: 'var(--adim)' };
-  const textColors = { discord: 'var(--teal)', ofm: 'var(--purple)', refund: 'var(--amber)' };
-  const labels = { discord: '💬 Discord', ofm: '💜 OFM', refund: '🛡️ Refund' };
-
-  document.getElementById('sales-list').innerHTML = [...sales].reverse().map((s, i) => {
-    const ri = sales.length - 1 - i;
-    return `<div class="sale-item">
-      <span class="sale-badge" style="background:${colors[s.source]};color:${textColors[s.source]}">${labels[s.source]}</span>
-      <span style="font-size:11px;color:var(--sub)">${s.date||''}</span>
-      <span class="sale-amount" style="color:${textColors[s.source]}">${s.amount.toLocaleString('fr-FR')} €</span>
-      <button class="sale-del" onclick="deleteSale(${ri})">×</button>
+function renderSales(){
+  const s=salesData.sales||[];
+  const tot={discord:0,ofm:0,refund:0};
+  s.forEach(x=>{if(tot[x.source]!==undefined)tot[x.source]+=x.amount;});
+  const total=tot.discord+tot.ofm+tot.refund;
+  document.getElementById('sales-total').textContent=total.toLocaleString('fr-FR')+' €';
+  document.getElementById('src-discord').textContent=tot.discord.toLocaleString('fr-FR')+' €';
+  document.getElementById('src-ofm').textContent=tot.ofm.toLocaleString('fr-FR')+' €';
+  document.getElementById('src-refund').textContent=tot.refund.toLocaleString('fr-FR')+' €';
+  const colors={discord:'var(--tdim)',ofm:'var(--pdim)',refund:'var(--adim)'};
+  const tColors={discord:'var(--teal)',ofm:'var(--purple)',refund:'var(--amber)'};
+  const labels={discord:'💬 Discord',ofm:'💜 OFM',refund:'🛡️ Refund'};
+  document.getElementById('sales-entries').innerHTML=[...s].reverse().map((x,ri)=>{
+    const orig=s.length-1-ri;
+    return`<div class="sale-row">
+      <span class="sale-badge" style="background:${colors[x.source]};color:${tColors[x.source]}">${labels[x.source]}</span>
+      <span class="sale-date">${x.date||''}</span>
+      <span class="sale-val" style="color:${tColors[x.source]}">${x.amount.toLocaleString('fr-FR')} €</span>
+      <button class="sale-del" onclick="deleteSale(${orig})">×</button>
     </div>`;
-  }).join('') || '<div style="font-size:11px;color:var(--sub);text-align:center;padding:12px">Aucune vente ce mois</div>';
+  }).join('')||'<div style="font-size:11px;color:var(--sub);text-align:center;padding:12px">Aucune vente ce mois</div>';
 }
-
-window.addSale = async () => {
-  const amount = parseInt(document.getElementById('sale-amount').value);
-  const source = document.getElementById('sale-source').value;
-  if (isNaN(amount) || amount <= 0) return;
-  const today = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-  salesData.sales.push({ amount, source, date: today });
-  document.getElementById('sale-amount').value = '';
+window.addSale=async()=>{
+  const amt=parseInt(document.getElementById('sale-amount').value);
+  const src=document.getElementById('sale-source').value;
+  if(isNaN(amt)||amt<=0)return;
+  const today=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  salesData.sales.push({amount:amt,source:src,date:today});
+  document.getElementById('sale-amount').value='';
   renderSales();
-  const mk = new Date().toISOString().slice(0, 7);
-  await saveD('sales/' + mk, salesData);
+  await saveD('sales/'+monthKey(),salesData);
 };
-
-window.deleteSale = async (idx) => {
-  salesData.sales.splice(idx, 1);
-  renderSales();
-  const mk = new Date().toISOString().slice(0, 7);
-  await saveD('sales/' + mk, salesData);
+window.deleteSale=async(idx)=>{
+  salesData.sales.splice(idx,1);renderSales();
+  await saveD('sales/'+monthKey(),salesData);
 };
-
 initSales();
 
-// ── WEEKLY CHART (cliquable) ──────────────────────────────────────────────────
-let chartDays = [], chartScores = [], chartAllData = [];
-
-async function loadWeeklyChart() {
-  const days = [];
-  const now = new Date();
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(now); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().slice(0, 10));
-  }
-  const results = await Promise.all(days.map(day => loadD('checks/' + day)));
-  const trackers = await Promise.all(days.map(day => loadD('trackers/' + day)));
-
-  chartDays = days;
-  chartScores = results.map(data => {
-    if (!data || Object.keys(data).length === 0) return null;
-    return CHECKS.filter(c => data[c.id] === true).length;
+// ── planning tabs ─────────────────────────────────────────────────────────────
+window.switchTab=tab=>{
+  ['d','o','r'].forEach(t=>{
+    document.getElementById('tc-'+t).classList.remove('vis');
+    document.getElementById('tb-'+t).className='tab';
   });
-  chartAllData = results.map((data, i) => ({ checks: data || {}, tracker: trackers[i] || {} }));
+  document.getElementById('tc-'+tab).classList.add('vis');
+  document.getElementById('tb-'+tab).className='tab '+(tab==='d'?'td':tab==='o'?'to':'tr');
+};
 
-  renderWeeklyChart(days, chartScores);
-
-  // Also update streak
-  await computeStreak();
-}
-
-function renderWeeklyChart(days, scores) {
-  document.getElementById('weekly-chart').innerHTML = scores.map((s, i) => {
-    if (s === null) return `<div class="wbar" style="height:4px;background:var(--b2);opacity:.3" onclick="showDayDetail(${i})"></div>`;
-    const h = Math.max(5, Math.round((s / 6) * 66));
-    const color = s >= 5 ? 'var(--green)' : s >= 3 ? 'var(--amber)' : 'var(--coral)';
-    return `<div class="wbar" style="height:${h}px;background:${color}" onclick="showDayDetail(${i})" title="${new Date(days[i]).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}: ${s}/6"></div>`;
-  }).join('');
-
-  document.getElementById('weekly-labels').innerHTML = days.map((d, i) => {
-    if (i % 5 !== 0) return `<span style="flex:1"></span>`;
-    const l = new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-    return `<span style="flex:1;white-space:nowrap">${l}</span>`;
-  }).join('');
-
-  const thisWeek = scores.slice(-7).filter(s => s !== null);
-  const avg = thisWeek.length ? Math.round(thisWeek.reduce((a, b) => a + b, 0) / thisWeek.length * 10) / 10 : null;
-  let best = 0, cur2 = 0;
-  scores.forEach(s => { if (s !== null && s >= 5) { cur2++; best = Math.max(best, cur2); } else cur2 = 0; });
-  const monthDone = scores.filter(s => s !== null && s >= 5).length;
-
-  document.getElementById('week-avg').textContent = avg !== null ? avg + '/6' : '—';
-  document.getElementById('best-streak').textContent = best > 0 ? best + 'j' : '—';
-  document.getElementById('month-score').textContent = monthDone > 0 ? monthDone + 'j' : '—';
-}
-
-// ── DAY DETAIL MODAL ─────────────────────────────────────────────────────────
-window.showDayDetail = (idx) => {
-  const day = chartDays[idx];
-  const score = chartScores[idx];
-  const data = chartAllData[idx] || { checks: {}, tracker: {} };
-  const dateStr = new Date(day).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-
-  document.getElementById('day-modal-date').textContent = dateStr;
-
-  const scoreColor = score === null ? 'var(--sub)' : score >= 5 ? 'var(--green)' : score >= 3 ? 'var(--amber)' : 'var(--coral)';
-  const t = data.tracker;
-  const foodMap = { junk: '🍔 Junk', ok: '🥗 Correct', clean: '✅ Propre' };
-
-  document.getElementById('day-detail-grid').innerHTML = `
-    <div class="day-detail-item">
-      <div class="day-detail-val" style="color:${scoreColor}">${score !== null ? score + '/6' : '—'}</div>
-      <div class="day-detail-lbl">Score journée</div>
-    </div>
-    <div class="day-detail-item">
-      <div class="day-detail-val" style="color:var(--teal)">${t.energie || '—'}</div>
-      <div class="day-detail-lbl">⚡ Énergie</div>
-    </div>
-    <div class="day-detail-item">
-      <div class="day-detail-val" style="color:var(--purple)">${t.mental || '—'}</div>
-      <div class="day-detail-lbl">🧠 Mental</div>
-    </div>
-    <div class="day-detail-item">
-      <div class="day-detail-val" style="font-size:14px">${foodMap[t.food] || '—'}</div>
-      <div class="day-detail-lbl">🍽️ Alimentation</div>
+// ── revenus ──────────────────────────────────────────────────────────────────
+const MO=[{m:'Jan',t:3000},{m:'Fév',t:5000},{m:'Mar',t:7000},{m:'Avr',t:8000},{m:'Mai',t:9000},{m:'Jun',t:10000},{m:'Jul',t:15000},{m:'Aoû',t:20000},{m:'Sep',t:28000},{m:'Oct',t:35000},{m:'Nov',t:42000},{m:'Déc',t:50000}];
+let RD={};
+async function initRev(){RD=await loadD('revenus/2025');renderRev();const c=RD[new Date().getMonth()];if(c)document.getElementById('rev-in').value=c;}
+function renderRev(){
+  const cur=new Date().getMonth(),max=50000;
+  document.getElementById('rev-chart').innerHTML=MO.map((r,i)=>{
+    const a=RD[i],mile=r.t===10000||r.t===50000,isc=i===cur;
+    const col=mile?'var(--amber)':isc?'var(--teal)':'var(--b2)';
+    const th=Math.round((r.t/max)*76),ah=a?Math.round((a/max)*76):0;
+    return`<div class="rev-bw">
+      <div style="font-size:8px;font-weight:600;color:${col}">${a?(a>=1000?(a/1000).toFixed(0)+'k':a):''}</div>
+      <div style="position:relative;width:100%;height:${th}px">
+        <div class="rev-bar" style="height:100%;background:var(--b1);position:absolute;bottom:0;width:100%"></div>
+        ${a?`<div class="rev-bar" style="height:${ah}px;background:${col};position:absolute;bottom:0;width:100%"></div>`:''}
+        <div style="height:1px;background:${col};opacity:${mile?.5:.15};position:absolute;top:0;width:100%"></div>
+      </div>
     </div>`;
-
-  document.getElementById('day-checks-list').innerHTML = CHECKS.map(c => {
-    const s = data.checks[c.id];
-    const color = s === true ? 'var(--green)' : s === false ? 'var(--coral)' : 'var(--sub)';
-    const ico = s === true ? '✅' : s === false ? '❌' : '○';
-    return `<div class="day-check-row"><span>${ico}</span><span style="color:${color}">${c.label}</span></div>`;
   }).join('');
+  document.getElementById('rev-months').innerHTML=MO.map((r,i)=>`<span style="flex:1;text-align:center;color:${i===cur?'var(--teal)':'var(--sub)'}">${r.m}</span>`).join('');
+  const c=RD[new Date().getMonth()];
+  document.getElementById('rev-cur').textContent=c?(c>=1000?(c/1000).toFixed(1)+'k':c+'€'):'—';
+}
+window.saveRevenu=async()=>{const v=parseInt(document.getElementById('rev-in').value);if(isNaN(v))return;RD[new Date().getMonth()]=v;renderRev();await saveD('revenus/2025',RD);};
+initRev();
 
-  document.getElementById('day-modal').classList.remove('hidden');
+// ── review ───────────────────────────────────────────────────────────────────
+let RV={};
+async function initReview(){
+  RV=await loadD('reviews/'+monthKey());
+  if(RV.win)  document.getElementById('rv-win').value=RV.win;
+  if(RV.block)document.getElementById('rv-block').value=RV.block;
+  if(RV.next) document.getElementById('rv-next').value=RV.next;
+  if(RV.soiree!==undefined)renderSoiree(RV.soiree);
+}
+window.saveReview=async()=>{
+  RV.win=document.getElementById('rv-win').value;
+  RV.block=document.getElementById('rv-block').value;
+  RV.next=document.getElementById('rv-next').value;
+  await saveD('reviews/'+monthKey(),RV);
 };
-
-window.closeDayModal = () => {
-  document.getElementById('day-modal').classList.add('hidden');
-};
-
-
+window.setSoiree=async(n)=>{RV.soiree=n;renderSoiree(n);await saveD('reviews/'+monthKey(),RV);};
+function renderSoiree(n){
+  document.querySelectorAll('.soiree-btn').forEach((b,i)=>{
+    const a=i===n;
+    b.style.background=a?(n<=1?'var(--green)':'var(--coral)'):'';
+    b.style.color=a?'#000':'';
+    b.style.borderColor=a?(n<=1?'var(--green)':'var(--coral)'):'';
+  });
+}
+initReview();
 </script>
 </body>
 </html>
