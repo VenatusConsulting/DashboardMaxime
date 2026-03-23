@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Système — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080808; --surface:#101010; --surface2:#161616;
+    --border:#1e1e1e; --border2:#2a2a2a;
+    --teal:#00c9a7; --teal-dim:rgba(0,201,167,0.1);
+    --purple:#a78bfa; --purple-dim:rgba(167,139,250,0.1);
+    --amber:#fbbf24; --amber-dim:rgba(251,191,36,0.1);
+    --coral:#f87171; --coral-dim:rgba(248,113,113,0.1);
+    --green:#4ade80; --green-dim:rgba(74,222,128,0.1);
+    --text:#e8e8e8; --muted:#444; --sub:#666;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.6;min-height:100vh;}
+  .shell{max-width:1140px;margin:0 auto;padding:0 24px 80px;}
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--teal);color:#000;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:10px 18px;border-radius:8px;opacity:0;transform:translateY(10px);transition:all .3s;z-index:1000;pointer-events:none;}
+  #toast.show{opacity:1;transform:translateY(0);}
+  #sync{position:fixed;top:16px;right:24px;font-size:10px;color:var(--sub);display:flex;align-items:center;gap:6px;z-index:100;}
+  .sdot{width:5px;height:5px;border-radius:50%;background:var(--muted);}
+  .sdot.on{background:var(--teal);animation:pulse 2s infinite;}
+  .sdot.saving{background:var(--amber);animation:pulse .5s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+  header{padding:40px 0 28px;border-bottom:1px solid var(--border);margin-bottom:28px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
+  .logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.5px;}
+  .logo span{color:var(--teal);}
+  .clock{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--teal);letter-spacing:2px;}
+  .obj{background:linear-gradient(90deg,var(--teal-dim),transparent);border:1px solid rgba(0,201,167,.18);border-radius:8px;padding:11px 20px;margin-bottom:28px;display:flex;align-items:center;gap:12px;font-family:'Syne',sans-serif;font-weight:600;font-size:13px;flex-wrap:wrap;}
+  .pdot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;animation:pulse 2s infinite;}
+  .grid-main{display:grid;grid-template-columns:310px 1fr;gap:16px;margin-bottom:16px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .col{display:flex;flex-direction:column;gap:16px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .ct{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+  .cdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+  .timeline{display:flex;flex-direction:column;gap:1px;max-height:520px;overflow-y:auto;padding-right:4px;}
+  .timeline::-webkit-scrollbar{width:3px;}
+  .timeline::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+  .tli{display:flex;align-items:stretch;gap:10px;}
+  .tll{display:flex;flex-direction:column;align-items:center;width:40px;flex-shrink:0;}
+  .tlt{font-size:9px;color:var(--sub);padding-top:9px;white-space:nowrap;}
+  .tlln{width:1px;background:var(--border2);flex:1;margin-top:3px;}
+  .tld{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:12px;}
+  .tld.now{animation:pulse 1.5s infinite;}
+  .tlb{flex:1;padding:7px 11px;border-radius:7px;border:1px solid var(--border);margin-bottom:3px;}
+  .tlb.now{border-color:var(--teal);background:var(--teal-dim);}
+  .tll2{font-family:'Syne',sans-serif;font-size:11.5px;font-weight:600;}
+  .tls{font-size:10px;color:var(--sub);margin-top:1px;}
+  .tracker-row{display:flex;flex-direction:column;gap:14px;}
+  .tlabel{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:6px;}
+  .sbrow{display:flex;gap:3px;flex-wrap:wrap;}
+  .sb{width:27px;height:27px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+  .sb:hover{border-color:var(--teal);color:var(--teal);}
+  .sb.on{color:#000;font-weight:500;}
+  .fbrow{display:flex;gap:6px;}
+  .fb{flex:1;padding:8px 4px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;text-align:center;}
+  .fb.junk{border-color:var(--coral);color:var(--coral);background:var(--coral-dim);}
+  .fb.ok{border-color:var(--amber);color:var(--amber);background:var(--amber-dim);}
+  .fb.clean{border-color:var(--green);color:var(--green);background:var(--green-dim);}
+  .snusrow{display:flex;gap:6px;}
+  .snusbtn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);color:var(--sub);font-size:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;}
+  .snusbtn.on{border-color:var(--amber);background:var(--amber-dim);color:var(--amber);}
+  .tabs{display:flex;gap:4px;margin-bottom:14px;}
+  .tab{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;}
+  .tab.td{border-color:var(--teal);color:var(--teal);background:var(--teal-dim);}
+  .tab.to{border-color:var(--purple);color:var(--purple);background:var(--purple-dim);}
+  .tab.tr{border-color:var(--amber);color:var(--amber);background:var(--amber-dim);}
+  .tc{display:none;}.tc.vis{display:block;}
+  .pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+  .pd{border-radius:8px;border:1px solid var(--border);overflow:hidden;}
+  .pdh{padding:6px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-align:center;}
+  .pdb{padding:8px 10px;}
+  .pt{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--text);}
+  .ps{font-size:10px;color:var(--sub);margin-top:2px;}
+  .rbars{display:flex;align-items:flex-end;gap:5px;height:80px;margin-bottom:6px;}
+  .rbw{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .rb{width:100%;border-radius:3px 3px 0 0;cursor:pointer;}
+  .rb:hover{filter:brightness(1.4);}
+  .rules{display:flex;flex-direction:column;gap:7px;}
+  .ri{display:flex;gap:10px;padding:10px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);align-items:flex-start;}
+  .ra{width:3px;border-radius:2px;flex-shrink:0;align-self:stretch;}
+  .rtt{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;}
+  .rts{font-size:10px;color:var(--sub);margin-top:1px;}
+  .rvgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+  .rvf label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:5px;}
+  .rvf textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:10px 12px;resize:none;outline:none;transition:border-color .2s;}
+  .rvf textarea:focus{border-color:var(--teal);}
+  .btn{padding:9px 18px;border-radius:7px;border:1px solid var(--teal);background:var(--teal-dim);color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+  .btn:hover{background:var(--teal);color:#000;}
+  .bsm{padding:6px 12px;font-size:11px;}
+  .sbtns{display:flex;gap:6px;}
+  .sbtn{width:40px;height:34px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+  input[type=number]{background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:8px 12px;outline:none;transition:border-color .2s;}
+  input[type=number]:focus{border-color:var(--teal);}
+  @media(max-width:768px){.grid-main{grid-template-columns:1fr;}.grid-2{grid-template-columns:1fr;}.pgrid{grid-template-columns:repeat(3,1fr);}.rvgrid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="sync"><div class="sdot" id="sdot"></div><span id="slbl">connexion...</span></div>
+<div id="toast"></div>
+<div class="shell">
+
+<header>
+  <div>
+    <div class="logo">MON <span>SYSTÈME</span></div>
+    <div style="color:var(--sub);font-size:11px;margin-top:3px">Dashboard · Maxime</div>
+  </div>
+  <div style="text-align:right">
+    <div class="clock" id="clock">--:--</div>
+    <div style="color:var(--sub);font-size:11px;margin-top:2px" id="datestr">--</div>
+  </div>
+</header>
+
+<div class="obj">
+  <div class="pdot"></div>
+  <span style="color:var(--sub)">OBJECTIF 2025</span>
+  <span style="color:var(--teal)">3k → 10k (juin)</span>
+  <span style="color:var(--sub)">→</span>
+  <span style="color:var(--amber)">50k (décembre)</span>
+</div>
+
+<div class="grid-main">
+  <div class="card">
+    <div class="ct"><div class="cdot" style="background:var(--teal)"></div>Routine du jour</div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="ct"><div class="cdot" style="background:var(--purple)"></div>Tracker du jour <span style="margin-left:auto;font-size:9px;color:var(--sub)" id="tdate"></span></div>
+      <div class="tracker-row">
+        <div><label class="tlabel">⚡ Énergie</label><div class="sbrow" id="e-btns"></div></div>
+        <div><label class="tlabel">🧠 Mental</label><div class="sbrow" id="m-btns"></div></div>
+        <div>
+          <label class="tlabel">🍽️ Alimentation</label>
+          <div class="fbrow">
+            <button class="fb" id="fb-junk" onclick="setFood('junk')">🍔 Junk</button>
+            <button class="fb" id="fb-ok" onclick="setFood('ok')">🥗 Correct</button>
+            <button class="fb" id="fb-clean" onclick="setFood('clean')">✅ Propre</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct"><div class="cdot" style="background:var(--amber)"></div>Snus du jour <span style="margin-left:auto;color:var(--sub)" id="snus-ct">0/5</span></div>
+      <div class="snusrow" id="snus-row"></div>
+      <div style="font-size:10px;color:var(--sub);margin-top:10px">10h · 13h · 14h30 · 20h30 · 22h</div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:16px">
+  <div class="ct"><div class="cdot" style="background:var(--teal)"></div>Planning hebdo</div>
+  <div class="tabs">
+    <button class="tab td" id="tb-discord" onclick="switchTab('discord')">Discord</button>
+    <button class="tab" id="tb-ofm" onclick="switchTab('ofm')">OFM</button>
+    <button class="tab" id="tb-refund" onclick="switchTab('refund')">RefundShield</button>
+  </div>
+  <div class="tc vis" id="tc-discord">
+    <div style="font-size:10px;color:var(--sub);margin-bottom:10px">10h–12h pilotage + contenu + acquisition &nbsp;|&nbsp; 14h–16h approfondissement · si calé → switch OFM</div>
+    <div class="pgrid">
+      <div class="pd"><div class="pdh" style="background:var(--teal-dim);color:var(--teal)">LUN</div><div class="pdb"><div class="pt">Pilotage</div><div class="ps">métriques · churn</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--teal-dim);color:var(--teal)">MAR</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">posts · valeur</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--teal-dim);color:var(--teal)">MER</div><div class="pdb"><div class="pt">Acquisition</div><div class="ps">prospection leads</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--teal-dim);color:var(--teal)">JEU</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">engagement membres</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--teal-dim);color:var(--teal)">VEN</div><div class="pdb"><div class="pt">Review KPIs</div><div class="ps">bilan semaine</div></div></div>
+    </div>
+  </div>
+  <div class="tc" id="tc-ofm">
+    <div style="font-size:10px;color:var(--sub);margin-bottom:10px">20h30–23h30 · soirée FR = journée US · meilleur taux de réponse</div>
+    <div class="pgrid">
+      <div class="pd"><div class="pdh" style="background:var(--purple-dim);color:var(--purple)">LUN</div><div class="pdb"><div class="pt">Recrutement</div><div class="ps">modèles M1</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--purple-dim);color:var(--purple)">MAR</div><div class="pdb"><div class="pt">DMs + PPV</div><div class="ps">scripts · optim</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--purple-dim);color:var(--purple)">MER</div><div class="pdb"><div class="pt">Analytics</div><div class="ps">revenus/modèle</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--purple-dim);color:var(--purple)">JEU</div><div class="pdb"><div class="pt">Chatters</div><div class="ps">recrutement</div></div></div>
+      <div class="pd"><div class="pdh" style="background:var(--purple-dim);color:var(--purple)">VEN</div><div class="pdb"><div class="pt">Social media</div><div class="ps">promo modèles</div></div></div>
+    </div>
+  </div>
+  <div class="tc" id="tc-refund">
+    <div style="font-size:10px;color:var(--sub);margin-bottom:10px">Vendredi aprèm · 2h · une tâche concrète par semaine</div>
+    <div class="pd" style="max-width:280px"><div class="pdh" style="background:var(--amber-dim);color:var(--amber)">VENDREDI</div><div class="pdb"><div class="pt">Avancement hebdo</div><div class="ps">Landing · appels PME · pitch deck</div></div></div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="ct"><div class="cdot" style="background:var(--coral)"></div>Revenus 2025</div>
+    <div class="rbars" id="rbars"></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px" id="rmonths"></div>
+    <div style="display:flex;gap:16px;margin-top:14px;align-items:flex-end">
+      <div><div style="font-size:10px;color:var(--sub)">Ce mois</div><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--teal)" id="rcur">—</div></div>
+      <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--sub)">Objectif juin</div><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--amber)">10k</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <input type="number" id="rev-in" placeholder="Revenu ce mois (€)" style="flex:1">
+      <button class="btn bsm" onclick="saveRevenu()">Sauv.</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><div class="cdot" style="background:var(--coral)"></div>Règles non-négociables</div>
+    <div class="rules">
+      <div class="ri"><div class="ra" style="background:var(--coral)"></div><div><div class="rtt">1 soirée max / mois</div><div class="rts">Le lendemain : travail quand même (10h–12h min)</div></div></div>
+      <div class="ri"><div class="ra" style="background:var(--teal)"></div><div><div class="rtt">Pas d'Uber Eats 4x/sem</div><div class="rts">Batch cook dimanche · économise 400-600€/mois</div></div></div>
+      <div class="ri"><div class="ra" style="background:var(--amber)"></div><div><div class="rtt">Téléphone hors du lit</div><div class="rts">Chargeur dans une autre pièce</div></div></div>
+      <div class="ri"><div class="ra" style="background:var(--purple)"></div><div><div class="rtt">Coupure 18h–20h30</div><div class="rts">Ce créneau appartient à ta mère et à toi</div></div></div>
+      <div class="ri"><div class="ra" style="background:var(--green)"></div><div><div class="rtt">Discord calé avant 16h → switch OFM</div><div class="rts">Pas de procrastination</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct"><div class="cdot" style="background:var(--amber)"></div>Review vendredi <span style="margin-left:auto;font-size:10px;color:var(--sub)">10 min · chaque vendredi soir</span></div>
+  <div class="rvgrid">
+    <div class="rvf"><label>✅ Winning move</label><textarea id="rv-win" rows="3" placeholder="Ce qui a généré du cash..."></textarea></div>
+    <div class="rvf"><label>🚧 Ce qui a bloqué</label><textarea id="rv-block" rows="3" placeholder="Obstacles, distractions..."></textarea></div>
+    <div class="rvf"><label>🎯 Focus semaine prochaine</label><textarea id="rv-next" rows="3" placeholder="1 priorité absolue..."></textarea></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Soirées ce mois</div>
+      <div class="sbtns">
+        <button class="sbtn" onclick="setSoiree(0)">0</button>
+        <button class="sbtn" onclick="setSoiree(1)">1 ✓</button>
+        <button class="sbtn" onclick="setSoiree(2)">2+</button>
+      </div>
+    </div>
+    <button class="btn" style="margin-left:auto" onclick="saveReview()">Sauvegarder la review</button>
+  </div>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyAFhwTMjDcFLvMqmaqvLi9i4grB6Q4NPwY",
+  authDomain:"dashboard-maxime.firebaseapp.com",
+  projectId:"dashboard-maxime",
+  storageBucket:"dashboard-maxime.firebasestorage.app",
+  messagingSenderId:"922707066056",
+  appId:"1:922707066056:web:4b1a5107c16b7ddd56f9fd"
+});
+const db = getFirestore(app);
+
+const todayKey = () => new Date().toISOString().slice(0,10);
+const monthKey = () => new Date().toISOString().slice(0,7);
+
+function showToast(msg='✓ Sauvegardé'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function syncStatus(s){
+  const d=document.getElementById('sdot'),l=document.getElementById('slbl');
+  if(s==='on'){d.className='sdot on';l.textContent='sync';}
+  else if(s==='saving'){d.className='sdot saving';l.textContent='sauvegarde...';}
+  else{d.className='sdot';l.textContent='hors-ligne';}
+}
+async function saveD(path,data){
+  syncStatus('saving');
+  try{await setDoc(doc(db,path),data,{merge:true});syncStatus('on');showToast();}
+  catch(e){syncStatus('');showToast('⚠ Erreur');}
+}
+async function loadD(path){
+  try{const s=await getDoc(doc(db,path));syncStatus('on');return s.exists()?s.data():{};}
+  catch(e){syncStatus('');return {};}
+}
+
+// CLOCK
+function tick(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('datestr').textContent=n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('tdate').textContent=todayKey();
+}
+setInterval(tick,1000); tick();
+
+// ROUTINE
+const R=[
+  {t:'7:30', l:'Réveil',          s:"1 verre d'eau · pas de téléphone 10 min",c:'var(--amber)', i:0},
+  {t:'8:00', l:'Café ☕',         s:'Avant la salle',                          c:'var(--amber)', i:0},
+  {t:'8:30', l:'Basic Fit 30min', s:'Tapis incliné · vitesse 3.5',             c:'var(--green)', i:1},
+  {t:'9:30', l:'Douche froide',   s:'30 sec froid à la fin',                   c:'var(--green)', i:0},
+  {t:'9:45', l:'Shaker whey 🥤',  s:'Post-salle · protection musculaire',      c:'var(--green)', i:0},
+  {t:'10:00',l:'DISCORD matin',   s:'Pilotage · contenu · acquisition',        c:'var(--teal)',  i:1},
+  {t:'12:00',l:'Déjeuner cuisiné',s:'Pas Uber Eats',                           c:'var(--amber)', i:0},
+  {t:'13:00',l:'Pause RS 20min',  s:'Réseaux · amis · alarme obligatoire',     c:'var(--sub)',   i:0},
+  {t:'13:20',l:'DISCORD aprèm',   s:'Si calé avant 16h → switch OFM',          c:'var(--teal)',  i:1},
+  {t:'14:30',l:'Red Bull 🔴',      s:'Boost aprèm',                             c:'var(--coral)', i:0},
+  {t:'16:00',l:'OFM si dispo',    s:'Selon avancement Discord',                c:'var(--purple)',i:0},
+  {t:'18:00',l:'Cuisine + repas', s:'Avec maman · coupure écrans totale',      c:'var(--coral)', i:1},
+  {t:'19:30',l:'Télé avec maman', s:'Vraie déconnexion — garder ce rituel',    c:'var(--coral)', i:0},
+  {t:'20:30',l:'OFM soir',        s:'DMs US · gestion modèles',                c:'var(--purple)',i:1},
+  {t:'23:30',l:'Dodo 😴',         s:'Téléphone hors du lit · viser 0h max',    c:'var(--muted)', i:0},
+];
+function buildTL(){
+  const n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  const toM=s=>{const[h,m]=s.split(':').map(Number);return h*60+(m||0);};
+  let ai=-1;
+  for(let i=0;i<R.length-1;i++){if(nm>=toM(R[i].t)&&nm<toM(R[i+1].t)){ai=i;break;}}
+  document.getElementById('timeline').innerHTML=R.map((r,i)=>`
+    <div class="tli">
+      <div class="tll"><div class="tlt">${r.t}</div>${i<R.length-1?'<div class="tlln"></div>':''}</div>
+      <div class="tld ${i===ai?'now':''}" style="background:${r.c}"></div>
+      <div class="tlb ${i===ai?'now':''}" style="${r.i?'border-left:2px solid '+r.c:''}">
+        <div class="tll2" style="color:${r.i?r.c:'var(--text)'}">${r.l}</div>
+        <div class="tls">${r.s}</div>
+      </div>
+    </div>`).join('');
+}
+buildTL(); setInterval(buildTL,60000);
+
+// TRACKER
+let TD={};
+async function initTracker(){
+  TD=await loadD('trackers/'+todayKey());
+  renderSB('e-btns','energie','var(--teal)');
+  renderSB('m-btns','mental','var(--purple)');
+  renderFood();
+}
+function renderSB(id,key,color){
+  const v=TD[key];
+  document.getElementById(id).innerHTML=Array.from({length:10},(_,i)=>{
+    const n=i+1,on=v===n;
+    return `<button class="sb ${on?'on':''}" style="${on?'background:'+color+';border-color:'+color+';':''}"
+      onclick="setScore('${key}',${n},'${color}','${id}')">${n}</button>`;
+  }).join('');
+}
+window.setScore=async(key,val,color,id)=>{TD[key]=val;renderSB(id,key,color);await saveD('trackers/'+todayKey(),TD);};
+window.setFood=async(v)=>{TD.food=v;renderFood();await saveD('trackers/'+todayKey(),TD);};
+function renderFood(){
+  const v=TD.food;
+  document.getElementById('fb-junk').className='fb'+(v==='junk'?' junk':'');
+  document.getElementById('fb-ok').className='fb'+(v==='ok'?' ok':'');
+  document.getElementById('fb-clean').className='fb'+(v==='clean'?' clean':'');
+}
+initTracker();
+
+// SNUS
+let SC=0;
+async function initSnus(){
+  const d=await loadD('snus/'+todayKey());
+  SC=d.count||0; renderSnus();
+}
+function renderSnus(){
+  document.getElementById('snus-row').innerHTML=Array.from({length:5},(_,i)=>
+    `<button class="snusbtn ${i<SC?'on':''}" onclick="setSnus(${i+1})">${i+1}</button>`).join('');
+  document.getElementById('snus-ct').textContent=SC+'/5';
+}
+window.setSnus=async(n)=>{SC=SC===n?n-1:n;renderSnus();await saveD('snus/'+todayKey(),{count:SC});};
+initSnus();
+
+// TABS
+window.switchTab=tab=>{
+  ['discord','ofm','refund'].forEach(t=>{
+    document.getElementById('tc-'+t).classList.remove('vis');
+    document.getElementById('tb-'+t).className='tab';
+  });
+  document.getElementById('tc-'+tab).classList.add('vis');
+  document.getElementById('tb-'+tab).className='tab '+(tab==='discord'?'td':tab==='ofm'?'to':'tr');
+};
+
+// REVENUS
+const MO=[
+  {m:'Jan',t:3000},{m:'Fév',t:5000},{m:'Mar',t:7000},{m:'Avr',t:8000},
+  {m:'Mai',t:9000},{m:'Jun',t:10000},{m:'Jul',t:15000},{m:'Aoû',t:20000},
+  {m:'Sep',t:28000},{m:'Oct',t:35000},{m:'Nov',t:42000},{m:'Déc',t:50000}
+];
+let RD={};
+async function initRev(){
+  RD=await loadD('revenus/2025');
+  renderRev();
+  const c=RD[new Date().getMonth()];
+  if(c)document.getElementById('rev-in').value=c;
+}
+function renderRev(){
+  const cur=new Date().getMonth(),max=50000;
+  document.getElementById('rbars').innerHTML=MO.map((r,i)=>{
+    const a=RD[i],mile=r.t===10000||r.t===50000,isc=i===cur;
+    const col=mile?'var(--amber)':isc?'var(--teal)':'var(--border2)';
+    const th=Math.round((r.t/max)*72),ah=a?Math.round((a/max)*72):0;
+    return `<div class="rbw">
+      <div style="font-size:8px;font-weight:500;color:${col}">${a?(a/1000).toFixed(0)+'k':''}</div>
+      <div style="position:relative;width:100%;height:${th}px">
+        <div class="rb" style="height:100%;background:var(--border2);position:absolute;bottom:0;width:100%"></div>
+        ${a?`<div class="rb" style="height:${ah}px;background:${col};opacity:.9;position:absolute;bottom:0;width:100%"></div>`:''}
+        <div style="height:1px;background:${col};opacity:${mile?.5:.15};position:absolute;top:0;width:100%"></div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('rmonths').innerHTML=MO.map((r,i)=>
+    `<span style="color:${i===new Date().getMonth()?'var(--teal)':'var(--sub)'};flex:1;text-align:center">${r.m}</span>`).join('');
+  const c=RD[new Date().getMonth()];
+  document.getElementById('rcur').textContent=c?(c/1000).toFixed(1)+'k':'—';
+}
+window.saveRevenu=async()=>{
+  const v=parseInt(document.getElementById('rev-in').value);
+  if(isNaN(v))return;
+  RD[new Date().getMonth()]=v;renderRev();await saveD('revenus/2025',RD);
+};
+initRev();
+
+// REVIEW
+let RV={};
+async function initReview(){
+  RV=await loadD('reviews/'+monthKey());
+  if(RV.win)document.getElementById('rv-win').value=RV.win;
+  if(RV.block)document.getElementById('rv-block').value=RV.block;
+  if(RV.next)document.getElementById('rv-next').value=RV.next;
+  if(RV.soiree!==undefined)renderSoiree(RV.soiree);
+}
+window.saveReview=async()=>{
+  RV.win=document.getElementById('rv-win').value;
+  RV.block=document.getElementById('rv-block').value;
+  RV.next=document.getElementById('rv-next').value;
+  await saveD('reviews/'+monthKey(),RV);
+};
+window.setSoiree=async(n)=>{RV.soiree=n;renderSoiree(n);await saveD('reviews/'+monthKey(),RV);};
+function renderSoiree(n){
+  document.querySelectorAll('.sbtn').forEach((b,i)=>{
+    const a=i===n;
+    b.style.background=a?(n<=1?'var(--green)':'var(--coral)'):'';
+    b.style.color=a?'#000':'';
+    b.style.borderColor=a?(n<=1?'var(--green)':'var(--coral)'):'';
+  });
+}
+initReview();
+</script>
+</body>
+</html>
