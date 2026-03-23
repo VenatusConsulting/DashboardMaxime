@@ -673,7 +673,7 @@ header {
   <div class="sec-label"><span>Revenus 2025</span></div>
   <div class="g2">
     <div class="card">
-      <div class="card-head"><div class="cbar" style="background:var(--coral)"></div><div class="card-title">Progression mensuelle</div></div>
+      <div class="card-head"><div class="cbar" style="background:var(--coral)"></div><div class="card-title">Progression mensuelle</div><button onclick="openPastModal()" style="margin-left:auto;background:var(--s2);border:1px solid var(--b2);border-radius:6px;color:var(--sub);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;cursor:pointer;">✏️ Modifier</button></div>
       <div class="rev-chart" id="rev-chart"></div>
       <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-bottom:16px" id="rev-months"></div>
       <div class="rev-goals">
@@ -817,7 +817,7 @@ function buildTL(){
   }
   if(ai>=0) document.getElementById('tl-now-label').textContent='▶ '+SLOTS[ai].n;
   document.getElementById('timeline').innerHTML=SLOTS.map((r,i)=>`
-    <div class="tl-item ${r.i?'big':''}">
+    <div class="tl-item ${r.i?'big':''}" onclick="openSlotModal(${i})" style="cursor:pointer">
       <div class="tl-dot ${i===ai?'now':''}" style="background:${r.c}"></div>
       <div class="tl-card ${i===ai?'now':''} ${r.i?'imp':''}" style="${r.i?'border-left-color:'+r.c:''}">
         <div class="tl-time">${r.t}</div>
@@ -1277,14 +1277,14 @@ window.savePastMonths = async () => {
 };
 
 window.openSlotModal = idx => {
-  const r = R[idx];
+  const r = SLOTS[idx];
   const detail = SLOT_DETAILS[idx];
-  if (!detail) return;
+  if (!detail || !r) return;
   const color = r.c;
 
   document.getElementById('sm-time').textContent = r.t;
   document.getElementById('sm-time').style.color = color;
-  document.getElementById('sm-title').textContent = r.l;
+  document.getElementById('sm-title').textContent = r.n;
   document.getElementById('sm-title').style.color = color;
   document.getElementById('sm-dur').textContent = '⏱ ' + detail.dur;
   document.getElementById('sm-desc').textContent = detail.desc;
