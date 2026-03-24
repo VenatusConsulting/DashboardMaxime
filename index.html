@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>EMPIRE</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#0f0d0b; --s1:#171410; --s2:#1e1a15; --s3:#26211a;
@@ -271,6 +272,17 @@ input[type=number]:focus{border-color:var(--teal);}
 .soiree-btn{width:46px;height:40px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
 
 
+
+/* CLASH DISPLAY for numbers */
+.clash { font-family: 'Clash Display', 'Syne', sans-serif; }
+.streak-num { font-family: 'Clash Display', 'Syne', sans-serif !important; }
+.score-num { font-family: 'Clash Display', 'Syne', sans-serif !important; }
+.sales-total { font-family: 'Clash Display', 'Syne', sans-serif !important; }
+.sales-src-v { font-family: 'Clash Display', 'Syne', sans-serif !important; }
+.wstat-v { font-family: 'Clash Display', 'Syne', sans-serif !important; }
+.metric .m-val { font-family: 'Clash Display', 'Syne', sans-serif !important; }
+#rcur, #obj-pct, #snus-ct { font-family: 'Clash Display', 'Syne', sans-serif !important; }
+
 /* PLAN EDIT */
 #plan-edit-modal input:focus { border-color: var(--teal) !important; }
 .pd { transition: filter .15s; }
@@ -308,9 +320,9 @@ input[type=number]:focus{border-color:var(--teal);}
 </div>
 
 <!-- SLOT MODAL -->
-<div class="overlay hidden" id="slot-modal">
+<div class="overlay hidden" id="slot-modal" onclick="if(event.target===this)this.classList.add('hidden')">
   <div class="slot-box">
-    <button class="modal-x" onclick="document.getElementById('slot-modal').classList.add('hidden')" style="width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);font-size:18px;display:flex;align-items:center;justify-content:center;">×</button>
+    <button onclick="document.getElementById('slot-modal').classList.add('hidden')" style="position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);z-index:10;">×</button>
     <div class="slot-hd" id="slot-hd">
       <div class="slot-hd-time" id="slot-time"></div>
       <div class="slot-hd-title" id="slot-title"></div>
@@ -325,7 +337,7 @@ input[type=number]:focus{border-color:var(--teal);}
 </div>
 
 <!-- DAY MODAL -->
-<div class="overlay hidden" id="day-modal">
+<div class="overlay hidden" id="day-modal" onclick="if(event.target===this)this.classList.add('hidden')">
   <div class="day-box">
     <div class="day-hd"><span id="day-date">—</span><button class="modal-x" style="position:static;font-size:20px" onclick="document.getElementById('day-modal').classList.add('hidden')">×</button></div>
     <div class="day-stats" id="day-stats"></div>
@@ -335,7 +347,7 @@ input[type=number]:focus{border-color:var(--teal);}
 </div>
 
 <!-- PAST MONTHS MODAL -->
-<div class="overlay hidden" id="past-modal">
+<div class="overlay hidden" id="past-modal" onclick="if(event.target===this)this.classList.add('hidden')">
   <div class="past-box">
     <div class="past-title">
       <span>Revenus par mois</span>
@@ -526,8 +538,8 @@ input[type=number]:focus{border-color:var(--teal);}
       <div class="rchart" id="rbars"></div>
       <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-bottom:14px" id="rmonths"></div>
       <div style="display:flex;gap:16px;align-items:flex-end;margin-bottom:14px">
-        <div><div style="font-size:10px;color:var(--sub);margin-bottom:3px">CE MOIS</div><div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--teal);line-height:1" id="rcur">—</div></div>
-        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--sub);margin-bottom:3px">OBJECTIF JUIN</div><div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--amber);line-height:1">10k</div></div>
+        <div><div style="font-size:10px;color:var(--sub);margin-bottom:3px">CE MOIS</div><div style="font-family:'Clash Display','Syne',sans-serif;font-size:30px;font-weight:700;color:var(--teal);line-height:1" id="rcur">—</div></div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--sub);margin-bottom:3px">OBJECTIF JUIN</div><div style="font-family:'Clash Display','Syne',sans-serif;font-size:30px;font-weight:700;color:var(--amber);line-height:1">10k</div></div>
       </div>
       <div style="display:flex;gap:8px;"><input type="number" id="rev-in" placeholder="Revenu ce mois (€)"><button class="btn bsm" onclick="saveRevenu()" style="white-space:nowrap">Sauv.</button></div>
     </div>
@@ -568,6 +580,119 @@ input[type=number]:focus{border-color:var(--teal);}
   </div>
 </div>
 
+
+  <!-- EXPORT -->
+  <div class="sec"><span>Export données</span></div>
+  <div class="card" style="margin-bottom:12px;">
+    <div class="ct"><div class="cdot" style="background:var(--green)"></div>Google Sheets <span style="margin-left:auto;font-size:10px;color:var(--sub)">sync toutes tes métriques</span></div>
+    <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:11px;color:var(--sub);margin-bottom:8px;line-height:1.7">Configure une fois, exporte en un clic.<br>Tracker · Checks · Ventes · Revenus · Streak.</div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);display:block;margin-bottom:5px;">URL Apps Script</label>
+          <input type="url" id="sheets-url" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:9px 12px;outline:none;transition:border-color .2s;">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn bsm" onclick="saveSheetUrl()" style="border-color:var(--sub);color:var(--sub);background:transparent;">Sauvegarder l'URL</button>
+          <button class="btn bsm" onclick="exportToSheets()" id="export-btn">📊 Exporter maintenant</button>
+        </div>
+        <div id="export-status" style="font-size:11px;color:var(--sub);margin-top:8px;min-height:16px;"></div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:12px 14px;font-size:11px;line-height:1.8;min-width:200px;">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px;">Setup (1 fois)</div>
+        <div style="color:var(--text)">1. Ouvre <span style="color:var(--teal)">script.google.com</span></div>
+        <div style="color:var(--text)">2. Nouveau projet</div>
+        <div style="color:var(--text)">3. Colle le code Apps Script</div>
+        <div style="color:var(--text)">4. Déployer → Application web</div>
+        <div style="color:var(--text)">5. Copie l'URL ici</div>
+        <button onclick="showAppsScript()" style="margin-top:10px;padding:6px 12px;border-radius:7px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;">Voir le code Apps Script</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- APPS SCRIPT MODAL -->
+<div class="overlay hidden" id="apps-modal" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:24px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;position:relative;">
+    <button onclick="document.getElementById('apps-modal').classList.add('hidden')" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);">×</button>
+    <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Code Apps Script</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.7">Colle ce code dans <strong style="color:var(--text)">script.google.com</strong> → Nouveau projet → remplace tout le contenu → Déployer → Application web → Accès : Tout le monde → Copie l'URL de déploiement.</div>
+    <pre id="apps-code" style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:14px;font-family:'DM Mono',monospace;font-size:10px;line-height:1.6;overflow-x:auto;color:var(--text);white-space:pre-wrap;word-break:break-word;">function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // TRACKER sheet
+  var trackerSheet = ss.getSheetByName('Tracker') || ss.insertSheet('Tracker');
+  if (trackerSheet.getLastRow() === 0) {
+    trackerSheet.appendRow(['Date','Energie','Mental','Alimentation','Snus','Score Journee','Checks']);
+  }
+  if (data.tracker) {
+    var checks = data.checks || {};
+    var checkList = ['sleep','wake','sport','food','discord','ofm'];
+    var checkLabels = ['Dodo','Lever','Salle','Manger','Discord','OFM'];
+    var score = checkList.filter(c => checks[c] === true).length;
+    var checkStr = checkLabels.map((l,i) => l + ':' + (checks[checkList[i]]===true?'✓':'✗')).join(' | ');
+    trackerSheet.appendRow([
+      data.date,
+      data.tracker.energie || '',
+      data.tracker.mental || '',
+      data.tracker.food || '',
+      data.snus || 0,
+      score + '/6',
+      checkStr
+    ]);
+  }
+  
+  // VENTES sheet
+  var salesSheet = ss.getSheetByName('Ventes') || ss.insertSheet('Ventes');
+  if (salesSheet.getLastRow() === 0) {
+    salesSheet.appendRow(['Mois','Discord (€)','OFM (€)','Rshield (€)','Total (€)']);
+  }
+  if (data.sales) {
+    var tot = {discord:0, ofm:0, refund:0};
+    (data.sales.sales||[]).forEach(s => { if(tot[s.source]!==undefined) tot[s.source]+=s.amount; });
+    salesSheet.appendRow([
+      data.month,
+      tot.discord,
+      tot.ofm,
+      tot.refund,
+      tot.discord+tot.ofm+tot.refund
+    ]);
+  }
+  
+  // REVENUS sheet
+  var revSheet = ss.getSheetByName('Revenus') || ss.insertSheet('Revenus');
+  if (revSheet.getLastRow() === 0) {
+    revSheet.appendRow(['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec','Total']);
+  }
+  if (data.revenus) {
+    var months = Array.from({length:12}, (_,i) => data.revenus[i] || 0);
+    var total = months.reduce((a,b)=>a+b,0);
+    revSheet.appendRow([...months, total]);
+  }
+  
+  // STREAK sheet
+  var streakSheet = ss.getSheetByName('Streak') || ss.insertSheet('Streak');
+  if (streakSheet.getLastRow() === 0) {
+    streakSheet.appendRow(['Date export','Streak actuel','Meilleur streak','Score semaine','Bonnes journees mois']);
+  }
+  if (data.streak) {
+    streakSheet.appendRow([
+      data.date,
+      data.streak.cur || 0,
+      data.streak.best || 0,
+      data.streak.weekAvg || '',
+      data.streak.monthScore || 0
+    ]);
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+    <button onclick="copyAppsScript()" style="margin-top:12px;padding:10px 20px;border-radius:9px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Copier le code</button>
+  </div>
 </div>
 
 <nav class="bnav">
