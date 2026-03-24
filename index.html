@@ -19,7 +19,7 @@
   --r:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.5;min-height:100vh;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.6;min-height:100vh;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));letter-spacing:.01em;}
 .shell{max-width:1280px;margin:0 auto;padding:0 24px 60px;}
 @media(min-width:768px){.shell{padding:0 36px 60px;}}
 
@@ -63,10 +63,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font
 .slot-hd-dur{font-size:10px;margin-top:6px;opacity:.6;}
 .slot-body{padding:18px 22px;display:flex;flex-direction:column;gap:16px;}
 .slot-section{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:6px;}
-.slot-desc{font-size:13px;line-height:1.7;color:var(--text);}
-.slot-why{font-size:12px;line-height:1.7;color:var(--sub);font-style:italic;}
+.slot-desc{font-size:13.5px;line-height:1.75;color:var(--text);letter-spacing:.01em;}
+.slot-why{font-size:12.5px;line-height:1.75;color:var(--sub);font-style:italic;letter-spacing:.01em;}
 .slot-tips{display:flex;flex-direction:column;gap:7px;}
-.slot-tip{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.55;}
+.slot-tip{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:1.65;letter-spacing:.01em;}
 .slot-tip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px;}
 .modal-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--sub);cursor:pointer;font-size:24px;line-height:1;}
 
@@ -270,6 +270,12 @@ input[type=number]:focus{border-color:var(--teal);}
 .soiree-btns{display:flex;gap:7px;}
 .soiree-btn{width:46px;height:40px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
 
+
+/* PLAN EDIT */
+#plan-edit-modal input:focus { border-color: var(--teal) !important; }
+.pd { transition: filter .15s; }
+.pd:hover { filter: brightness(1.15); }
+
 /* BOTTOM NAV */
 .bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--b1);padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;}
 @media(min-width:768px){.bnav{display:none;}}
@@ -304,7 +310,7 @@ input[type=number]:focus{border-color:var(--teal);}
 <!-- SLOT MODAL -->
 <div class="overlay hidden" id="slot-modal">
   <div class="slot-box">
-    <button class="modal-x" onclick="document.getElementById('slot-modal').classList.add('hidden')">×</button>
+    <button class="modal-x" onclick="document.getElementById('slot-modal').classList.add('hidden')" style="width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);font-size:18px;display:flex;align-items:center;justify-content:center;">×</button>
     <div class="slot-hd" id="slot-hd">
       <div class="slot-hd-time" id="slot-time"></div>
       <div class="slot-hd-title" id="slot-title"></div>
@@ -469,7 +475,7 @@ input[type=number]:focus{border-color:var(--teal);}
     <div class="sales-srcs">
       <div class="sales-src"><div class="sales-src-v" id="src-discord" style="color:var(--teal)">0 €</div><div class="sales-src-l">💬 Discord</div></div>
       <div class="sales-src"><div class="sales-src-v" id="src-ofm" style="color:var(--purple)">0 €</div><div class="sales-src-l">💜 OFM</div></div>
-      <div class="sales-src"><div class="sales-src-v" id="src-refund" style="color:var(--amber)">0 €</div><div class="sales-src-l">🛡️ RefundShield</div></div>
+      <div class="sales-src"><div class="sales-src-v" id="src-refund" style="color:var(--amber)">0 €</div><div class="sales-src-l">🛡️ Rshield</div></div>
     </div>
     <div class="sales-add">
       <input type="number" id="sale-amount" placeholder="Montant (€)">
@@ -495,23 +501,11 @@ input[type=number]:focus{border-color:var(--teal);}
     </div>
     <div class="tc vis" id="tc-discord">
       <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.9">10h–12h pilotage + contenu + acquisition<br>14h–16h approfondissement · si calé → <span style="color:var(--purple)">switch OFM</span></div>
-      <div class="pgrid">
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">LUN</div><div class="pdb"><div class="pt">Pilotage</div><div class="ps">métriques · churn</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">MAR</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">posts · valeur</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">MER</div><div class="pdb"><div class="pt">Acquisition</div><div class="ps">prospection</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">JEU</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">engagement</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">VEN</div><div class="pdb"><div class="pt">Review</div><div class="ps">KPIs semaine</div></div></div>
-      </div>
+      <div class="pgrid" id="discord-grid"></div>
     </div>
     <div class="tc" id="tc-ofm">
       <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.9">20h30–23h30 · soirée FR = journée US · <span style="color:var(--purple)">meilleur taux de réponse</span></div>
-      <div class="pgrid">
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">LUN</div><div class="pdb"><div class="pt">Recrutement</div><div class="ps">modèles M1</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">MAR</div><div class="pdb"><div class="pt">DMs + PPV</div><div class="ps">scripts</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">MER</div><div class="pdb"><div class="pt">Analytics</div><div class="ps">revenus/modèle</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">JEU</div><div class="pdb"><div class="pt">Chatters</div><div class="ps">recrutement</div></div></div>
-        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">VEN</div><div class="pdb"><div class="pt">Social</div><div class="ps">promo modèles</div></div></div>
-      </div>
+      <div class="pgrid" id="ofm-grid"></div>
     </div>
     <div class="tc" id="tc-refund">
       <div style="font-size:11px;color:var(--sub);margin-bottom:12px">Vendredi aprèm · 2h · une tâche concrète par semaine</div>
@@ -712,10 +706,10 @@ const R = [
    desc:"Routine skincare complète. Nettoyage, hydratation. Déconnexion totale des écrans business.",
    why:"Le skincare est un signal à ton cerveau que la journée de travail est terminée. Ce rituel de transition est psychologiquement important pour la qualité du sommeil.",
    tips:["Garder la routine simple : nettoyant + hydratant = suffit","Lumière tamisée pendant ce rituel pour préparer le sommeil","C'est le moment où tu mentalement fermes la journée"]},
-  {t:'23:45',l:'Lecture 📖',      s:'15 min · pas écran',    c:'#60a5fa', i:0, dur:'15 min (23h45–0h00)',
-   desc:"15 minutes de lecture, livre physique uniquement. Pas d'écran, pas de podcast. Un vrai livre.",
-   why:"La lecture avant le sommeil réduit le temps d'endormissement de 40%. Elle remplace le scroll qui maintient le cerveau en état d'alerte.",
-   tips:["Livre de chevet — toujours le même endroit pour créer le rituel","Business, biographie, développement : du contenu qui nourrit","Si tu t'endors en lisant c'est parfait"]},
+  {t:'23:45',l:'Lecture 📖',      s:'15 min · Kindle',       c:'#60a5fa', i:0, dur:'15 min (23h45–0h00)',
+   desc:"15 minutes de lecture sur ton Kindle Amazon. Parfait — pas d'écran bleu, la lumière chaude est similaire à un livre papier et ne perturbe pas le sommeil.",
+   why:"La lecture avant le sommeil réduit le temps d'endormissement de 40%. Le Kindle est un excellent choix — pas d'écran bleu, pas de notifications, pas de tentation de scroller.",
+   tips:["Kindle en mode nuit (fond noir, texte blanc) pour encore moins de lumière","Business, biographie, développement : du contenu qui nourrit","Si tu t'endors en lisant c'est parfait"]},
   {t:'0:00', l:'Dodo 😴',         s:'Téléphone hors lit',    c:'#4a4038', i:0, dur:'Toute la nuit',
    desc:"Téléphone en charge hors de la chambre ou en mode avion. Objectif : 7h à 7h30 de sommeil.",
    why:"Le sommeil consolide tout ce que t'as appris et décidé dans la journée. Un entrepreneur qui dort mal prend de mauvaises décisions. C'est ton investissement le plus rentable.",
@@ -930,7 +924,7 @@ function renderSales(){
   document.getElementById('src-refund').textContent=fmt(tot.refund);
   const cols={discord:'var(--tdim)',ofm:'var(--pdim)',refund:'var(--adim)'};
   const tcols={discord:'var(--teal)',ofm:'var(--purple)',refund:'var(--amber)'};
-  const lbls={discord:'💬 Discord',ofm:'💜 OFM',refund:'🛡️ Refund'};
+  const lbls={discord:'💬 Discord',ofm:'💜 OFM',refund:'🛡️ Rshield'};
   document.getElementById('sales-list').innerHTML=[...sales].reverse().map((s,ri)=>{
     const oi=sales.length-1-ri;
     return`<div class="sale-item">
@@ -987,10 +981,10 @@ function renderRev(){
     const col=mile?'var(--amber)':isc?'var(--teal)':'var(--b2)';
     const th=Math.round((r.t/max)*76),ah=a?Math.round((a/max)*76):0;
     return`<div class="rbw">
-      <div style="font-size:8px;font-weight:600;color:${col}">${a?(a>=1000?(a/1000).toFixed(0)+'k':a):''}</div>
+      <div style="font-size:${isc?'11':'9'}px;font-weight:700;color:${col};font-family:'Syne',sans-serif">${a?(a>=1000?(a/1000).toFixed(1)+'k':a+'€'):''}</div>
       <div style="position:relative;width:100%;height:${th}px">
         <div class="rb" style="height:100%;background:var(--b1);position:absolute;bottom:0;width:100%"></div>
-        ${a?`<div class="rb" style="height:${ah}px;background:${col};position:absolute;bottom:0;width:100%"></div>`:''}
+        ${a?`<div class="rb" style="height:${ah}px;background:${col};position:absolute;bottom:0;width:100%;box-shadow:${isc?'0 0 8px '+col+'88':'none'}"></div>`:''}
         <div style="height:1px;background:${col};opacity:${mile?.5:.15};position:absolute;top:0;width:100%"></div>
       </div>
     </div>`;
@@ -1055,6 +1049,95 @@ function renderSoiree(n){
   });
 }
 initReview();
+
+// ── PLANNING EDITABLE ──────────────────────────────────────────────────────
+const PLAN_DEFAULTS = {
+  discord: [
+    {title:'Pilotage', sub:'métriques · churn'},
+    {title:'Contenu', sub:'posts · valeur'},
+    {title:'Acquisition', sub:'prospection'},
+    {title:'Contenu', sub:'engagement'},
+    {title:'Review', sub:'KPIs semaine'},
+  ],
+  ofm: [
+    {title:'Recrutement', sub:'modèles M1'},
+    {title:'DMs + PPV', sub:'scripts'},
+    {title:'Analytics', sub:'revenus/modèle'},
+    {title:'Chatters', sub:'recrutement'},
+    {title:'Social', sub:'promo modèles'},
+  ]
+};
+const DAYS = ['LUN','MAR','MER','JEU','VEN'];
+let planData = { discord: null, ofm: null };
+
+async function initPlanning() {
+  const d = await loadD('planning/data');
+  planData.discord = d.discord || PLAN_DEFAULTS.discord;
+  planData.ofm = d.ofm || PLAN_DEFAULTS.ofm;
+  renderPlanGrid('discord');
+  renderPlanGrid('ofm');
+}
+
+function renderPlanGrid(tab) {
+  const color = tab === 'discord' ? 'var(--teal)' : 'var(--purple)';
+  const dim = tab === 'discord' ? 'var(--tdim)' : 'var(--pdim)';
+  const el = document.getElementById(tab + '-grid');
+  if (!el) return;
+  el.innerHTML = planData[tab].map((item, i) => `
+    <div class="pd" onclick="editPlanDay('${tab}', ${i})" style="cursor:pointer" title="Cliquer pour modifier">
+      <div class="pdh" style="background:${dim};color:${color}">${DAYS[i]}</div>
+      <div class="pdb">
+        <div class="pt" style="color:${color}">${item.title}</div>
+        <div class="ps">${item.sub}</div>
+      </div>
+    </div>`).join('');
+}
+
+window.editPlanDay = (tab, idx) => {
+  const item = planData[tab][idx];
+  const color = tab === 'discord' ? 'var(--teal)' : 'var(--purple)';
+  const day = DAYS[idx];
+  const label = tab === 'discord' ? 'Discord' : 'OFM';
+
+  // Create inline edit modal
+  const existing = document.getElementById('plan-edit-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'plan-edit-modal';
+  modal.className = 'overlay';
+  modal.innerHTML = `
+    <div style="background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:24px;max-width:380px;width:100%;position:relative;">
+      <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;color:${color}">${day} · ${label}</div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);display:block;margin-bottom:5px;">Tâche principale</label>
+        <input id="pe-title" type="text" value="${item.title}" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;font-weight:700;padding:10px 12px;outline:none;">
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);display:block;margin-bottom:5px;">Détail</label>
+        <input id="pe-sub" type="text" value="${item.sub}" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:10px 12px;outline:none;">
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="document.getElementById('plan-edit-modal').remove()" style="padding:9px 16px;border-radius:9px;border:1px solid var(--b2);background:transparent;color:var(--sub);font-family:'Syne',sans-serif;font-size:12px;cursor:pointer;">Annuler</button>
+        <button onclick="savePlanDay('${tab}',${idx})" style="padding:9px 16px;border-radius:9px;border:1px solid ${color};background:${tab==='discord'?'var(--tdim)':'var(--pdim)'};color:${color};font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Sauvegarder</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  setTimeout(() => document.getElementById('pe-title').focus(), 100);
+};
+
+window.savePlanDay = async (tab, idx) => {
+  const title = document.getElementById('pe-title').value.trim();
+  const sub = document.getElementById('pe-sub').value.trim();
+  if (!title) return;
+  planData[tab][idx] = { title, sub };
+  renderPlanGrid(tab);
+  document.getElementById('plan-edit-modal').remove();
+  await saveD('planning/data', { discord: planData.discord, ofm: planData.ofm });
+};
+
+initPlanning();
+
 </script>
 </body>
 </html>
