@@ -295,7 +295,7 @@ input[type=number]:focus{border-color:var(--teal);}
 .bnav-btn.active{color:var(--teal);}
 .bnav-icon{font-size:19px;}
 .section{display:none;}.section.vis{display:block;}
-@media(min-width:768px){.section{display:block!important;}}
+@media(min-width:768px){.section:not(#sec-analytics){display:block!important;}}
 </style>
 </head>
 <body>
@@ -685,15 +685,39 @@ async function loadD(path){try{const s=await getDoc(doc(db,path));syncSt('on');r
 
 // NAV
 window.showSection = sec => {
-  ['today','planning','revenus','review','analytics'].forEach(s=>{
-    document.getElementById('sec-'+s)?.classList.toggle('vis',s===sec);
-    document.getElementById('nav-'+s)?.classList.toggle('active',s===sec);
-  });
-  // header analytics button
-  const hbtn = document.getElementById('nav-analytics-header');
-  if(hbtn) hbtn.style.color = sec==='analytics' ? 'var(--teal)' : '';
-  if(hbtn) hbtn.style.borderColor = sec==='analytics' ? 'var(--teal)' : '';
-  if(sec==='analytics') loadAnalytics();
+  const isDesktop = window.innerWidth >= 768;
+
+  if (sec === 'analytics') {
+    // Analytics: hide everything else, show analytics full page
+    ['today','planning','revenus','review'].forEach(s => {
+      document.getElementById('sec-'+s)?.classList.remove('vis');
+    });
+    document.getElementById('sec-analytics').classList.add('vis');
+    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('nav-analytics')?.classList.add('active');
+    const hbtn = document.getElementById('nav-analytics-header');
+    if(hbtn){ hbtn.style.color='var(--teal)'; hbtn.style.borderColor='var(--teal)'; hbtn.textContent='← Retour'; hbtn.setAttribute('onclick','showSection(\'today\')'); }
+    loadAnalytics();
+  } else {
+    // Normal sections
+    document.getElementById('sec-analytics')?.classList.remove('vis');
+    const hbtn = document.getElementById('nav-analytics-header');
+    if(hbtn){ hbtn.style.color=''; hbtn.style.borderColor=''; hbtn.textContent='📈 Analytics'; hbtn.setAttribute('onclick','showSection(\'analytics\')'); }
+
+    if (isDesktop) {
+      // On desktop show all 4 main sections simultaneously
+      ['today','planning','revenus','review'].forEach(s => {
+        document.getElementById('sec-'+s)?.classList.add('vis');
+      });
+    } else {
+      // On mobile show only selected section
+      ['today','planning','revenus','review'].forEach(s => {
+        document.getElementById('sec-'+s)?.classList.toggle('vis', s===sec);
+      });
+    }
+    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('nav-'+sec)?.classList.add('active');
+  }
 };
 
 // CLOCK
