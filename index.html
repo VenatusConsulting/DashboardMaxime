@@ -387,15 +387,15 @@ input[type=number]:focus{border-color:var(--teal);}
   <div class="obj-top">
     <div class="odot"></div>
     <span style="color:var(--sub);font-family:'Syne',sans-serif;font-size:12px;font-weight:700">OBJECTIF 2025</span>
-    <span style="color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:600">3k → 10k juin</span>
+    <span style="color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:600">10k en 1 mois (avant juin)</span>
     <span style="color:var(--sub2)">→</span>
-    <span style="color:var(--amber);font-family:'Syne',sans-serif;font-size:12px;font-weight:600">50k décembre</span>
+    <span style="color:var(--amber);font-family:'Syne',sans-serif;font-size:12px;font-weight:600">50k en 1 mois (avant déc.)</span>
     <span style="margin-left:auto;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--teal)" id="obj-pct">0%</span>
   </div>
   <div class="obj-bar-wrap"><div class="obj-bar-fill" id="obj-bar"></div></div>
   <div class="obj-bottom">
     <span>Gagné cette année : <strong id="obj-total" style="color:var(--text)">0 €</strong></span>
-    <span>Objectif : <strong style="color:var(--amber)">50 000 €</strong></span>
+    <span>Objectif annuel cumulé : <strong style="color:var(--amber)">50 000 €</strong></span>
   </div>
 </div>
 
@@ -551,7 +551,7 @@ input[type=number]:focus{border-color:var(--teal);}
       <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-bottom:14px" id="rmonths"></div>
       <div style="display:flex;gap:16px;align-items:flex-end;margin-bottom:14px">
         <div><div style="font-size:10px;color:var(--sub);margin-bottom:3px">CE MOIS</div><div style="font-family:'Clash Display','Syne',sans-serif;font-size:30px;font-weight:700;color:var(--teal);line-height:1" id="rcur">—</div></div>
-        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--sub);margin-bottom:3px">OBJECTIF JUIN</div><div style="font-family:'Clash Display','Syne',sans-serif;font-size:30px;font-weight:700;color:var(--amber);line-height:1">10k</div></div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--sub);margin-bottom:3px">OBJECTIF M1 à M6</div><div style="font-family:'Clash Display','Syne',sans-serif;font-size:30px;font-weight:700;color:var(--amber);line-height:1">10k</div></div>
       </div>
       <div style="display:flex;gap:8px;"><input type="number" id="rev-in" placeholder="Revenu ce mois (€)"><button class="btn bsm" onclick="saveRevenu()" style="white-space:nowrap">Sauv.</button></div>
     </div>
@@ -1051,7 +1051,7 @@ window.switchTab=tab=>{
 };
 
 // ── REVENUS ──
-const MO=[{m:'Jan',t:3000},{m:'Fév',t:5000},{m:'Mar',t:7000},{m:'Avr',t:8000},{m:'Mai',t:9000},{m:'Jun',t:10000},{m:'Jul',t:15000},{m:'Aoû',t:20000},{m:'Sep',t:28000},{m:'Oct',t:35000},{m:'Nov',t:42000},{m:'Déc',t:50000}];
+const MO=[{m:'Jan',t:4000},{m:'Fév',t:5000},{m:'Mar',t:6000},{m:'Avr',t:7000},{m:'Mai',t:8000},{m:'Jun',t:10000},{m:'Jul',t:15000},{m:'Aoû',t:20000},{m:'Sep',t:28000},{m:'Oct',t:35000},{m:'Nov',t:42000},{m:'Déc',t:50000}];
 const MONTH_NAMES=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 let RD={};
 
@@ -1267,7 +1267,7 @@ async function loadAnalytics() {
 // ── REVENUS TABLE ──
 function renderRevTable(rd) {
   const mnames = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-  const targets = [3000,5000,7000,8000,9000,10000,15000,20000,28000,35000,42000,50000];
+  const targets = [4000,5000,6000,7000,8000,10000,15000,20000,28000,35000,42000,50000];
   const curMonth = new Date().getMonth();
 
   let html = '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
@@ -1589,7 +1589,7 @@ window.exportCSV = async (type) => {
     if (type === 'revenus' || type === 'tout') {
       const rd = await loadD('revenus/2025');
       const mnames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-      const targets = [3000,5000,7000,8000,9000,10000,15000,20000,28000,35000,42000,50000];
+      const targets = [4000,5000,6000,7000,8000,10000,15000,20000,28000,35000,42000,50000];
       const rows = [['Mois','Réalisé (€)','Objectif (€)','Écart (€)','%']];
       mnames.forEach((m, i) => {
         const real = rd[i] || 0;
