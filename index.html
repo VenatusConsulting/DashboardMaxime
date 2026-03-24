@@ -3,461 +3,342 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>EMPIRE — Maxime</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>EMPIRE</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #111009;
-  --s1:      #1a1713;
-  --s2:      #21201a;
-  --s3:      #2a2820;
-  --b1:      #312e24;
-  --b2:      #3e3a2e;
-  --teal:    #00d4aa;
-  --tdim:    rgba(0,212,170,.10);
-  --purple:  #a78bfa;
-  --pdim:    rgba(167,139,250,.10);
-  --amber:   #f59e0b;
-  --adim:    rgba(245,158,11,.10);
-  --coral:   #f43f5e;
-  --cdim:    rgba(244,63,94,.10);
-  --green:   #22c55e;
-  --gdim:    rgba(34,197,94,.10);
-  --blue:    #3b82f6;
-  --bdim:    rgba(59,130,246,.10);
-  --text:    #ede8df;
-  --sub:     #6b6456;
-  --sub2:    #453f34;
-  --r:       12px;
+  --bg:#0f0d0b; --s1:#171410; --s2:#1e1a15; --s3:#26211a;
+  --b1:#2e2820; --b2:#3a3228;
+  --teal:#00d4aa; --teal2:#00ffcc; --tdim:rgba(0,212,170,.1);
+  --purple:#b197fc; --pdim:rgba(177,151,252,.1);
+  --amber:#fcd34d; --adim:rgba(252,211,77,.1);
+  --coral:#fb7185; --cdim:rgba(251,113,133,.1);
+  --green:#4ade80; --gdim:rgba(74,222,128,.1);
+  --blue:#60a5fa; --bdim:rgba(96,165,250,.1);
+  --text:#ede8e0; --sub:#6b6256; --sub2:#4a4038;
+  --r:12px;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { scroll-behavior:smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  min-height: 100vh;
-  padding-bottom: max(80px, env(safe-area-inset-bottom, 80px));
-}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:1.5;min-height:100vh;padding-bottom:max(80px,env(safe-area-inset-bottom,80px));}
+.shell{max-width:1280px;margin:0 auto;padding:0 24px 60px;}
+@media(min-width:768px){.shell{padding:0 36px 60px;}}
 
-/* ─── SHELL ─── */
-.shell { max-width: 1280px; margin: 0 auto; padding: 0 20px 40px; }
-@media(min-width:768px){ .shell { padding: 0 32px 40px; } }
+@keyframes glow{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes flicker{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ─── SYNC ─── */
-#sync {
-  position: fixed; top: max(14px, env(safe-area-inset-top)); right: 18px;
-  font-size: 10px; color: var(--sub); display: flex; align-items: center; gap: 5px;
-  z-index: 300; background: var(--s1); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--b1);
-}
-.sdot { width: 5px; height: 5px; border-radius: 50%; background: var(--sub2); }
-.sdot.on  { background: var(--teal); animation: pulse 2s infinite; }
-.sdot.sv  { background: var(--amber); animation: pulse .4s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* SYNC */
+#sync{position:fixed;top:max(14px,env(safe-area-inset-top));right:20px;font-size:10px;color:var(--sub);display:flex;align-items:center;gap:5px;z-index:200;background:var(--s1);padding:5px 10px;border-radius:20px;border:1px solid var(--b1);}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--sub2);}
+.sdot.on{background:var(--teal);animation:glow 2s infinite;}
+.sdot.sv{background:var(--amber);animation:glow .4s infinite;}
 
-/* ─── TOAST ─── */
-#toast {
-  position: fixed; bottom: max(28px, env(safe-area-inset-bottom, 28px));
-  left: 50%; transform: translateX(-50%) translateY(16px);
-  background: var(--teal); color: #000; font-family: 'Syne', sans-serif;
-  font-size: 12px; font-weight: 800; padding: 10px 22px; border-radius: 30px;
-  opacity: 0; transition: all .3s; z-index: 400; white-space: nowrap; pointer-events: none;
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* TOAST */
+#toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));left:50%;transform:translateX(-50%) translateY(14px);background:var(--teal);color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:10px 22px;border-radius:30px;opacity:0;transition:all .3s;z-index:500;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ─── MODAL (rule) ─── */
-.overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.80);
-  z-index: 500; display: flex; align-items: center; justify-content: center;
-  padding: 24px; backdrop-filter: blur(6px);
-}
-.overlay.hidden { display: none; }
-.modal {
-  background: var(--s1); border: 1px solid var(--b2); border-radius: 18px;
-  padding: 36px 32px; max-width: 460px; width: 100%; text-align: center;
-}
-.modal-emoji { font-size: 44px; margin-bottom: 18px; display: block; }
-.modal-eyebrow { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--sub); margin-bottom: 10px; }
-.modal-headline {
-  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; line-height: 1.25;
-  background: linear-gradient(135deg, var(--amber), var(--coral));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text; margin-bottom: 6px;
-}
-.modal-hint { font-size: 12px; color: var(--sub); margin-bottom: 28px; }
-.modal-cta {
-  padding: 13px 36px; border-radius: 10px; border: none;
-  background: linear-gradient(135deg, var(--amber), var(--coral));
-  color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
-  cursor: pointer; letter-spacing: .3px;
-}
-.modal-edit-link { display: block; font-size: 11px; color: var(--sub); margin-top: 14px; cursor: pointer; }
-.modal-edit-link:hover { color: var(--text); }
-.edit-area { display: none; margin-top: 16px; text-align: left; }
-.edit-area.vis { display: block; }
-.edit-area textarea {
-  width: 100%; background: var(--s2); border: 1px solid var(--b2); border-radius: 9px;
-  color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px;
-  padding: 11px 13px; resize: none; outline: none; margin-bottom: 8px; line-height: 1.5;
-}
-.edit-area textarea:focus { border-color: var(--teal); }
-.edit-save {
-  padding: 8px 18px; border-radius: 8px; border: 1px solid var(--teal);
-  background: var(--tdim); color: var(--teal); font-family: 'Syne', sans-serif;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-}
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);animation:fadeUp .2s ease;}
+.overlay.hidden{display:none;}
 
-/* ─── DAY DETAIL MODAL ─── */
-.day-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.75);
-  z-index: 500; display: flex; align-items: center; justify-content: center;
-  padding: 24px; backdrop-filter: blur(4px);
-}
-.day-overlay.hidden { display: none; }
-.day-modal {
-  background: var(--s1); border: 1px solid var(--b2); border-radius: 16px;
-  padding: 24px; max-width: 420px; width: 100%;
-}
-.day-modal-head {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 18px;
-}
-.day-modal-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
-.day-close { background: none; border: none; color: var(--sub); font-size: 22px; cursor: pointer; line-height: 1; }
-.day-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
-.day-stat { background: var(--s2); border-radius: 9px; padding: 10px 8px; text-align: center; }
-.day-stat-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; }
-.day-stat-lbl { font-size: 9px; color: var(--sub); margin-top: 3px; letter-spacing: .3px; }
-.day-checks { display: flex; flex-direction: column; gap: 6px; }
-.day-check-row { display: flex; align-items: center; gap: 10px; font-size: 12px; padding: 7px 10px; background: var(--s2); border-radius: 8px; }
+/* RULE MODAL */
+.rule-box{background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:32px 28px;max-width:460px;width:100%;text-align:center;}
+.rule-icon{font-size:44px;margin-bottom:14px;}
+.rule-tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:10px;}
+.rule-text{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;line-height:1.35;background:linear-gradient(135deg,var(--amber),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.rule-hint{font-size:11px;color:var(--sub);margin-bottom:22px;}
+.rule-cta{padding:13px 36px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--amber),var(--coral));color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.rule-change{font-size:10px;color:var(--sub);margin-top:14px;cursor:pointer;text-decoration:underline;display:block;}
+.rule-edit{margin-top:14px;display:none;}
+.rule-edit.vis{display:block;}
+.rule-edit textarea{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;resize:none;outline:none;margin-bottom:8px;line-height:1.5;}
+.rule-edit button{padding:8px 18px;border-radius:8px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
 
-/* ─── HEADER ─── */
-header {
-  padding: max(22px, env(safe-area-inset-top, 22px)) 0 22px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid var(--b1); margin-bottom: 22px; gap: 12px;
-}
-.logo { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, var(--amber) 30%, var(--coral)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.logo-sub { font-size: 11px; color: var(--sub); margin-top: 2px; letter-spacing: 1.5px; text-transform: uppercase; }
-.header-right { text-align: right; }
-#clock { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--teal); letter-spacing: .5px; }
-#datestr { font-size: 11px; color: var(--sub); margin-top: 2px; }
+/* SLOT MODAL */
+.slot-box{background:var(--s1);border:1px solid var(--b1);border-radius:16px;max-width:460px;width:100%;overflow:hidden;position:relative;}
+.slot-hd{padding:20px 22px 16px;}
+.slot-hd-time{font-size:11px;font-weight:500;margin-bottom:4px;opacity:.7;}
+.slot-hd-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.2;}
+.slot-hd-dur{font-size:10px;margin-top:6px;opacity:.6;}
+.slot-body{padding:18px 22px;display:flex;flex-direction:column;gap:16px;}
+.slot-section{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:6px;}
+.slot-desc{font-size:13px;line-height:1.7;color:var(--text);}
+.slot-why{font-size:12px;line-height:1.7;color:var(--sub);font-style:italic;}
+.slot-tips{display:flex;flex-direction:column;gap:7px;}
+.slot-tip{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.55;}
+.slot-tip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.modal-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--sub);cursor:pointer;font-size:24px;line-height:1;}
 
-/* ─── OBJ BANNER ─── */
-.obj {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  background: linear-gradient(90deg, var(--adim), transparent 70%);
-  border: 1px solid rgba(245,158,11,.2); border-radius: var(--r);
-  padding: 12px 18px; margin-bottom: 24px;
-}
-.obj-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; animation: pulse 2s infinite; }
-.obj span { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; }
+/* DAY MODAL */
+.day-box{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:24px;max-width:420px;width:100%;}
+.day-hd{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.day-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.day-stat{background:var(--s2);border-radius:8px;padding:10px;text-align:center;}
+.day-stat-v{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;line-height:1;}
+.day-stat-l{font-size:9px;color:var(--sub);margin-top:3px;}
+.day-checks{display:flex;flex-direction:column;gap:5px;}
+.day-check-row{display:flex;align-items:center;gap:9px;font-size:12px;padding:5px 0;border-bottom:1px solid var(--b1);}
+.day-check-row:last-child{border:none;}
 
-/* ─── SECTION LABEL ─── */
-.sec-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-  color: var(--sub); margin: 24px 0 12px; display: flex; align-items: center; gap: 10px;
-}
-.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--b1); }
+/* PAST MONTHS MODAL */
+.past-box{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:24px;max-width:500px;width:100%;}
+.past-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.past-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;}
+@media(min-width:480px){.past-grid{grid-template-columns:repeat(3,1fr);}}
+.past-item{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;}
+.past-month-name{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px;}
+.past-item input{width:100%;background:var(--s3);border:1px solid var(--b2);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:6px 8px;outline:none;transition:border-color .2s;}
+.past-item input:focus{border-color:var(--teal);}
+.past-item-val{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--teal);margin-top:4px;}
 
-/* ─── CARD ─── */
-.card { background: var(--s1); border: 1px solid var(--b1); border-radius: var(--r); padding: 18px 20px; }
-.card + .card { margin-top: 12px; }
-.card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-.card-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .5px; }
-.card-right { margin-left: auto; }
-.cbar { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+/* HEADER */
+header{padding:max(20px,env(safe-area-inset-top,20px)) 0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--b1);margin-bottom:20px;}
+.logo{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1.5px;background:linear-gradient(135deg,var(--amber),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-sub{font-size:10px;color:var(--sub);letter-spacing:1.5px;margin-top:2px;}
+#clock{font-family:'DM Mono',monospace;font-size:17px;color:var(--teal);letter-spacing:1px;text-align:right;}
+#datestr{font-size:10px;color:var(--sub);margin-top:3px;text-align:right;}
 
-/* ─── GRIDS ─── */
-.g2 { display: grid; gap: 12px; grid-template-columns: 1fr; }
-@media(min-width:680px){ .g2 { grid-template-columns: 1fr 1fr; } }
-.g3 { display: grid; gap: 12px; grid-template-columns: 1fr; }
-@media(min-width:900px){ .g3 { grid-template-columns: 1fr 1fr 1fr; } }
+/* OBJECTIVE */
+.obj{background:linear-gradient(90deg,var(--adim),transparent 70%);border:1px solid rgba(252,211,77,.18);border-radius:var(--r);padding:14px 18px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px;}
+.obj-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.odot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;animation:glow 2s infinite;}
+.obj-bar-wrap{height:6px;background:var(--b2);border-radius:3px;overflow:hidden;}
+.obj-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--amber));border-radius:3px;width:0%;transition:width .8s cubic-bezier(.34,1.2,.64,1);}
+.obj-bottom{display:flex;justify-content:space-between;font-size:10px;color:var(--sub);}
 
-/* ─── STREAK ─── */
-.streak {
-  display: flex; align-items: center; gap: 16px;
-  background: linear-gradient(90deg, rgba(245,158,11,.1), transparent 80%);
-  border: 1px solid rgba(245,158,11,.2); border-radius: var(--r);
-  padding: 14px 20px; margin-bottom: 12px;
-}
-.streak-fire { font-size: 32px; }
-.streak-count { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800; color: var(--amber); line-height: 1; }
-.streak-lbl { font-size: 11px; color: var(--sub); margin-top: 2px; }
-.streak-best { margin-left: auto; text-align: right; }
-.streak-best-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--sub); }
-.streak-best-lbl { font-size: 10px; color: var(--sub2); }
+/* SECTION TITLE */
+.sec{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin:24px 0 10px;display:flex;align-items:center;gap:10px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--b1);}
 
-/* ─── TIMELINE (horizontal scroll) ─── */
-.tl-scroll { overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
-.tl-scroll::-webkit-scrollbar { height: 3px; }
-.tl-scroll::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 2px; }
-.tl-track { display: flex; gap: 8px; min-width: max-content; position: relative; padding-top: 8px; }
-.tl-track::before { content: ''; position: absolute; top: 16px; left: 0; right: 0; height: 1px; background: var(--b2); z-index: 0; }
-.tl-item { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; flex-shrink: 0; position: relative; z-index: 1; }
-.tl-item.big { width: 126px; }
-.tl-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--bg); flex-shrink: 0; z-index: 2; }
-.tl-dot.now { box-shadow: 0 0 0 4px rgba(0,212,170,.25); animation: pulse 1.5s infinite; }
-.tl-card {
-  width: 100%; background: var(--s2); border: 1px solid var(--b1);
-  border-radius: 10px; padding: 10px 12px; text-align: center; transition: border-color .2s;
-}
-.tl-card.now { border-color: var(--teal); background: var(--tdim); }
-.tl-card.imp { border-left: 2px solid; }
-.tl-time { font-size: 10px; color: var(--sub); margin-bottom: 3px; font-weight: 500; }
-.tl-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; line-height: 1.2; margin-bottom: 3px; }
-.tl-sub  { font-size: 10px; color: var(--sub); line-height: 1.3; }
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:18px;}
+.ct{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.cdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
 
-/* ─── CHECKS ─── */
-.checks { display: flex; flex-direction: column; gap: 7px; }
-.check {
-  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
-  border-radius: 10px; border: 1px solid var(--b1); background: var(--s2);
-  cursor: pointer; transition: all .22s; user-select: none; position: relative; overflow: hidden;
-}
-.check::after {
-  content: ''; position: absolute; inset: 0;
-  background: var(--green); opacity: 0; transition: opacity .3s; pointer-events: none;
-}
-.check.done::after { opacity: .06; }
-.check.done { border-color: var(--green); box-shadow: 0 0 16px rgba(34,197,94,.15); }
-.check.fail { border-color: var(--coral); }
-.check-ico {
-  width: 32px; height: 32px; border-radius: 9px; border: 1.5px solid var(--b2);
-  background: var(--s3); display: flex; align-items: center; justify-content: center;
-  font-size: 15px; flex-shrink: 0; transition: all .22s; position: relative; z-index: 1;
-}
-.check.done .check-ico { background: var(--green); border-color: var(--green); box-shadow: 0 0 12px rgba(34,197,94,.5); }
-.check.fail .check-ico { background: var(--coral); border-color: var(--coral); }
-.check-body { flex: 1; position: relative; z-index: 1; }
-.check-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; transition: color .22s; }
-.check.done .check-name { color: var(--green); }
-.check.fail .check-name { color: var(--coral); }
-.check-time { font-size: 10px; color: var(--sub); margin-top: 1px; }
-.check-status { font-size: 14px; position: relative; z-index: 1; }
-@keyframes pop { 0%{transform:scale(1)} 45%{transform:scale(1.4)} 100%{transform:scale(1)} }
-.check.done .check-ico { animation: pop .28s ease; }
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:700px){.g2{grid-template-columns:1fr 1fr;}}
+.g3{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:960px){.g3{grid-template-columns:1fr 1fr 1fr;}}
 
-/* ─── SCORE BAR ─── */
-.score-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--b1); }
-.score-track { height: 6px; background: var(--b2); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
-.score-fill { height: 100%; border-radius: 3px; transition: width .5s cubic-bezier(.34,1.56,.64,1), background .3s; }
-.score-row { display: flex; align-items: baseline; justify-content: space-between; }
-.score-msg { font-size: 12px; color: var(--sub); }
-.score-num { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
+/* STREAK */
+.streak-card{display:flex;align-items:center;gap:14px;background:linear-gradient(90deg,rgba(252,211,77,.1),transparent 80%);border:1px solid rgba(252,211,77,.2);border-radius:var(--r);padding:14px 20px;margin-bottom:12px;}
+.streak-fire{font-size:32px;animation:flicker 2s ease-in-out infinite;flex-shrink:0;}
+.streak-num{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--amber);line-height:1;}
+.streak-lbl{font-size:11px;color:var(--sub);margin-top:3px;}
+.streak-right{margin-left:auto;text-align:right;}
+.streak-best-n{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--sub);}
+.streak-best-l{font-size:10px;color:var(--sub2);}
 
-/* ─── TRACKER ─── */
-.tracker-group { margin-bottom: 16px; }
-.tracker-group:last-child { margin-bottom: 0; }
-.tracker-lbl { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--sub); margin-bottom: 8px; display: block; }
-.scores { display: flex; gap: 4px; }
-.score-btn {
-  flex: 1; height: 36px; border-radius: 7px; border: 1px solid var(--b2);
-  background: var(--s2); color: var(--sub); font-family: 'Inter', sans-serif;
-  font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s;
-  display: flex; align-items: center; justify-content: center;
-}
-.score-btn:hover { transform: scale(1.08); }
-.score-btn.on { color: #000; font-weight: 700; transform: scale(1.1); }
-.food-btns { display: flex; gap: 8px; }
-.food-btn {
-  flex: 1; padding: 11px 6px; border-radius: 9px; border: 1px solid var(--b2);
-  background: var(--s2); color: var(--sub); font-family: 'Inter', sans-serif;
-  font-size: 11px; cursor: pointer; transition: all .2s; text-align: center; line-height: 1.5;
-}
-.food-btn.junk  { border-color: var(--coral);  color: var(--coral);  background: var(--cdim); }
-.food-btn.ok    { border-color: var(--amber);  color: var(--amber);  background: var(--adim); }
-.food-btn.clean { border-color: var(--green);  color: var(--green);  background: var(--gdim); }
+/* TIMELINE */
+.tl-scroll{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+.tl-scroll::-webkit-scrollbar{height:3px;}
+.tl-scroll::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+.tl-track{display:flex;gap:0;min-width:max-content;padding-top:6px;position:relative;}
+.tl-track::before{content:'';position:absolute;top:14px;left:0;right:0;height:1px;background:var(--b2);}
+.tl-slot{display:flex;flex-direction:column;align-items:center;gap:8px;width:120px;flex-shrink:0;position:relative;cursor:pointer;}
+.tl-slot.imp{width:136px;}
+.tl-slot:hover .tl-card{border-color:var(--b2);filter:brightness(1.1);}
+.tl-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;border:2px solid var(--bg);z-index:2;position:relative;}
+.tl-dot.now{box-shadow:0 0 0 5px rgba(0,212,170,.22);animation:glow 1.5s infinite;}
+.tl-card{width:calc(100% - 10px);background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:11px 12px;text-align:center;transition:all .2s;}
+.tl-card.now{border-color:var(--teal);background:var(--tdim);}
+.tl-card.imp{border-left-width:3px;}
+.tl-time{font-size:11px;color:var(--sub);margin-bottom:3px;}
+.tl-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;line-height:1.2;}
+.tl-sub{font-size:11px;color:var(--sub);margin-top:4px;line-height:1.3;}
 
-/* ─── SNUS ─── */
-.snus-row { display: flex; gap: 8px; margin-bottom: 8px; }
-.snus-btn {
-  flex: 1; height: 44px; border-radius: 9px; border: 1px solid var(--b2);
-  background: var(--s2); color: var(--sub); font-family: 'Syne', sans-serif;
-  font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
-}
-.snus-btn.on { border-color: var(--amber); background: var(--adim); color: var(--amber); box-shadow: 0 0 10px rgba(245,158,11,.2); }
-.snus-time-lbl { font-size: 8px; font-weight: 400; opacity: .55; }
+/* CHECKS */
+.checks{display:flex;flex-direction:column;gap:7px;}
+.ck{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:10px;border:1px solid var(--b1);background:var(--s2);cursor:pointer;transition:all .2s;user-select:none;position:relative;overflow:hidden;}
+.ck-glow{position:absolute;inset:0;pointer-events:none;border-radius:10px;opacity:0;transition:opacity .3s;}
+.ck.done .ck-glow{opacity:1;box-shadow:inset 0 0 20px rgba(74,222,128,.12),0 0 10px rgba(74,222,128,.15);}
+.ck.done{border-color:var(--green);}
+.ck.fail{border-color:var(--coral);background:var(--cdim);}
+.ck-icon{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--b2);background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:all .25s;z-index:1;}
+.ck.done .ck-icon{background:var(--green);border-color:var(--green);box-shadow:0 0 16px rgba(74,222,128,.45);animation:pop .3s ease;}
+.ck.fail .ck-icon{background:var(--coral);border-color:var(--coral);}
+.ck-body{flex:1;z-index:1;}
+.ck-label{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;transition:color .2s;}
+.ck.done .ck-label{color:var(--green);}
+.ck.fail .ck-label{color:var(--coral);}
+.ck-time{font-size:10px;color:var(--sub);margin-top:1px;}
+.ck-state{font-size:13px;z-index:1;min-width:18px;text-align:right;}
+.score-bar-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1);}
+.score-track{height:7px;background:var(--b2);border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.score-fill{height:100%;border-radius:4px;transition:width .5s cubic-bezier(.34,1.56,.64,1),background .3s;}
+.score-row{display:flex;align-items:center;justify-content:space-between;}
+.score-msg{font-size:11px;color:var(--sub);}
+.score-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
 
-/* ─── SALES ─── */
-.sales-total-row { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 16px; }
-.sales-total-val { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--teal); line-height: 1; }
-.sales-total-lbl { font-size: 11px; color: var(--sub); padding-bottom: 4px; }
-.sales-srcs { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
-.sales-src { background: var(--s2); border: 1px solid var(--b1); border-radius: 9px; padding: 10px; text-align: center; }
-.sales-src-val { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; line-height: 1; }
-.sales-src-lbl { font-size: 10px; color: var(--sub); margin-top: 4px; }
-.sales-form { display: flex; gap: 6px; margin-bottom: 12px; }
-.sales-form input, .sales-form select {
-  background: var(--s2); border: 1px solid var(--b2); border-radius: 9px;
-  color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px;
-  padding: 9px 12px; outline: none; transition: border-color .2s;
-}
-.sales-form input { flex: 1; }
-.sales-form input:focus, .sales-form select:focus { border-color: var(--teal); }
-.sales-entries { display: flex; flex-direction: column; gap: 5px; max-height: 150px; overflow-y: auto; }
-.sales-entries::-webkit-scrollbar { width: 3px; }
-.sales-entries::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 2px; }
-.sale-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--s2); border-radius: 8px; border: 1px solid var(--b1); }
-.sale-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 6px; flex-shrink: 0; }
-.sale-date { font-size: 10px; color: var(--sub); }
-.sale-val { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-left: auto; }
-.sale-del { background: none; border: none; color: var(--sub2); cursor: pointer; font-size: 16px; padding: 0 2px; }
-.sale-del:hover { color: var(--coral); }
+/* TRACKER */
+.score-wrap{margin-bottom:14px;}
+.score-lbl{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:7px;}
+.sbrow{display:flex;gap:3px;}
+.sb{flex:1;height:36px;border-radius:7px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.sb:hover{transform:scale(1.06);}
+.sb.on{color:#000;font-weight:700;transform:scale(1.1);}
+.fbrow{display:flex;gap:8px;}
+.fb{flex:1;padding:12px 6px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;text-align:center;line-height:1.5;}
+.fb.junk{border-color:var(--coral);color:var(--coral);background:var(--cdim);}
+.fb.ok{border-color:var(--amber);color:var(--amber);background:var(--adim);}
+.fb.clean{border-color:var(--green);color:var(--green);background:var(--gdim);}
 
-/* ─── CHART ─── */
-.chart-wrap { display: flex; align-items: flex-end; gap: 3px; height: 72px; margin-bottom: 6px; }
-.bar { flex: 1; border-radius: 3px 3px 0 0; min-width: 4px; cursor: pointer; transition: filter .15s; }
-.bar:hover { filter: brightness(1.5); }
-.chart-labels { display: flex; gap: 3px; font-size: 9px; color: var(--sub); margin-bottom: 14px; }
-.chart-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
-.cstat { background: var(--s2); border-radius: 9px; padding: 10px; text-align: center; }
-.cstat-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; }
-.cstat-lbl { font-size: 9px; color: var(--sub); margin-top: 3px; }
+/* SNUS */
+.snus-wrap{display:flex;gap:7px;margin-bottom:8px;}
+.snusbtn{flex:1;height:44px;border-radius:10px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.snusbtn.on{border-color:var(--amber);background:var(--adim);color:var(--amber);box-shadow:0 0 10px rgba(252,211,77,.18);}
+.snus-t{font-size:8px;opacity:.55;}
 
-/* ─── PLANNING ─── */
-.tabs { display: flex; gap: 5px; margin-bottom: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.tabs::-webkit-scrollbar { display: none; }
-.tab { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--b2); background: transparent; color: var(--sub); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; white-space: nowrap; flex-shrink: 0; }
-.tab.td { border-color: var(--teal); color: var(--teal); background: var(--tdim); }
-.tab.to { border-color: var(--purple); color: var(--purple); background: var(--pdim); }
-.tab.tr { border-color: var(--amber); color: var(--amber); background: var(--adim); }
-.tc { display: none; } .tc.vis { display: block; }
-.plan-note { font-size: 11px; color: var(--sub); margin-bottom: 12px; line-height: 1.8; }
-.plan-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 7px; }
-@media(max-width:480px){ .plan-grid { grid-template-columns: repeat(3,1fr); } }
-.plan-day { border-radius: 9px; border: 1px solid var(--b1); overflow: hidden; }
-.plan-day-h { padding: 7px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-align: center; }
-.plan-day-b { padding: 9px 10px; }
-.plan-task { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; }
-.plan-sub { font-size: 10px; color: var(--sub); margin-top: 2px; }
+/* SALES */
+.sales-top{display:flex;align-items:flex-end;gap:16px;margin-bottom:14px;}
+.sales-total{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--teal);line-height:1;}
+.sales-lbl{font-size:10px;color:var(--sub);margin-top:3px;}
+.sales-srcs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.sales-src{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;text-align:center;}
+.sales-src-v{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;line-height:1;}
+.sales-src-l{font-size:10px;color:var(--sub);margin-top:4px;}
+.sales-add{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.sales-add input{flex:1;min-width:80px;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s;}
+.sales-add input:focus{border-color:var(--teal);}
+.sales-add select{background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:9px 12px;outline:none;cursor:pointer;}
+.sales-list{display:flex;flex-direction:column;gap:4px;max-height:150px;overflow-y:auto;}
+.sales-list::-webkit-scrollbar{width:3px;}
+.sales-list::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+.sale-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);border-radius:8px;border:1px solid var(--b1);}
+.sale-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:5px;flex-shrink:0;}
+.sale-date{font-size:10px;color:var(--sub);}
+.sale-amt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-left:auto;}
+.sale-del{background:none;border:none;color:var(--sub2);cursor:pointer;font-size:15px;padding:0 2px;}
+.sale-del:hover{color:var(--coral);}
 
-/* ─── REVENUE ─── */
-.rev-chart { display: flex; align-items: flex-end; gap: 5px; height: 80px; margin-bottom: 6px; }
-.rev-bw { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.rev-bar { width: 100%; border-radius: 3px 3px 0 0; cursor: pointer; transition: filter .2s; }
-.rev-bar:hover { filter: brightness(1.4); }
-.rev-goals { display: flex; gap: 0; margin-top: 16px; }
-.rev-goal { flex: 1; text-align: center; background: var(--s2); border-radius: 9px; padding: 12px 8px; }
-.rev-goal + .rev-goal { margin-left: 8px; }
-.rev-goal-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; line-height: 1; }
-.rev-goal-lbl { font-size: 10px; color: var(--sub); margin-top: 4px; }
-.rev-input-row { display: flex; gap: 8px; margin-top: 14px; }
-.rev-input-row input { flex: 1; background: var(--s2); border: 1px solid var(--b2); border-radius: 9px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 10px 13px; outline: none; }
-.rev-input-row input:focus { border-color: var(--teal); }
+/* CHART */
+.wchart{display:flex;align-items:flex-end;gap:3px;height:72px;margin-bottom:6px;}
+.wbar{flex:1;border-radius:3px 3px 0 0;min-width:4px;cursor:pointer;transition:filter .15s,transform .15s;}
+.wbar:hover{filter:brightness(1.5);transform:scaleY(1.05);transform-origin:bottom;}
+.wlbls{display:flex;gap:3px;font-size:9px;color:var(--sub);margin-bottom:12px;}
+.wstats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.wstat{background:var(--s2);border-radius:8px;padding:10px;text-align:center;}
+.wstat-v{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;line-height:1;}
+.wstat-l{font-size:9px;color:var(--sub);margin-top:3px;}
 
-/* ─── RULES ─── */
-.rules { display: flex; flex-direction: column; gap: 8px; }
-.rule { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--b1); background: var(--s2); }
-.rule-acc { width: 3px; min-height: 20px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
-.rule-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; }
-.rule-desc { font-size: 11px; color: var(--sub); margin-top: 2px; }
+/* TABS */
+.tabs{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:7px 14px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.tab.td{border-color:var(--teal);color:var(--teal);background:var(--tdim);}
+.tab.to{border-color:var(--purple);color:var(--purple);background:var(--pdim);}
+.tab.tr{border-color:var(--amber);color:var(--amber);background:var(--adim);}
+.tc{display:none;}.tc.vis{display:block;}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:500px){.pgrid{grid-template-columns:repeat(3,1fr);}}
+.pd{border-radius:9px;border:1px solid var(--b1);overflow:hidden;}
+.pdh{padding:7px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-align:center;}
+.pdb{padding:9px 11px;}
+.pt{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;}
+.ps{font-size:10px;color:var(--sub);margin-top:2px;}
 
-/* ─── REVIEW ─── */
-.review-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
-@media(min-width:600px){ .review-grid { grid-template-columns: 1fr 1fr 1fr; } }
-.rv-lbl { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--sub); margin-bottom: 6px; display: block; }
-.rv-ta { width: 100%; background: var(--s2); border: 1px solid var(--b2); border-radius: 9px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 11px 13px; resize: none; outline: none; transition: border-color .2s; line-height: 1.5; }
-.rv-ta:focus { border-color: var(--teal); }
-.soiree-wrap { display: flex; gap: 7px; }
-.soiree-btn { width: 48px; height: 40px; border-radius: 9px; border: 1px solid var(--b2); background: var(--s2); color: var(--sub); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; }
+/* REVENUE */
+.rchart{display:flex;align-items:flex-end;gap:5px;height:80px;margin-bottom:6px;}
+.rbw{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.rb{width:100%;border-radius:3px 3px 0 0;cursor:pointer;transition:filter .2s;}
+.rb:hover{filter:brightness(1.4);}
 
-/* ─── BUTTONS ─── */
-.btn { padding: 10px 20px; border-radius: 9px; border: 1px solid var(--teal); background: var(--tdim); color: var(--teal); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s; }
-.btn:hover { background: var(--teal); color: #000; }
-.btn:active { transform: scale(.97); }
-.btn-sm { padding: 8px 14px; font-size: 11px; }
+/* RULES */
+.rules{display:flex;flex-direction:column;gap:7px;}
+.rule{display:flex;gap:11px;padding:11px 13px;border-radius:9px;border:1px solid var(--b1);background:var(--s2);align-items:flex-start;}
+.racc{width:3px;border-radius:2px;flex-shrink:0;align-self:stretch;min-height:18px;}
+.rt{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;}
+.rs{font-size:10px;color:var(--sub);margin-top:2px;}
 
-/* ─── BOTTOM NAV ─── */
-.bnav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--s1); border-top: 1px solid var(--b1); padding: 8px 0 max(8px, env(safe-area-inset-bottom)); z-index: 200; }
-@media(min-width:768px){ .bnav { display: none; } }
-.bnav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px; background: none; border: none; color: var(--sub); font-family: 'Inter', sans-serif; font-size: 9px; cursor: pointer; transition: color .15s; }
-.bnav-btn.active { color: var(--teal); }
-.bnav-ico { font-size: 20px; }
+/* REVIEW */
+.rvgrid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px;}
+@media(min-width:600px){.rvgrid{grid-template-columns:1fr 1fr 1fr;}}
+.rvf label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:5px;}
+.rvf textarea{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:11px 13px;resize:none;outline:none;transition:border-color .2s;line-height:1.5;}
+.rvf textarea:focus{border-color:var(--teal);}
 
-/* ─── SECTIONS ─── */
-.section { display: none; }
-.section.vis { display: block; }
-@media(min-width:768px){ .section { display: block !important; } }
+/* BUTTONS */
+.btn{padding:11px 20px;border-radius:9px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn:hover{background:var(--teal);color:#000;}
+.btn:active{transform:scale(.97);}
+.bsm{padding:9px 14px;font-size:11px;}
+.btn-ghost{padding:9px 14px;border-radius:9px;border:1px solid var(--b2);background:transparent;color:var(--sub);font-family:'Syne',sans-serif;font-size:11px;cursor:pointer;}
+input[type=number]{background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:9px 13px;outline:none;transition:border-color .2s;width:100%;}
+input[type=number]:focus{border-color:var(--teal);}
+.soiree-btns{display:flex;gap:7px;}
+.soiree-btn{width:46px;height:40px;border-radius:9px;border:1px solid var(--b2);background:var(--s2);color:var(--sub);font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--b1);padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;}
+@media(min-width:768px){.bnav{display:none;}}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px;background:none;border:none;color:var(--sub);font-family:'DM Mono',monospace;font-size:9px;cursor:pointer;transition:color .15s;}
+.bnav-btn.active{color:var(--teal);}
+.bnav-icon{font-size:19px;}
+.section{display:none;}.section.vis{display:block;}
+@media(min-width:768px){.section{display:block!important;}}
 </style>
 </head>
 <body>
 
-<!-- SYNC -->
 <div id="sync"><div class="sdot" id="sdot"></div><span id="slbl">...</span></div>
 <div id="toast"></div>
 
 <!-- RULE MODAL -->
-<div class="overlay" id="rule-overlay">
-  <div class="modal">
-    <span class="modal-emoji">⚡</span>
-    <div class="modal-eyebrow">Ta règle du jour</div>
-    <div class="modal-headline" id="modal-rule">Chargement...</div>
-    <div class="modal-hint">Lis-la. Retiens-la. Applique-la aujourd'hui.</div>
-    <button class="modal-cta" onclick="closeModal()">Let's go 🔥</button>
-    <a class="modal-edit-link" onclick="toggleEdit()">Modifier cette règle</a>
-    <div class="edit-area" id="edit-area">
+<div class="overlay hidden" id="rule-modal">
+  <div class="rule-box">
+    <div class="rule-icon">⚡</div>
+    <div class="rule-tag">Règle du jour</div>
+    <div class="rule-text" id="rule-text">Tu dois exécuter l'entièreté de ta routine.</div>
+    <div class="rule-hint">Lis-la. Retiens-la. Applique-la.</div>
+    <button class="rule-cta" onclick="closeRuleModal()">Let's go 🔥</button>
+    <span class="rule-change" onclick="document.getElementById('rule-edit').classList.toggle('vis')">Modifier cette règle</span>
+    <div class="rule-edit" id="rule-edit">
       <textarea id="rule-input" rows="2" placeholder="Ta règle..."></textarea>
-      <button class="edit-save" onclick="saveRule()">Sauvegarder</button>
-    </div>
-  </div>
-</div>
-
-<!-- DAY DETAIL MODAL -->
-<div class="day-overlay hidden" id="day-overlay">
-  <div class="day-modal">
-    <div class="day-modal-head">
-      <div class="day-modal-title" id="day-title">—</div>
-      <button class="day-close" onclick="closeDayModal()">×</button>
-    </div>
-    <div class="day-stats" id="day-stats"></div>
-    <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px">Checks</div>
-    <div class="day-checks" id="day-checks"></div>
-  </div>
-</div>
-
-
-
-<!-- PAST MONTHS MODAL -->
-<div class="overlay hidden" id="past-modal">
-  <div class="past-modal-box">
-    <div class="past-modal-title">
-      <span>Revenus par mois</span>
-      <button class="day-modal-close" onclick="closePastModal()">×</button>
-    </div>
-    <div class="past-grid" id="past-grid"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button class="btn bsm" style="border-color:var(--sub);color:var(--sub);background:transparent" onclick="closePastModal()">Annuler</button>
-      <button class="btn bsm" onclick="savePastMonths()">Sauvegarder</button>
+      <button onclick="saveRule()">Sauvegarder</button>
     </div>
   </div>
 </div>
 
 <!-- SLOT MODAL -->
 <div class="overlay hidden" id="slot-modal">
-  <div class="slot-modal-box" style="position:relative;">
-    <button class="slot-modal-close-btn" onclick="closeSlotModal()">×</button>
-    <div class="slot-modal-header">
-      <div class="slot-modal-time" id="sm-time"></div>
-      <div class="slot-modal-title" id="sm-title"></div>
-      <div class="slot-modal-dur" id="sm-dur"></div>
+  <div class="slot-box">
+    <button class="modal-x" onclick="document.getElementById('slot-modal').classList.add('hidden')">×</button>
+    <div class="slot-hd" id="slot-hd">
+      <div class="slot-hd-time" id="slot-time"></div>
+      <div class="slot-hd-title" id="slot-title"></div>
+      <div class="slot-hd-dur" id="slot-dur"></div>
     </div>
-    <div class="slot-modal-body">
-      <div>
-        <div class="slot-section-lbl">📋 Description</div>
-        <div class="slot-desc" id="sm-desc"></div>
-      </div>
-      <div>
-        <div class="slot-section-lbl">💡 Pourquoi c'est important</div>
-        <div class="slot-why" id="sm-why"></div>
-      </div>
-      <div>
-        <div class="slot-section-lbl">⚡ Tips</div>
-        <div class="slot-tips" id="sm-tips"></div>
-      </div>
+    <div class="slot-body">
+      <div><div class="slot-section">📋 Description</div><div class="slot-desc" id="slot-desc"></div></div>
+      <div><div class="slot-section">💡 Pourquoi c'est important</div><div class="slot-why" id="slot-why"></div></div>
+      <div><div class="slot-section">⚡ Tips</div><div class="slot-tips" id="slot-tips"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY MODAL -->
+<div class="overlay hidden" id="day-modal">
+  <div class="day-box">
+    <div class="day-hd"><span id="day-date">—</span><button class="modal-x" style="position:static;font-size:20px" onclick="document.getElementById('day-modal').classList.add('hidden')">×</button></div>
+    <div class="day-stats" id="day-stats"></div>
+    <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px">Checks</div>
+    <div class="day-checks" id="day-checks"></div>
+  </div>
+</div>
+
+<!-- PAST MONTHS MODAL -->
+<div class="overlay hidden" id="past-modal">
+  <div class="past-box">
+    <div class="past-title">
+      <span>Revenus par mois</span>
+      <button class="modal-x" style="position:static;font-size:20px" onclick="document.getElementById('past-modal').classList.add('hidden')">×</button>
+    </div>
+    <div class="past-grid" id="past-grid"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn-ghost" onclick="document.getElementById('past-modal').classList.add('hidden')">Annuler</button>
+      <button class="btn bsm" onclick="savePastMonths()">Sauvegarder</button>
     </div>
   </div>
 </div>
@@ -468,102 +349,65 @@ header {
 <header>
   <div>
     <div class="logo">EMPIRE</div>
-    <div class="logo-sub">Maxime · Grind Mode</div>
+    <div class="logo-sub">MAXIME · GRIND MODE</div>
   </div>
-  <div class="header-right">
+  <div>
     <div id="clock">--:--:--</div>
     <div id="datestr">--</div>
   </div>
 </header>
 
-<!-- OBJ -->
+<!-- OBJECTIVE -->
 <div class="obj">
-  <div class="obj-dot"></div>
-  <span style="color:var(--sub)">OBJECTIF 2025</span>
-  <span style="color:var(--teal)">3k → 10k juin</span>
-  <span style="color:var(--sub2)">→</span>
-  <span style="color:var(--amber)">50k décembre</span>
+  <div class="obj-top">
+    <div class="odot"></div>
+    <span style="color:var(--sub);font-family:'Syne',sans-serif;font-size:12px;font-weight:700">OBJECTIF 2025</span>
+    <span style="color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:600">3k → 10k juin</span>
+    <span style="color:var(--sub2)">→</span>
+    <span style="color:var(--amber);font-family:'Syne',sans-serif;font-size:12px;font-weight:600">50k décembre</span>
+    <span style="margin-left:auto;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--teal)" id="obj-pct">0%</span>
+  </div>
+  <div class="obj-bar-wrap"><div class="obj-bar-fill" id="obj-bar"></div></div>
+  <div class="obj-bottom">
+    <span>Gagné cette année : <strong id="obj-total" style="color:var(--text)">0 €</strong></span>
+    <span>Objectif : <strong style="color:var(--amber)">50 000 €</strong></span>
+  </div>
 </div>
 
-<!-- ══ AUJOURD'HUI ══ -->
+<!-- ══ TODAY ══ -->
 <div class="section vis" id="sec-today">
+  <div class="sec"><span>Aujourd'hui</span></div>
 
   <!-- STREAK -->
-  <div class="streak">
+  <div class="streak-card">
     <div class="streak-fire">🔥</div>
     <div>
-      <div class="streak-count" id="streak-cur">0</div>
+      <div class="streak-num" id="streak-cur">0</div>
       <div class="streak-lbl">jours consécutifs ≥ 5/6</div>
     </div>
-    <div class="streak-best">
-      <div class="streak-best-val" id="streak-best">—</div>
-      <div class="streak-best-lbl">meilleur streak</div>
+    <div class="streak-right">
+      <div class="streak-best-n" id="streak-best">—</div>
+      <div class="streak-best-l">meilleur streak</div>
     </div>
   </div>
 
   <!-- TIMELINE -->
-  <div class="sec-label"><span>Routine du jour</span></div>
-  <div class="card" style="padding:16px 18px">
-    <div class="card-head">
-      <div class="cbar" style="background:var(--teal)"></div>
-      <div class="card-title">Emploi du temps</div>
-      <div class="card-right" style="font-size:11px;color:var(--teal);font-weight:600" id="tl-now-label"></div>
+  <div class="card" style="margin-bottom:12px;padding:16px 18px 14px;">
+    <div class="ct">
+      <div class="cdot" style="background:var(--teal)"></div>
+      Routine du jour
+      <span style="margin-left:auto;font-size:10px;color:var(--teal)" id="tl-now-lbl"></span>
     </div>
-    <div class="tl-scroll">
-      <div class="tl-track" id="timeline"></div>
-    </div>
+    <div class="tl-scroll"><div class="tl-track" id="timeline"></div></div>
   </div>
 
-  <!-- VENTES + CHECKS + TRACKER -->
-  <div class="sec-label"><span>Business & Journée</span></div>
-  <div class="g2" style="margin-bottom:12px">
-
-    <!-- VENTES -->
+  <!-- CHECKS + TRACKER + RIGHT -->
+  <div class="g3" style="margin-bottom:12px;">
+    <!-- CHECKS -->
     <div class="card">
-      <div class="card-head">
-        <div class="cbar" style="background:var(--teal)"></div>
-        <div class="card-title">Ventes du mois</div>
-        <div class="card-right" style="font-size:10px;color:var(--sub)" id="sales-month-lbl">—</div>
-      </div>
-      <div class="sales-total-row">
-        <div class="sales-total-val" id="sales-total">0 €</div>
-        <div class="sales-total-lbl">ce mois</div>
-      </div>
-      <div class="sales-srcs">
-        <div class="sales-src">
-          <div class="sales-src-val" id="src-discord" style="color:var(--teal)">0 €</div>
-          <div class="sales-src-lbl">💬 Discord</div>
-        </div>
-        <div class="sales-src">
-          <div class="sales-src-val" id="src-ofm" style="color:var(--purple)">0 €</div>
-          <div class="sales-src-lbl">💜 OFM</div>
-        </div>
-        <div class="sales-src">
-          <div class="sales-src-val" id="src-refund" style="color:var(--amber)">0 €</div>
-          <div class="sales-src-lbl">🛡️ Refund</div>
-        </div>
-      </div>
-      <div class="sales-form">
-        <input type="number" id="sale-amount" placeholder="Montant (€)">
-        <select id="sale-source">
-          <option value="discord">💬 Discord</option>
-          <option value="ofm">💜 OFM</option>
-          <option value="refund">🛡️ RefundShield</option>
-        </select>
-        <button class="btn btn-sm" onclick="addSale()">+</button>
-      </div>
-      <div class="sales-entries" id="sales-entries"></div>
-    </div>
-
-    <!-- CHECKS DU SOIR -->
-    <div class="card">
-      <div class="card-head">
-        <div class="cbar" style="background:var(--green)"></div>
-        <div class="card-title">Check du soir</div>
-        <div class="card-right" style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--sub)" id="check-count">0/6</div>
-      </div>
-      <div class="checks" id="checks"></div>
-      <div class="score-section">
+      <div class="ct"><div class="cdot" style="background:var(--green)"></div>Check du soir</div>
+      <div class="checks" id="checks-list"></div>
+      <div class="score-bar-wrap">
         <div class="score-track"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
         <div class="score-row">
           <div class="score-msg" id="score-msg">Commence ta journée 💪</div>
@@ -572,128 +416,135 @@ header {
       </div>
     </div>
 
-  </div>
-
-  <!-- TRACKER + SNUS + CHART -->
-  <div class="g3">
-
     <!-- TRACKER -->
     <div class="card">
-      <div class="card-head">
-        <div class="cbar" style="background:var(--purple)"></div>
-        <div class="card-title">Tracker</div>
-        <div class="card-right" style="font-size:10px;color:var(--sub2)" id="tdate">—</div>
+      <div class="ct"><div class="cdot" style="background:var(--purple)"></div>Tracker <span style="margin-left:auto;font-size:9px;color:var(--sub2)" id="tdate"></span></div>
+      <div class="score-wrap">
+        <span class="score-lbl">⚡ Énergie</span>
+        <div class="sbrow" id="e-btns"></div>
       </div>
-      <div class="tracker-group">
-        <span class="tracker-lbl">⚡ Énergie</span>
-        <div class="scores" id="e-btns"></div>
+      <div class="score-wrap">
+        <span class="score-lbl">🧠 Mental</span>
+        <div class="sbrow" id="m-btns"></div>
       </div>
-      <div class="tracker-group">
-        <span class="tracker-lbl">🧠 Mental</span>
-        <div class="scores" id="m-btns"></div>
-      </div>
-      <div class="tracker-group" style="margin-bottom:0">
-        <span class="tracker-lbl">🍽️ Alimentation</span>
-        <div class="food-btns">
-          <button class="food-btn" id="fb-junk" onclick="setFood('junk')">🍔<br>Junk</button>
-          <button class="food-btn" id="fb-ok" onclick="setFood('ok')">🥗<br>Correct</button>
-          <button class="food-btn" id="fb-clean" onclick="setFood('clean')">✅<br>Propre</button>
+      <div>
+        <span class="score-lbl" style="display:block;margin-bottom:7px;">🍽️ Alimentation</span>
+        <div class="fbrow">
+          <button class="fb" id="fb-junk" onclick="setFood('junk')">🍔<br><span style="font-size:10px">Junk</span></button>
+          <button class="fb" id="fb-ok" onclick="setFood('ok')">🥗<br><span style="font-size:10px">Correct</span></button>
+          <button class="fb" id="fb-clean" onclick="setFood('clean')">✅<br><span style="font-size:10px">Propre</span></button>
         </div>
       </div>
     </div>
 
-    <!-- SNUS -->
-    <div class="card">
-      <div class="card-head">
-        <div class="cbar" style="background:var(--amber)"></div>
-        <div class="card-title">Snus du jour</div>
-        <div class="card-right" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--amber)" id="snus-ct">0/5</div>
+    <!-- SNUS + CHART -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="ct"><div class="cdot" style="background:var(--amber)"></div>Snus <span style="margin-left:auto;font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--amber)" id="snus-ct">0/5</span></div>
+        <div class="snus-wrap" id="snus-row"></div>
+        <div style="font-size:10px;color:var(--sub)">10h · 13h · 14h30 · 20h30 · 22h</div>
       </div>
-      <div class="snus-row" id="snus-row"></div>
-      <div style="font-size:10px;color:var(--sub)">10h · 13h · 14h30 · 20h30 · 22h</div>
-    </div>
-
-    <!-- CHART 30J -->
-    <div class="card">
-      <div class="card-head">
-        <div class="cbar" style="background:var(--blue)"></div>
-        <div class="card-title">30 derniers jours</div>
-        <div class="card-right" style="font-size:10px;color:var(--sub)">cliquer pour détail</div>
-      </div>
-      <div class="chart-wrap" id="chart"></div>
-      <div class="chart-labels" id="chart-labels"></div>
-      <div class="chart-stats">
-        <div class="cstat"><div class="cstat-val" id="c-week" style="color:var(--teal)">—</div><div class="cstat-lbl">moy. semaine</div></div>
-        <div class="cstat"><div class="cstat-val" id="c-streak" style="color:var(--amber)">—</div><div class="cstat-lbl">best streak</div></div>
-        <div class="cstat"><div class="cstat-val" id="c-month" style="color:var(--purple)">—</div><div class="cstat-lbl">jours parfaits</div></div>
+      <div class="card">
+        <div class="ct"><div class="cdot" style="background:var(--blue)"></div>30 derniers jours <span style="margin-left:auto;font-size:10px;color:var(--sub)">↗ cliquer</span></div>
+        <div class="wchart" id="wchart"></div>
+        <div class="wlbls" id="wlbls"></div>
+        <div class="wstats">
+          <div class="wstat"><div class="wstat-v" id="w-avg" style="color:var(--teal)">—</div><div class="wstat-l">sem. moy.</div></div>
+          <div class="wstat"><div class="wstat-v" id="w-streak" style="color:var(--amber)">—</div><div class="wstat-l">best streak</div></div>
+          <div class="wstat"><div class="wstat-v" id="w-month" style="color:var(--purple)">—</div><div class="wstat-l">ce mois ✓</div></div>
+        </div>
       </div>
     </div>
+  </div>
 
+  <!-- SALES -->
+  <div class="card" style="margin-bottom:12px;">
+    <div class="ct"><div class="cdot" style="background:var(--teal)"></div>Ventes du mois <span style="margin-left:auto;font-size:10px;color:var(--sub)" id="sales-month-lbl">—</span></div>
+    <div class="sales-top">
+      <div>
+        <div class="sales-total" id="sales-total">0 €</div>
+        <div class="sales-lbl">total ce mois</div>
+      </div>
+    </div>
+    <div class="sales-srcs">
+      <div class="sales-src"><div class="sales-src-v" id="src-discord" style="color:var(--teal)">0 €</div><div class="sales-src-l">💬 Discord</div></div>
+      <div class="sales-src"><div class="sales-src-v" id="src-ofm" style="color:var(--purple)">0 €</div><div class="sales-src-l">💜 OFM</div></div>
+      <div class="sales-src"><div class="sales-src-v" id="src-refund" style="color:var(--amber)">0 €</div><div class="sales-src-l">🛡️ RefundShield</div></div>
+    </div>
+    <div class="sales-add">
+      <input type="number" id="sale-amount" placeholder="Montant (€)">
+      <select id="sale-src" style="background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:9px 12px;outline:none;cursor:pointer;">
+        <option value="discord">💬 Discord</option>
+        <option value="ofm">💜 OFM</option>
+        <option value="refund">🛡️ RefundShield</option>
+      </select>
+      <button class="btn bsm" onclick="addSale()">+ Ajouter</button>
+    </div>
+    <div class="sales-list" id="sales-list"></div>
   </div>
 </div>
 
 <!-- ══ PLANNING ══ -->
 <div class="section" id="sec-planning">
-  <div class="sec-label"><span>Planning hebdo</span></div>
+  <div class="sec"><span>Planning hebdo</span></div>
   <div class="card">
     <div class="tabs">
-      <button class="tab td" id="tb-d" onclick="switchTab('d')">💬 Discord</button>
-      <button class="tab" id="tb-o" onclick="switchTab('o')">💜 OFM</button>
-      <button class="tab" id="tb-r" onclick="switchTab('r')">🛡️ RefundShield</button>
+      <button class="tab td" id="tb-discord" onclick="switchTab('discord')">💬 Discord</button>
+      <button class="tab" id="tb-ofm" onclick="switchTab('ofm')">💜 OFM</button>
+      <button class="tab" id="tb-refund" onclick="switchTab('refund')">🛡️ RefundShield</button>
     </div>
-    <div class="tc vis" id="tc-d">
-      <div class="plan-note">10h–12h pilotage + contenu + acquisition<br>14h–16h approfondissement · si calé → <span style="color:var(--purple)">switch OFM</span></div>
-      <div class="plan-grid">
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">LUN</div><div class="plan-day-b"><div class="plan-task">Pilotage</div><div class="plan-sub">métriques · churn</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">MAR</div><div class="plan-day-b"><div class="plan-task">Contenu</div><div class="plan-sub">posts · valeur</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">MER</div><div class="plan-day-b"><div class="plan-task">Acquisition</div><div class="plan-sub">prospection</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">JEU</div><div class="plan-day-b"><div class="plan-task">Contenu</div><div class="plan-sub">engagement</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--tdim);color:var(--teal)">VEN</div><div class="plan-day-b"><div class="plan-task">Review</div><div class="plan-sub">KPIs semaine</div></div></div>
+    <div class="tc vis" id="tc-discord">
+      <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.9">10h–12h pilotage + contenu + acquisition<br>14h–16h approfondissement · si calé → <span style="color:var(--purple)">switch OFM</span></div>
+      <div class="pgrid">
+        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">LUN</div><div class="pdb"><div class="pt">Pilotage</div><div class="ps">métriques · churn</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">MAR</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">posts · valeur</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">MER</div><div class="pdb"><div class="pt">Acquisition</div><div class="ps">prospection</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">JEU</div><div class="pdb"><div class="pt">Contenu</div><div class="ps">engagement</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--tdim);color:var(--teal)">VEN</div><div class="pdb"><div class="pt">Review</div><div class="ps">KPIs semaine</div></div></div>
       </div>
     </div>
-    <div class="tc" id="tc-o">
-      <div class="plan-note">20h30–23h30 · soirée FR = journée US · <span style="color:var(--purple)">meilleur taux de réponse</span></div>
-      <div class="plan-grid">
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">LUN</div><div class="plan-day-b"><div class="plan-task">Recrutement</div><div class="plan-sub">modèles M1</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">MAR</div><div class="plan-day-b"><div class="plan-task">DMs + PPV</div><div class="plan-sub">scripts</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">MER</div><div class="plan-day-b"><div class="plan-task">Analytics</div><div class="plan-sub">revenus/modèle</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">JEU</div><div class="plan-day-b"><div class="plan-task">Chatters</div><div class="plan-sub">recrutement</div></div></div>
-        <div class="plan-day"><div class="plan-day-h" style="background:var(--pdim);color:var(--purple)">VEN</div><div class="plan-day-b"><div class="plan-task">Social</div><div class="plan-sub">promo modèles</div></div></div>
+    <div class="tc" id="tc-ofm">
+      <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.9">20h30–23h30 · soirée FR = journée US · <span style="color:var(--purple)">meilleur taux de réponse</span></div>
+      <div class="pgrid">
+        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">LUN</div><div class="pdb"><div class="pt">Recrutement</div><div class="ps">modèles M1</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">MAR</div><div class="pdb"><div class="pt">DMs + PPV</div><div class="ps">scripts</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">MER</div><div class="pdb"><div class="pt">Analytics</div><div class="ps">revenus/modèle</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">JEU</div><div class="pdb"><div class="pt">Chatters</div><div class="ps">recrutement</div></div></div>
+        <div class="pd"><div class="pdh" style="background:var(--pdim);color:var(--purple)">VEN</div><div class="pdb"><div class="pt">Social</div><div class="ps">promo modèles</div></div></div>
       </div>
     </div>
-    <div class="tc" id="tc-r">
-      <div class="plan-note">Vendredi aprèm · 2h · une tâche concrète par semaine</div>
-      <div class="plan-day" style="max-width:220px"><div class="plan-day-h" style="background:var(--adim);color:var(--amber)">VENDREDI</div><div class="plan-day-b"><div class="plan-task">Avancement hebdo</div><div class="plan-sub">Landing · PME · pitch</div></div></div>
+    <div class="tc" id="tc-refund">
+      <div style="font-size:11px;color:var(--sub);margin-bottom:12px">Vendredi aprèm · 2h · une tâche concrète par semaine</div>
+      <div class="pd" style="max-width:240px"><div class="pdh" style="background:var(--adim);color:var(--amber)">VENDREDI</div><div class="pdb"><div class="pt">Avancement hebdo</div><div class="ps">Landing · appels PME · pitch</div></div></div>
     </div>
   </div>
 </div>
 
 <!-- ══ REVENUS ══ -->
 <div class="section" id="sec-revenus">
-  <div class="sec-label"><span>Revenus 2025</span></div>
+  <div class="sec"><span>Revenus 2025</span></div>
   <div class="g2">
     <div class="card">
-      <div class="card-head"><div class="cbar" style="background:var(--coral)"></div><div class="card-title">Progression mensuelle</div><button onclick="openPastModal()" style="margin-left:auto;background:var(--s2);border:1px solid var(--b2);border-radius:6px;color:var(--sub);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;cursor:pointer;">✏️ Modifier</button></div>
-      <div class="rev-chart" id="rev-chart"></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-bottom:16px" id="rev-months"></div>
-      <div class="rev-goals">
-        <div class="rev-goal"><div class="rev-goal-val" id="rev-cur" style="color:var(--teal)">—</div><div class="rev-goal-lbl">Ce mois</div></div>
-        <div class="rev-goal"><div class="rev-goal-val" style="color:var(--amber)">10k</div><div class="rev-goal-lbl">Objectif juin</div></div>
-        <div class="rev-goal"><div class="rev-goal-val" style="color:var(--coral)">50k</div><div class="rev-goal-lbl">Objectif déc.</div></div>
+      <div class="ct">
+        <div class="cdot" style="background:var(--coral)"></div>Progression mensuelle
+        <button onclick="document.getElementById('past-modal').classList.remove('hidden');buildPastGrid()" style="margin-left:auto;background:var(--s2);border:1px solid var(--b2);border-radius:6px;color:var(--sub);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;cursor:pointer;">✏️ Modifier</button>
       </div>
-      <div class="rev-input-row">
-        <input type="number" id="rev-in" placeholder="Revenu ce mois (€)">
-        <button class="btn btn-sm" onclick="saveRevenu()">Sauv.</button>
+      <div class="rchart" id="rbars"></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-bottom:14px" id="rmonths"></div>
+      <div style="display:flex;gap:16px;align-items:flex-end;margin-bottom:14px">
+        <div><div style="font-size:10px;color:var(--sub);margin-bottom:3px">CE MOIS</div><div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--teal);line-height:1" id="rcur">—</div></div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--sub);margin-bottom:3px">OBJECTIF JUIN</div><div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--amber);line-height:1">10k</div></div>
       </div>
+      <div style="display:flex;gap:8px;"><input type="number" id="rev-in" placeholder="Revenu ce mois (€)"><button class="btn bsm" onclick="saveRevenu()" style="white-space:nowrap">Sauv.</button></div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="cbar" style="background:var(--coral)"></div><div class="card-title">Règles non-négociables</div></div>
+      <div class="ct"><div class="cdot" style="background:var(--coral)"></div>Règles non-négociables</div>
       <div class="rules">
-        <div class="rule"><div class="rule-acc" style="background:var(--coral)"></div><div><div class="rule-name">1 soirée max / mois</div><div class="rule-desc">Le lendemain : travail quand même</div></div></div>
-        <div class="rule"><div class="rule-acc" style="background:var(--teal)"></div><div><div class="rule-name">Pas d'Uber Eats 4x/sem</div><div class="rule-desc">Batch cook dimanche</div></div></div>
-        <div class="rule"><div class="rule-acc" style="background:var(--amber)"></div><div><div class="rule-name">Téléphone hors du lit</div><div class="rule-desc">Chargeur dans une autre pièce</div></div></div>
-        <div class="rule"><div class="rule-acc" style="background:var(--purple)"></div><div><div class="rule-name">Coupure 18h–20h30</div><div class="rule-desc">Ce créneau appartient à ta mère et toi</div></div></div>
-        <div class="rule"><div class="rule-acc" style="background:var(--green)"></div><div><div class="rule-name">Discord calé → switch OFM</div><div class="rule-desc">Pas de procrastination</div></div></div>
+        <div class="rule"><div class="racc" style="background:var(--coral)"></div><div><div class="rt">1 soirée max / mois</div><div class="rs">Le lendemain : travail quand même</div></div></div>
+        <div class="rule"><div class="racc" style="background:var(--teal)"></div><div><div class="rt">Pas d'Uber Eats 4x/sem</div><div class="rs">Batch cook dimanche</div></div></div>
+        <div class="rule"><div class="racc" style="background:var(--amber)"></div><div><div class="rt">Téléphone hors du lit</div><div class="rs">Chargeur dans une autre pièce</div></div></div>
+        <div class="rule"><div class="racc" style="background:var(--purple)"></div><div><div class="rt">Coupure 18h–20h30</div><div class="rs">Ce créneau appartient à ta mère et toi</div></div></div>
+        <div class="rule"><div class="racc" style="background:var(--green)"></div><div><div class="rt">Discord calé → switch OFM</div><div class="rs">Pas de procrastination</div></div></div>
       </div>
     </div>
   </div>
@@ -701,18 +552,18 @@ header {
 
 <!-- ══ REVIEW ══ -->
 <div class="section" id="sec-review">
-  <div class="sec-label"><span>Review vendredi</span></div>
+  <div class="sec"><span>Review vendredi</span></div>
   <div class="card">
-    <div class="card-head"><div class="cbar" style="background:var(--amber)"></div><div class="card-title">Bilan hebdo</div><div class="card-right" style="font-size:10px;color:var(--sub2)">10 min · chaque vendredi soir</div></div>
-    <div class="review-grid">
-      <div><span class="rv-lbl">✅ Winning move</span><textarea class="rv-ta" id="rv-win" rows="4" placeholder="Ce qui a généré du cash..."></textarea></div>
-      <div><span class="rv-lbl">🚧 Ce qui a bloqué</span><textarea class="rv-ta" id="rv-block" rows="4" placeholder="Obstacles, distractions..."></textarea></div>
-      <div><span class="rv-lbl">🎯 Focus S+1</span><textarea class="rv-ta" id="rv-next" rows="4" placeholder="1 priorité absolue..."></textarea></div>
+    <div class="ct"><div class="cdot" style="background:var(--amber)"></div>Bilan hebdo <span style="margin-left:auto;font-size:10px;color:var(--sub2)">10 min · chaque vendredi soir</span></div>
+    <div class="rvgrid">
+      <div class="rvf"><label>✅ Winning move</label><textarea id="rv-win" rows="4" placeholder="Ce qui a généré du cash..."></textarea></div>
+      <div class="rvf"><label>🚧 Ce qui a bloqué</label><textarea id="rv-block" rows="4" placeholder="Obstacles, distractions..."></textarea></div>
+      <div class="rvf"><label>🎯 Focus S+1</label><textarea id="rv-next" rows="4" placeholder="1 priorité absolue..."></textarea></div>
     </div>
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
       <div>
-        <span class="rv-lbl" style="margin-bottom:8px">Soirées ce mois</span>
-        <div class="soiree-wrap">
+        <div style="font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px">Soirées ce mois</div>
+        <div class="soiree-btns">
           <button class="soiree-btn" onclick="setSoiree(0)">0</button>
           <button class="soiree-btn" onclick="setSoiree(1)">1 ✓</button>
           <button class="soiree-btn" onclick="setSoiree(2)">2+</button>
@@ -723,14 +574,13 @@ header {
   </div>
 </div>
 
-</div><!-- shell -->
+</div>
 
-<!-- BOTTOM NAV -->
 <nav class="bnav">
-  <button class="bnav-btn active" id="nav-today"    onclick="showSec('today')"><span class="bnav-ico">⚡</span>Aujourd'hui</button>
-  <button class="bnav-btn"        id="nav-planning" onclick="showSec('planning')"><span class="bnav-ico">📅</span>Planning</button>
-  <button class="bnav-btn"        id="nav-revenus"  onclick="showSec('revenus')"><span class="bnav-ico">💰</span>Revenus</button>
-  <button class="bnav-btn"        id="nav-review"   onclick="showSec('review')"><span class="bnav-ico">📝</span>Review</button>
+  <button class="bnav-btn active" id="nav-today" onclick="showSection('today')"><span class="bnav-icon">⚡</span>Aujourd'hui</button>
+  <button class="bnav-btn" id="nav-planning" onclick="showSection('planning')"><span class="bnav-icon">📅</span>Planning</button>
+  <button class="bnav-btn" id="nav-revenus" onclick="showSection('revenus')"><span class="bnav-icon">💰</span>Revenus</button>
+  <button class="bnav-btn" id="nav-review" onclick="showSection('review')"><span class="bnav-icon">📝</span>Review</button>
 </nav>
 
 <script type="module">
@@ -746,184 +596,194 @@ const app = initializeApp({
   appId:"1:922707066056:web:4b1a5107c16b7ddd56f9fd"
 });
 const db = getFirestore(app);
-const todayKey  = () => new Date().toISOString().slice(0,10);
-const monthKey  = () => new Date().toISOString().slice(0,7);
+const todayKey = () => new Date().toISOString().slice(0,10);
+const monthKey = () => new Date().toISOString().slice(0,7);
+const fmt = n => n.toLocaleString('fr-FR') + ' €';
 
-// ── utils ────────────────────────────────────────────────────────────────────
-function toast(msg='✓ Sauvegardé'){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
-function syncSt(s){
-  const d=document.getElementById('sdot'),l=document.getElementById('slbl');
-  if(s==='on'){d.className='sdot on';l.textContent='sync';}
-  else if(s==='sv'){d.className='sdot sv';l.textContent='...';}
-  else{d.className='sdot';l.textContent='offline';}
-}
-async function saveD(path,data){
-  syncSt('sv');
-  try{ await setDoc(doc(db,path),data,{merge:true}); syncSt('on'); toast(); }
-  catch(e){ syncSt(''); toast('⚠ Erreur'); }
-}
-async function loadD(path){
-  try{ const s=await getDoc(doc(db,path)); syncSt('on'); return s.exists()?s.data():{}; }
-  catch(e){ syncSt(''); return {}; }
-}
+function toast(msg='✓ Sauvegardé'){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function syncSt(s){const d=document.getElementById('sdot'),l=document.getElementById('slbl');if(s==='on'){d.className='sdot on';l.textContent='sync';}else if(s==='sv'){d.className='sdot sv';l.textContent='...';}else{d.className='sdot';l.textContent='offline';}}
+async function saveD(path,data){syncSt('sv');try{await setDoc(doc(db,path),data,{merge:true});syncSt('on');toast();}catch(e){syncSt('');toast('⚠ Erreur');}}
+async function loadD(path){try{const s=await getDoc(doc(db,path));syncSt('on');return s.exists()?s.data():{};}catch(e){syncSt('');return{};}}
 
-// ── nav ──────────────────────────────────────────────────────────────────────
-window.showSec = sec => {
+// NAV
+window.showSection = sec => {
   ['today','planning','revenus','review'].forEach(s=>{
     document.getElementById('sec-'+s)?.classList.toggle('vis',s===sec);
     document.getElementById('nav-'+s)?.classList.toggle('active',s===sec);
   });
 };
 
-// ── clock ────────────────────────────────────────────────────────────────────
+// CLOCK
 function tick(){
   const n=new Date();
-  document.getElementById('clock').textContent   = n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  document.getElementById('datestr').textContent = n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('tdate').textContent   = todayKey();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('datestr').textContent=n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('tdate').textContent=todayKey();
 }
-setInterval(tick,1000); tick();
+setInterval(tick,1000);tick();
 
-// ── timeline ─────────────────────────────────────────────────────────────────
-const SLOTS=[
-  {t:'7:30', n:'Réveil',          s:"Eau · pas téléphone",   c:'#f59e0b', i:0},
-  {t:'8:00', n:'Café ☕',         s:'Avant la salle',         c:'#f59e0b', i:0},
-  {t:'8:30', n:'Basic Fit',       s:'Tapis 30min · v3.5',     c:'#22c55e', i:1},
-  {t:'9:30', n:'Douche froide',   s:'30 sec froid',           c:'#22c55e', i:0},
-  {t:'9:45', n:'Shaker whey 🥤',  s:'Post-salle',             c:'#22c55e', i:0},
-  {t:'10:00',n:'DISCORD matin',   s:'Pilotage · acq.',        c:'#00d4aa', i:1},
-  {t:'12:00',n:'Déjeuner',        s:'Cuisiné · pas UE',       c:'#f59e0b', i:0},
-  {t:'12:30',n:'Pause libre',     s:'RS · amis · recharge',   c:'#6b6456', i:0},
-  {t:'14:00',n:'DISCORD aprèm',   s:'→ OFM si calé',          c:'#00d4aa', i:1},
-  {t:'14:30',n:'Red Bull 🔴',      s:'Boost bloc',             c:'#f43f5e', i:0},
-  {t:'16:00',n:'OFM si dispo',    s:'Selon Discord',          c:'#a78bfa', i:0},
-  {t:'18:00',n:'Cuisine + repas', s:'Maman · coupure',        c:'#f43f5e', i:1},
-  {t:'19:30',n:'Télé maman',      s:'Déconnexion totale',     c:'#f43f5e', i:0},
-  {t:'20:30',n:'OFM soir',        s:'DMs US · modèles',       c:'#a78bfa', i:1},
-  {t:'23:30',n:'Skincare 🧴',     s:'Routine soin',           c:'#3b82f6', i:0},
-  {t:'23:45',n:'Lecture 📖',      s:'15 min · pas écran',     c:'#3b82f6', i:0},
-  {t:'0:00', n:'Dodo 😴',         s:'Téléphone hors du lit',  c:'#453f34', i:0},
+// ── RULE MODAL ──
+const DEFAULT_RULE = "Tu dois exécuter l'entièreté de ta routine.";
+window.closeRuleModal = () => {
+  document.getElementById('rule-modal').classList.add('hidden');
+  localStorage.setItem('modal_'+todayKey(),'1');
+};
+window.saveRule = async () => {
+  const txt = document.getElementById('rule-input').value.trim();
+  if(!txt) return;
+  document.getElementById('rule-text').textContent = txt;
+  document.getElementById('rule-edit').classList.remove('vis');
+  await saveD('settings/rule', {text: txt});
+};
+async function initModal(){
+  // Show immediately with default rule — no Firebase wait
+  if(!localStorage.getItem('modal_'+todayKey())){
+    document.getElementById('rule-modal').classList.remove('hidden');
+  }
+  // Load custom rule from Firebase in background
+  try {
+    const d = await loadD('settings/rule');
+    const rule = d.text || DEFAULT_RULE;
+    document.getElementById('rule-text').textContent = rule;
+    document.getElementById('rule-input').value = rule;
+  } catch(e) {}
+}
+initModal();
+
+// ── ROUTINE DATA ──
+const R = [
+  {t:'7:30', l:'Réveil',          s:"Eau · pas téléphone",   c:'#fcd34d', i:0, dur:'~5 min',
+   desc:"Premier geste de la journée : un grand verre d'eau avant tout. Ton corps est déshydraté après 7-8h de sommeil.",
+   why:"Réhydrater le corps dès le réveil améliore la clarté mentale. Pas de téléphone les 10 premières minutes — tu choisis ton humeur toi-même.",
+   tips:["Prépare le verre d'eau la veille au bord du lit","10 min sans téléphone = tu pars du bon pied","Ouvre les volets, laisse entrer la lumière naturelle"]},
+  {t:'8:00', l:'Café ☕',         s:'Avant la salle',        c:'#fcd34d', i:0, dur:'~10 min',
+   desc:"Café noir + éventuellement un pre-workout léger. Pas de vrai repas — tu t'entraînes à jeun pour maximiser la lipolyse.",
+   why:"La caféine avant le cardio à jeun augmente le brûlage de graisses et booste les performances sans interférer avec l'entraînement.",
+   tips:["Café noir sans sucre pour maximiser l'effet","Prépare ta tenue la veille pour pas perdre de temps","Hydrate-toi aussi — eau + café"]},
+  {t:'8:30', l:'Basic Fit',       s:'Tapis 30min · v3.5',   c:'#4ade80', i:1, dur:'~60 min transport inclus',
+   desc:"Tapis de marche incliné, 30 minutes, vitesse 3.5. Cardio zone 2 — tu dois pouvoir parler sans être essoufflé.",
+   why:"Le cardio zone 2 à jeun est optimal pour la perte de graisses sans catabolisme musculaire. C'est aussi le meilleur investissement mental de ta journée — clarté, dopamine, discipline.",
+   tips:["Écoute un podcast business ou de la musique motivante","Inclinaison entre 8 et 12 pour brûler plus sans impact articulaire","Régularité > intensité : 6j/7 à v3.5 bat 2j/7 à fond"]},
+  {t:'9:30', l:'Douche froide',   s:'30 sec froid',          c:'#4ade80', i:0, dur:'~15 min',
+   desc:"Douche normale + 30 secondes d'eau froide à la fin. Pas plus, pas moins.",
+   why:"L'eau froide libère de la noradrénaline, réduit l'inflammation musculaire et te met dans un état d'alerte optimal pour démarrer le travail.",
+   tips:["Commence tiède, finis froid progressivement","30 sec froid suffisent — pas besoin d'en faire plus","Respire lentement pendant le froid pour rester calme"]},
+  {t:'9:45', l:'Shaker 🥤',       s:'Post-salle',            c:'#4ade80', i:0, dur:'~5 min',
+   desc:"Shaker de whey protéine dans les 30 minutes post-entraînement. 1 scoop (25-30g) dans 250ml d'eau froide.",
+   why:"La fenêtre anabolique : ton corps reconstruit le muscle. Les protéines stoppent le catabolisme. Sans ça, ton cardio à jeun détruit autant de muscle que de graisse.",
+   tips:["MyProtein ou Foodspring — whey basique, pas besoin de payer cher","Bois le shaker avant le café, pas après","Saveur chocolat ou vanille pour que ce soit pas une corvée"]},
+  {t:'10:00',l:'DISCORD matin',   s:'Pilotage · acq.',       c:'#00d4aa', i:1, dur:'2h (10h–12h)',
+   desc:"Premier bloc de travail Discord. Focus sur le pilotage (métriques, membres, churn), la création de contenu, et l'acquisition de nouveaux membres.",
+   why:"Le matin c'est ton pic cognitif — réserve ce temps pour les tâches qui demandent de la réflexion et de la créativité. L'acquisition le matin = résultats visibles dans la journée.",
+   tips:["Lance le bloc sans checker les notifs d'abord","Une seule tâche prioritaire avant 11h","Si t'as une idée de contenu, note-la immédiatement"]},
+  {t:'12:00',l:'Déjeuner',        s:'Cuisiné · pas UE',      c:'#fcd34d', i:0, dur:'~30 min',
+   desc:"Repas cuisiné, pas de livraison. Idéalement préparé en batch cook le dimanche.",
+   why:"La junk food plombe l'énergie cognitive pendant 2-3h. Un repas propre maintient ta glycémie stable pour l'aprèm. Tu économises aussi 400-600€/mois.",
+   tips:["Riz + poulet + légumes — simple et efficace","Batch cook le dimanche = zéro effort lundi au vendredi","Mange loin de l'écran, c'est ta vraie pause"]},
+  {t:'12:30',l:'Pause libre',     s:'RS · amis · recharge',  c:'#6b6256', i:0, dur:'30 min (12h30–13h)',
+   desc:"Pause libre et déconnectée. Réseaux sociaux, réponses aux amis, musique, sortie rapide. Pose une alarme pour 13h.",
+   why:"Le cerveau a besoin de décompresser entre deux blocs intensifs. Une vraie pause améliore la concentration du bloc suivant.",
+   tips:["Alarme obligatoire à 13h — sans ça 30 min deviennent 1h30","Pas de contenu business pendant cette pause — vrai repos","Si possible, marche 10 min dehors"]},
+  {t:'14:00',l:'DISCORD aprèm',   s:'→ OFM si calé',         c:'#00d4aa', i:1, dur:'2h+ (14h–16h)',
+   desc:"Second bloc Discord — approfondissement, prospection active, réponses membres. Si Discord est calé, switch OFM directement.",
+   why:"Le Red Bull à 14h30 recharge l'énergie. C'est le moment des tâches plus mécaniques — répondre, prospecter, exécuter.",
+   tips:["Si Discord tourne bien à 15h30-16h, switch OFM sans hésiter","Commence par une micro-tâche de 2 min pour vaincre la procrastination post-déjeuner","Ferme les onglets non nécessaires"]},
+  {t:'14:30',l:'Red Bull 🔴',      s:'Boost bloc',            c:'#fb7185', i:0, dur:'~5 min',
+   desc:"Red Bull classique, 250ml. Pris au début du bloc aprèm pour maximiser l'effet sur la durée.",
+   why:"La caféine met 20-30 min à agir. En le prenant à 14h30, tu es au pic à 15h-15h30 — exactement quand la fatigue post-déjeuner commence à peser.",
+   tips:["Bois de l'eau en parallèle — la caféine déshydrate","Pas de Red Bull après 18h sinon le sommeil est impacté","Alterne avec un café froid 2-3 fois/semaine pour éviter la tolérance"]},
+  {t:'16:00',l:'OFM si dispo',    s:'Selon Discord',         c:'#b197fc', i:0, dur:'Variable (16h–18h)',
+   desc:"Bloc OFM anticipé si Discord est calé avant 16h. Recrutement modèles, optimisation DMs, analytics.",
+   why:"En France à 16h il est 10h à New York. Les modèles commencent à être actives, les fans aussi. Meilleur moment pour les DMs avant le pic du soir.",
+   tips:["Prépare tes scripts DMs à l'avance pour aller vite","Analyse les performances de la veille avant de commencer","Focus sur 1-2 modèles max si tu démarres — qualité > quantité"]},
+  {t:'18:00',l:'Cuisine + repas', s:'Maman · coupure',       c:'#fb7185', i:1, dur:'1h30 (18h–19h30)',
+   desc:"Tu cuisines et tu dînes avec ta mère. Coupure totale des écrans professionnels. Ce créneau est sacré.",
+   why:"C'est ton ancre quotidienne. Un entrepreneur qui tient sur la durée a besoin de rituels humains. Ce moment te recentre et protège ta santé mentale.",
+   tips:["Téléphone en silencieux pendant le repas","Cuisine simple — pas besoin de recettes complexes","Ce créneau NE SE DÉPLACE PAS même si Discord est chaud"]},
+  {t:'19:30',l:'Télé maman',      s:'Déconnexion totale',    c:'#fb7185', i:0, dur:'1h (19h30–20h30)',
+   desc:"Télé avec ta mère. Déconnexion totale. Aucun écran de travail, aucune notification.",
+   why:"Ce n'est pas du temps perdu — c'est de la récupération active. Ton cerveau traite les infos de la journée. Tu vas démarrer le bloc OFM bien plus frais.",
+   tips:["Résiste à l'envie de checker les stats pendant la pub","C'est le moment où tu recharges émotionnellement","Prépare mentalement le bloc OFM dans ta tête — pas sur l'écran"]},
+  {t:'20:30',l:'OFM soir',        s:'DMs US · modèles',      c:'#b197fc', i:1, dur:'3h (20h30–23h30)',
+   desc:"Bloc OFM principal. DMs avec les fans (heure US optimale), gestion des modèles, contenu PPV, analytics revenus.",
+   why:"20h30 France = 14h30 New York = 11h30 Los Angeles. Pic d'activité des fans sur OnlyFans. Meilleur taux de réponse et de conversion de la journée.",
+   tips:["Scripts DMs préparés = 3x plus de volume à qualité égale","Analyse le taux de conversion par modèle chaque semaine","Délègue les DMs répétitifs à des chatters dès que possible pour scaler"]},
+  {t:'23:30',l:'Skincare 🧴',     s:'Routine soin',          c:'#60a5fa', i:0, dur:'~15 min',
+   desc:"Routine skincare complète. Nettoyage, hydratation. Déconnexion totale des écrans business.",
+   why:"Le skincare est un signal à ton cerveau que la journée de travail est terminée. Ce rituel de transition est psychologiquement important pour la qualité du sommeil.",
+   tips:["Garder la routine simple : nettoyant + hydratant = suffit","Lumière tamisée pendant ce rituel pour préparer le sommeil","C'est le moment où tu mentalement fermes la journée"]},
+  {t:'23:45',l:'Lecture 📖',      s:'15 min · pas écran',    c:'#60a5fa', i:0, dur:'15 min (23h45–0h00)',
+   desc:"15 minutes de lecture, livre physique uniquement. Pas d'écran, pas de podcast. Un vrai livre.",
+   why:"La lecture avant le sommeil réduit le temps d'endormissement de 40%. Elle remplace le scroll qui maintient le cerveau en état d'alerte.",
+   tips:["Livre de chevet — toujours le même endroit pour créer le rituel","Business, biographie, développement : du contenu qui nourrit","Si tu t'endors en lisant c'est parfait"]},
+  {t:'0:00', l:'Dodo 😴',         s:'Téléphone hors lit',    c:'#4a4038', i:0, dur:'Toute la nuit',
+   desc:"Téléphone en charge hors de la chambre ou en mode avion. Objectif : 7h à 7h30 de sommeil.",
+   why:"Le sommeil consolide tout ce que t'as appris et décidé dans la journée. Un entrepreneur qui dort mal prend de mauvaises décisions. C'est ton investissement le plus rentable.",
+   tips:["Téléphone hors de portée du lit — règle non-négociable","Chambre fraîche (18-19°C) pour un sommeil plus profond","Si tu t'endors pas en 20 min, c'est probablement trop de caféine"]},
 ];
+
+// ── TIMELINE ──
 function buildTL(){
   const n=new Date(), nm=n.getHours()*60+n.getMinutes();
   const toM=s=>{const[h,m]=s.split(':').map(Number);return h*60+(m||0);};
   let ai=-1;
-  for(let i=0;i<SLOTS.length-1;i++){
-    if(nm>=toM(SLOTS[i].t)&&nm<toM(SLOTS[i+1].t)){ai=i;break;}
-  }
-  if(ai>=0) document.getElementById('tl-now-label').textContent='▶ '+SLOTS[ai].n;
-  document.getElementById('timeline').innerHTML=SLOTS.map((r,i)=>`
-    <div class="tl-item ${r.i?'big':''}" onclick="openSlotModal(${i})" style="cursor:pointer">
+  for(let i=0;i<R.length-1;i++){if(nm>=toM(R[i].t)&&nm<toM(R[i+1].t)){ai=i;break;}}
+  document.getElementById('tl-now-lbl').textContent=ai>=0?'▶ '+R[ai].l:'';
+  document.getElementById('timeline').innerHTML=R.map((r,i)=>`
+    <div class="tl-slot ${r.i?'imp':''}" onclick="openSlotModal(${i})">
       <div class="tl-dot ${i===ai?'now':''}" style="background:${r.c}"></div>
       <div class="tl-card ${i===ai?'now':''} ${r.i?'imp':''}" style="${r.i?'border-left-color:'+r.c:''}">
         <div class="tl-time">${r.t}</div>
-        <div class="tl-name" style="color:${r.i||i===ai?r.c:'var(--text)'}">${r.n}</div>
+        <div class="tl-name" style="color:${r.i||i===ai?r.c:'var(--text)'}">${r.l}</div>
         <div class="tl-sub">${r.s}</div>
       </div>
     </div>`).join('');
 }
-buildTL(); setInterval(buildTL,60000);
+buildTL();setInterval(buildTL,60000);
 
-// ── rule modal ───────────────────────────────────────────────────────────────
-const DEFAULT_RULE = "Tu dois exécuter l'entièreté de ta routine.";
-async function initModal(){
-  const d=await loadD('settings/rule');
-  const rule=d.text||DEFAULT_RULE;
-  document.getElementById('modal-rule').textContent=rule;
-  document.getElementById('rule-input').value=rule;
-  if(!localStorage.getItem('modal_'+todayKey()))
-    document.getElementById('rule-overlay').classList.remove('hidden');
-}
-window.closeModal=()=>{
-  document.getElementById('rule-overlay').classList.add('hidden');
-  localStorage.setItem('modal_'+todayKey(),'1');
+// ── SLOT MODAL ──
+window.openSlotModal = idx => {
+  const r = R[idx];
+  if(!r) return;
+  document.getElementById('slot-time').textContent = r.t;
+  document.getElementById('slot-time').style.color = r.c;
+  document.getElementById('slot-title').textContent = r.l;
+  document.getElementById('slot-title').style.color = r.c;
+  document.getElementById('slot-dur').textContent = '⏱ ' + r.dur;
+  document.getElementById('slot-hd').style.background = r.c + '12';
+  document.getElementById('slot-hd').style.borderBottom = '1px solid ' + r.c + '33';
+  document.getElementById('slot-desc').textContent = r.desc;
+  document.getElementById('slot-why').textContent = r.why;
+  document.getElementById('slot-tips').innerHTML = r.tips.map(tip =>
+    `<div class="slot-tip"><div class="slot-tip-dot" style="background:${r.c}"></div><span>${tip}</span></div>`).join('');
+  document.getElementById('slot-modal').classList.remove('hidden');
 };
-window.toggleEdit=()=>document.getElementById('edit-area').classList.toggle('vis');
-window.saveRule=async()=>{
-  const txt=document.getElementById('rule-input').value.trim();
-  if(!txt)return;
-  document.getElementById('modal-rule').textContent=txt;
-  await saveD('settings/rule',{text:txt});
-  document.getElementById('edit-area').classList.remove('vis');
-};
-initModal();
 
-// ── tracker ──────────────────────────────────────────────────────────────────
-let TD={};
-async function initTracker(){
-  TD=await loadD('trackers/'+todayKey());
-  renderSB('e-btns','energie','#00d4aa');
-  renderSB('m-btns','mental','#a78bfa');
-  renderFood();
-}
-function renderSB(id,key,color){
-  const v=TD[key];
-  document.getElementById(id).innerHTML=Array.from({length:10},(_,i)=>{
-    const n=i+1,on=v===n;
-    return `<button class="score-btn${on?' on':''}" style="${on?'background:'+color+';border-color:'+color+';':''}"
-      onclick="setScore('${key}',${n},'${color}','${id}')">${n}</button>`;
-  }).join('');
-}
-function renderFood(){
-  const v=TD.food;
-  document.getElementById('fb-junk').className ='food-btn'+(v==='junk'?' junk':'');
-  document.getElementById('fb-ok').className   ='food-btn'+(v==='ok'?' ok':'');
-  document.getElementById('fb-clean').className='food-btn'+(v==='clean'?' clean':'');
-}
-window.setScore=async(key,val,color,id)=>{TD[key]=val;renderSB(id,key,color);await saveD('trackers/'+todayKey(),TD);};
-window.setFood=async(v)=>{TD.food=v;renderFood();await saveD('trackers/'+todayKey(),TD);};
-initTracker();
-
-// ── snus ─────────────────────────────────────────────────────────────────────
-const SNUS_T=['10h','13h','14h30','20h30','22h'];
-let SC=0;
-async function initSnus(){const d=await loadD('snus/'+todayKey());SC=d.count||0;renderSnus();}
-function renderSnus(){
-  document.getElementById('snus-row').innerHTML=SNUS_T.map((t,i)=>`
-    <button class="snus-btn${i<SC?' on':''}" onclick="setSnus(${i+1})">
-      ${i+1}<span class="snus-time-lbl">${t}</span>
-    </button>`).join('');
-  document.getElementById('snus-ct').textContent=SC+'/5';
-}
-window.setSnus=async(n)=>{SC=SC===n?n-1:n;renderSnus();await saveD('snus/'+todayKey(),{count:SC});};
-initSnus();
-
-// ── checks ───────────────────────────────────────────────────────────────────
-const CHECKS=[
-  {id:'sleep',   n:'Dodo avant 0h30',       ico:'😴', t:'0h'},
-  {id:'wake',    n:'Levé à 7h30',           ico:'⏰', t:'7h30'},
-  {id:'sport',   n:'Salle faite',           ico:'🏃', t:'8h30'},
-  {id:'food',    n:'Bien mangé (pas junk)', ico:'🥗', t:'midi'},
-  {id:'discord', n:'Bloc Discord fait',     ico:'💬', t:'10h–16h'},
-  {id:'ofm',     n:'Bloc OFM fait',         ico:'💜', t:'20h30'},
+// ── CHECKS ──
+const CHECKS = [
+  {id:'sleep',   label:'Dodo avant 0h30',       icon:'😴', time:'0h00'},
+  {id:'wake',    label:'Levé à 7h30',           icon:'⏰', time:'7h30'},
+  {id:'sport',   label:'Salle faite',           icon:'🏃', time:'8h30'},
+  {id:'food',    label:'Bien mangé (pas junk)', icon:'🥗', time:'midi'},
+  {id:'discord', label:'Bloc Discord fait',     icon:'💬', time:'10h–16h'},
+  {id:'ofm',     label:'Bloc OFM fait',         icon:'💜', time:'20h30'},
 ];
-const MSGS=['Commence ta journée 💪','En route… 🔥','À mi-chemin ⚡','Bien joué 💪','Presque parfait 🔥','Journée parfaite 🏆'];
-let CD={};
-async function initChecks(){
-  CD=await loadD('checks/'+todayKey());
-  renderChecks();
-}
+const MSGS = ['Commence ta journée 💪','En route… 🔥','À mi-chemin 💪','Presque parfait ⚡','Belle journée 🔥','Journée parfaite 🏆'];
+let CD = {};
+
+async function initChecks(){CD=await loadD('checks/'+todayKey());renderChecks();}
 function renderChecks(){
-  document.getElementById('checks').innerHTML=CHECKS.map(c=>{
+  document.getElementById('checks-list').innerHTML=CHECKS.map(c=>{
     const s=CD[c.id];
     const cls=s===true?'done':s===false?'fail':'';
-    const ico=s===true?'✓':s===false?'✗':c.ico;
-    return `<div class="check ${cls}" onclick="toggleCheck('${c.id}')">
-      <div class="check-ico">${ico}</div>
-      <div class="check-body">
-        <div class="check-name">${c.n}</div>
-        <div class="check-time">${c.t}</div>
-      </div>
-      <div class="check-status">${s===true?'✅':s===false?'❌':''}</div>
+    const ico=s===true?'✓':s===false?'✗':c.icon;
+    return `<div class="ck ${cls}" onclick="toggleCheck('${c.id}')">
+      <div class="ck-glow"></div>
+      <div class="ck-icon">${ico}</div>
+      <div class="ck-body"><div class="ck-label">${c.label}</div><div class="ck-time">${c.time}</div></div>
+      <div class="ck-state">${s===true?'✅':s===false?'❌':''}</div>
     </div>`;
   }).join('');
-  updateScore();
-}
-function updateScore(){
   const done=CHECKS.filter(c=>CD[c.id]===true).length;
   const pct=Math.round((done/6)*100);
   const color=done>=5?'var(--green)':done>=3?'var(--amber)':'var(--coral)';
@@ -931,10 +791,9 @@ function updateScore(){
   document.getElementById('score-fill').style.background=color;
   document.getElementById('score-num').textContent=done+'/6';
   document.getElementById('score-num').style.color=color;
-  document.getElementById('check-count').textContent=done+'/6';
   document.getElementById('score-msg').textContent=MSGS[Math.min(done,5)];
 }
-window.toggleCheck=async(id)=>{
+window.toggleCheck = async id => {
   const cur=CD[id];
   if(cur===undefined)CD[id]=true;
   else if(cur===true)CD[id]=false;
@@ -942,80 +801,116 @@ window.toggleCheck=async(id)=>{
   renderChecks();
   await saveD('checks/'+todayKey(),CD);
   loadChart();
+  computeStreak();
 };
 initChecks();
 
-// ── streak ───────────────────────────────────────────────────────────────────
-async function loadStreak(){
-  const days=[];const now=new Date();
-  for(let i=59;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
-  const res=await Promise.all(days.map(d=>loadD('checks/'+d)));
-  const scores=res.map(data=>(!data||!Object.keys(data).length)?null:CHECKS.filter(c=>data[c.id]===true).length);
-  let cur=0;
-  for(let i=scores.length-1;i>=0;i--){if(scores[i]!==null&&scores[i]>=5)cur++;else break;}
-  let best=0,tmp=0;
-  scores.forEach(s=>{if(s!==null&&s>=5){tmp++;best=Math.max(best,tmp);}else tmp=0;});
-  document.getElementById('streak-cur').textContent=cur;
-  document.getElementById('streak-best').textContent=best>0?best+'j':'—';
+// ── TRACKER ──
+let TD={};
+async function initTracker(){TD=await loadD('trackers/'+todayKey());renderSB('e-btns','energie','#00d4aa');renderSB('m-btns','mental','#b197fc');renderFood();}
+function renderSB(id,key,color){
+  const v=TD[key];
+  document.getElementById(id).innerHTML=Array.from({length:10},(_,i)=>{
+    const n=i+1,on=v===n;
+    return `<button class="sb ${on?'on':''}" style="${on?'background:'+color+';border-color:'+color+';':''}" onclick="setScore('${key}',${n},'${color}','${id}')">${n}</button>`;
+  }).join('');
 }
-loadStreak();
+window.setScore=async(key,val,color,id)=>{TD[key]=val;renderSB(id,key,color);await saveD('trackers/'+todayKey(),TD);};
+window.setFood=async v=>{TD.food=v;renderFood();await saveD('trackers/'+todayKey(),TD);};
+function renderFood(){
+  const v=TD.food;
+  document.getElementById('fb-junk').className='fb'+(v==='junk'?' junk':'');
+  document.getElementById('fb-ok').className='fb'+(v==='ok'?' ok':'');
+  document.getElementById('fb-clean').className='fb'+(v==='clean'?' clean':'');
+}
+initTracker();
 
-// ── chart 30j ────────────────────────────────────────────────────────────────
-let chartDays=[],chartData=[];
+// ── SNUS ──
+const SNUS_T=['10h','13h','14h30','20h30','22h'];
+let SC=0;
+async function initSnus(){const d=await loadD('snus/'+todayKey());SC=d.count||0;renderSnus();}
+function renderSnus(){
+  document.getElementById('snus-row').innerHTML=SNUS_T.map((t,i)=>
+    `<button class="snusbtn ${i<SC?'on':''}" onclick="setSnus(${i+1})">${i+1}<span class="snus-t">${t}</span></button>`).join('');
+  document.getElementById('snus-ct').textContent=SC+'/5';
+}
+window.setSnus=async n=>{SC=SC===n?n-1:n;renderSnus();await saveD('snus/'+todayKey(),{count:SC});};
+initSnus();
+
+// ── CHART 30J ──
+let chartDays=[],chartScores=[],chartData=[];
 async function loadChart(){
   const days=[],now=new Date();
   for(let i=29;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
-  const [checkRes,trackerRes]=await Promise.all([
+  const [checks,trackers]=await Promise.all([
     Promise.all(days.map(d=>loadD('checks/'+d))),
-    Promise.all(days.map(d=>loadD('trackers/'+d))),
+    Promise.all(days.map(d=>loadD('trackers/'+d)))
   ]);
   chartDays=days;
-  chartData=checkRes.map((ch,i)=>({checks:ch||{},tracker:trackerRes[i]||{},score:(!ch||!Object.keys(ch).length)?null:CHECKS.filter(c=>ch[c.id]===true).length}));
+  chartScores=checks.map(data=>{
+    if(!data||Object.keys(data).length===0)return null;
+    return CHECKS.filter(c=>data[c.id]===true).length;
+  });
+  chartData=checks.map((c,i)=>({checks:c||{},tracker:trackers[i]||{}}));
   renderChart();
 }
 function renderChart(){
-  const scores=chartData.map(d=>d.score);
-  document.getElementById('chart').innerHTML=scores.map((s,i)=>{
-    if(s===null)return`<div class="bar" style="height:4px;background:var(--b2);opacity:.3" onclick="showDay(${i})"></div>`;
+  document.getElementById('wchart').innerHTML=chartScores.map((s,i)=>{
+    if(s===null)return`<div class="wbar" style="height:4px;background:var(--b2);opacity:.3" onclick="showDay(${i})"></div>`;
     const h=Math.max(5,Math.round((s/6)*68));
-    const color=s>=5?'var(--green)':s>=3?'var(--amber)':'var(--coral)';
-    return`<div class="bar" style="height:${h}px;background:${color}" onclick="showDay(${i})"></div>`;
+    const col=s>=5?'var(--green)':s>=3?'var(--amber)':'var(--coral)';
+    const d=new Date(chartDays[i]).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+    return`<div class="wbar" style="height:${h}px;background:${col}" onclick="showDay(${i})" title="${d}: ${s}/6"></div>`;
   }).join('');
-  document.getElementById('chart-labels').innerHTML=chartDays.map((d,i)=>{
+  document.getElementById('wlbls').innerHTML=chartDays.map((d,i)=>{
     if(i%5!==0)return`<span style="flex:1"></span>`;
     return`<span style="flex:1;white-space:nowrap">${new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>`;
   }).join('');
-  const week=scores.slice(-7).filter(s=>s!==null);
-  const avg=week.length?Math.round(week.reduce((a,b)=>a+b,0)/week.length*10)/10:null;
-  let best=0,tmp=0;scores.forEach(s=>{if(s!==null&&s>=5){tmp++;best=Math.max(best,tmp);}else tmp=0;});
-  const good=scores.filter(s=>s!==null&&s>=5).length;
-  document.getElementById('c-week').textContent=avg!==null?avg+'/6':'—';
-  document.getElementById('c-streak').textContent=best>0?best+'j':'—';
-  document.getElementById('c-month').textContent=good>0?good+'j':'—';
+  const wk=chartScores.slice(-7).filter(s=>s!==null);
+  const avg=wk.length?Math.round(wk.reduce((a,b)=>a+b,0)/wk.length*10)/10:null;
+  let best=0,cur=0;
+  chartScores.forEach(s=>{if(s!==null&&s>=5){cur++;best=Math.max(best,cur);}else cur=0;});
+  const mo=chartScores.filter(s=>s!==null&&s>=5).length;
+  document.getElementById('w-avg').textContent=avg!==null?avg+'/6':'—';
+  document.getElementById('w-streak').textContent=best>0?best+'j':'—';
+  document.getElementById('w-month').textContent=mo>0?mo+'j':'—';
 }
-window.showDay=i=>{
-  const d=chartDays[i],dat=chartData[i];
-  const dateStr=new Date(d).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('day-title').textContent=dateStr;
-  const sc=dat.score,t=dat.tracker;
-  const scColor=sc===null?'var(--sub)':sc>=5?'var(--green)':sc>=3?'var(--amber)':'var(--coral)';
-  const food={junk:'🍔 Junk',ok:'🥗 Correct',clean:'✅ Propre'};
+window.showDay = idx => {
+  const day=chartDays[idx],s=chartScores[idx],d=chartData[idx]||{checks:{},tracker:{}};
+  const t=d.tracker,fmap={junk:'🍔 Junk',ok:'🥗 Correct',clean:'✅ Propre'};
+  const sc=s!==null?s+'/6':'—',scCol=s===null?'var(--sub)':s>=5?'var(--green)':s>=3?'var(--amber)':'var(--coral)';
+  document.getElementById('day-date').textContent=new Date(day).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('day-stats').innerHTML=`
-    <div class="day-stat"><div class="day-stat-val" style="color:${scColor}">${sc!==null?sc+'/6':'—'}</div><div class="day-stat-lbl">Score</div></div>
-    <div class="day-stat"><div class="day-stat-val" style="color:var(--teal)">${t.energie||'—'}</div><div class="day-stat-lbl">⚡ Énergie</div></div>
-    <div class="day-stat"><div class="day-stat-val" style="color:var(--purple)">${t.mental||'—'}</div><div class="day-stat-lbl">🧠 Mental</div></div>
-    <div class="day-stat"><div class="day-stat-val" style="font-size:14px">${food[t.food]||'—'}</div><div class="day-stat-lbl">🍽️ Alim.</div></div>`;
+    <div class="day-stat"><div class="day-stat-v" style="color:${scCol}">${sc}</div><div class="day-stat-l">Score</div></div>
+    <div class="day-stat"><div class="day-stat-v" style="color:var(--teal)">${t.energie||'—'}</div><div class="day-stat-l">⚡ Énergie</div></div>
+    <div class="day-stat"><div class="day-stat-v" style="color:var(--purple)">${t.mental||'—'}</div><div class="day-stat-l">🧠 Mental</div></div>
+    <div class="day-stat"><div class="day-stat-v" style="font-size:13px">${fmap[t.food]||'—'}</div><div class="day-stat-l">🍽️ Alim.</div></div>`;
   document.getElementById('day-checks').innerHTML=CHECKS.map(c=>{
-    const s=dat.checks[c.id];
-    const color=s===true?'var(--green)':s===false?'var(--coral)':'var(--sub)';
-    return`<div class="day-check-row"><span>${s===true?'✅':s===false?'❌':'○'}</span><span style="color:${color}">${c.n}</span></div>`;
+    const cs=d.checks[c.id],col=cs===true?'var(--green)':cs===false?'var(--coral)':'var(--sub)',ico=cs===true?'✅':cs===false?'❌':'○';
+    return`<div class="day-check-row"><span>${ico}</span><span style="color:${col}">${c.label}</span></div>`;
   }).join('');
-  document.getElementById('day-overlay').classList.remove('hidden');
+  document.getElementById('day-modal').classList.remove('hidden');
 };
-window.closeDayModal=()=>document.getElementById('day-overlay').classList.add('hidden');
 loadChart();
 
-// ── sales ─────────────────────────────────────────────────────────────────────
+// ── STREAK ──
+async function computeStreak(){
+  const days=[],now=new Date();
+  for(let i=59;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+  const results=await Promise.all(days.map(d=>loadD('checks/'+d)));
+  const scores=results.map(data=>{
+    if(!data||Object.keys(data).length===0)return null;
+    return CHECKS.filter(c=>data[c.id]===true).length;
+  });
+  let cur=0;for(let i=scores.length-1;i>=0;i--){if(scores[i]!==null&&scores[i]>=5)cur++;else break;}
+  let best=0,tmp=0;scores.forEach(s=>{if(s!==null&&s>=5){tmp++;best=Math.max(best,tmp);}else tmp=0;});
+  document.getElementById('streak-cur').textContent=cur;
+  document.getElementById('streak-best').textContent=best>0?best+'j':'—';
+  document.querySelector('.streak-fire').style.filter=cur===0?'grayscale(.6)':'none';
+}
+computeStreak();
+
+// ── SALES ──
 let salesData={sales:[]};
 async function initSales(){
   const mk=monthKey();
@@ -1025,86 +920,126 @@ async function initSales(){
   renderSales();
 }
 function renderSales(){
-  const s=salesData.sales||[];
+  const sales=salesData.sales||[];
   const tot={discord:0,ofm:0,refund:0};
-  s.forEach(x=>{if(tot[x.source]!==undefined)tot[x.source]+=x.amount;});
+  sales.forEach(s=>{if(tot[s.source]!==undefined)tot[s.source]+=s.amount;});
   const total=tot.discord+tot.ofm+tot.refund;
-  document.getElementById('sales-total').textContent=total.toLocaleString('fr-FR')+' €';
-  document.getElementById('src-discord').textContent=tot.discord.toLocaleString('fr-FR')+' €';
-  document.getElementById('src-ofm').textContent=tot.ofm.toLocaleString('fr-FR')+' €';
-  document.getElementById('src-refund').textContent=tot.refund.toLocaleString('fr-FR')+' €';
-  const colors={discord:'var(--tdim)',ofm:'var(--pdim)',refund:'var(--adim)'};
-  const tColors={discord:'var(--teal)',ofm:'var(--purple)',refund:'var(--amber)'};
-  const labels={discord:'💬 Discord',ofm:'💜 OFM',refund:'🛡️ Refund'};
-  document.getElementById('sales-entries').innerHTML=[...s].reverse().map((x,ri)=>{
-    const orig=s.length-1-ri;
-    return`<div class="sale-row">
-      <span class="sale-badge" style="background:${colors[x.source]};color:${tColors[x.source]}">${labels[x.source]}</span>
-      <span class="sale-date">${x.date||''}</span>
-      <span class="sale-val" style="color:${tColors[x.source]}">${x.amount.toLocaleString('fr-FR')} €</span>
-      <button class="sale-del" onclick="deleteSale(${orig})">×</button>
+  document.getElementById('sales-total').textContent=fmt(total);
+  document.getElementById('src-discord').textContent=fmt(tot.discord);
+  document.getElementById('src-ofm').textContent=fmt(tot.ofm);
+  document.getElementById('src-refund').textContent=fmt(tot.refund);
+  const cols={discord:'var(--tdim)',ofm:'var(--pdim)',refund:'var(--adim)'};
+  const tcols={discord:'var(--teal)',ofm:'var(--purple)',refund:'var(--amber)'};
+  const lbls={discord:'💬 Discord',ofm:'💜 OFM',refund:'🛡️ Refund'};
+  document.getElementById('sales-list').innerHTML=[...sales].reverse().map((s,ri)=>{
+    const oi=sales.length-1-ri;
+    return`<div class="sale-item">
+      <span class="sale-badge" style="background:${cols[s.source]};color:${tcols[s.source]}">${lbls[s.source]}</span>
+      <span class="sale-date">${s.date||''}</span>
+      <span class="sale-amt" style="color:${tcols[s.source]}">${s.amount.toLocaleString('fr-FR')} €</span>
+      <button class="sale-del" onclick="delSale(${oi})">×</button>
     </div>`;
-  }).join('')||'<div style="font-size:11px;color:var(--sub);text-align:center;padding:12px">Aucune vente ce mois</div>';
+  }).join('')||'<div style="font-size:11px;color:var(--sub);text-align:center;padding:10px">Aucune vente ce mois</div>';
 }
 window.addSale=async()=>{
-  const amt=parseInt(document.getElementById('sale-amount').value);
-  const src=document.getElementById('sale-source').value;
-  if(isNaN(amt)||amt<=0)return;
+  const amount=parseInt(document.getElementById('sale-amount').value);
+  const source=document.getElementById('sale-src').value;
+  if(isNaN(amount)||amount<=0)return;
   const today=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-  salesData.sales.push({amount:amt,source:src,date:today});
+  salesData.sales.push({amount,source,date:today});
   document.getElementById('sale-amount').value='';
   renderSales();
   await saveD('sales/'+monthKey(),salesData);
 };
-window.deleteSale=async(idx)=>{
-  salesData.sales.splice(idx,1);renderSales();
-  await saveD('sales/'+monthKey(),salesData);
-};
+window.delSale=async idx=>{salesData.sales.splice(idx,1);renderSales();await saveD('sales/'+monthKey(),salesData);};
 initSales();
 
-// ── planning tabs ─────────────────────────────────────────────────────────────
+// ── TABS ──
 window.switchTab=tab=>{
-  ['d','o','r'].forEach(t=>{
-    document.getElementById('tc-'+t).classList.remove('vis');
-    document.getElementById('tb-'+t).className='tab';
-  });
+  ['discord','ofm','refund'].forEach(t=>{document.getElementById('tc-'+t).classList.remove('vis');document.getElementById('tb-'+t).className='tab';});
   document.getElementById('tc-'+tab).classList.add('vis');
-  document.getElementById('tb-'+tab).className='tab '+(tab==='d'?'td':tab==='o'?'to':'tr');
+  document.getElementById('tb-'+tab).className='tab '+(tab==='discord'?'td':tab==='ofm'?'to':'tr');
 };
 
-// ── revenus ──────────────────────────────────────────────────────────────────
+// ── REVENUS ──
 const MO=[{m:'Jan',t:3000},{m:'Fév',t:5000},{m:'Mar',t:7000},{m:'Avr',t:8000},{m:'Mai',t:9000},{m:'Jun',t:10000},{m:'Jul',t:15000},{m:'Aoû',t:20000},{m:'Sep',t:28000},{m:'Oct',t:35000},{m:'Nov',t:42000},{m:'Déc',t:50000}];
+const MONTH_NAMES=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 let RD={};
-async function initRev(){RD=await loadD('revenus/2025');renderRev();updateObjBar(RD);const c=RD[new Date().getMonth()];if(c)document.getElementById('rev-in').value=c;}
+
+function updateObjBar(){
+  const total=Object.values(RD).reduce((a,b)=>a+(typeof b==='number'?b:0),0);
+  const pct=Math.min(100,Math.round((total/50000)*100));
+  document.getElementById('obj-bar').style.width=pct+'%';
+  document.getElementById('obj-pct').textContent=pct+"% de l'objectif";
+  document.getElementById('obj-total').textContent=total.toLocaleString('fr-FR')+' €';
+}
+
+async function initRev(){
+  RD=await loadD('revenus/2025');
+  renderRev();updateObjBar();
+  const c=RD[new Date().getMonth()];
+  if(c)document.getElementById('rev-in').value=c;
+}
 function renderRev(){
   const cur=new Date().getMonth(),max=50000;
-  document.getElementById('rev-chart').innerHTML=MO.map((r,i)=>{
+  document.getElementById('rbars').innerHTML=MO.map((r,i)=>{
     const a=RD[i],mile=r.t===10000||r.t===50000,isc=i===cur;
     const col=mile?'var(--amber)':isc?'var(--teal)':'var(--b2)';
     const th=Math.round((r.t/max)*76),ah=a?Math.round((a/max)*76):0;
-    return`<div class="rev-bw">
+    return`<div class="rbw">
       <div style="font-size:8px;font-weight:600;color:${col}">${a?(a>=1000?(a/1000).toFixed(0)+'k':a):''}</div>
       <div style="position:relative;width:100%;height:${th}px">
-        <div class="rev-bar" style="height:100%;background:var(--b1);position:absolute;bottom:0;width:100%"></div>
-        ${a?`<div class="rev-bar" style="height:${ah}px;background:${col};position:absolute;bottom:0;width:100%"></div>`:''}
+        <div class="rb" style="height:100%;background:var(--b1);position:absolute;bottom:0;width:100%"></div>
+        ${a?`<div class="rb" style="height:${ah}px;background:${col};position:absolute;bottom:0;width:100%"></div>`:''}
         <div style="height:1px;background:${col};opacity:${mile?.5:.15};position:absolute;top:0;width:100%"></div>
       </div>
     </div>`;
   }).join('');
-  document.getElementById('rev-months').innerHTML=MO.map((r,i)=>`<span style="flex:1;text-align:center;color:${i===cur?'var(--teal)':'var(--sub)'}">${r.m}</span>`).join('');
+  document.getElementById('rmonths').innerHTML=MO.map((r,i)=>`<span style="flex:1;text-align:center;color:${i===new Date().getMonth()?'var(--teal)':'var(--sub)'}">${r.m}</span>`).join('');
   const c=RD[new Date().getMonth()];
-  document.getElementById('rev-cur').textContent=c?(c>=1000?(c/1000).toFixed(1)+'k':c+'€'):'—';
+  document.getElementById('rcur').textContent=c?(c>=1000?(c/1000).toFixed(1)+'k':c+'€'):'—';
 }
-window.saveRevenu=async()=>{const v=parseInt(document.getElementById('rev-in').value);if(isNaN(v))return;RD[new Date().getMonth()]=v;renderRev();updateObjBar(RD);await saveD('revenus/2025',RD);};
+window.saveRevenu=async()=>{
+  const v=parseInt(document.getElementById('rev-in').value);
+  if(isNaN(v))return;
+  RD[new Date().getMonth()]=v;renderRev();updateObjBar();
+  await saveD('revenus/2025',RD);
+};
+
+// PAST MONTHS MODAL
+window.buildPastGrid=()=>{
+  const curMonth=new Date().getMonth();
+  document.getElementById('past-grid').innerHTML=MONTH_NAMES.slice(0,curMonth+1).map((name,i)=>{
+    const val=RD[i]||'';
+    return`<div class="past-item">
+      <div class="past-month-name">${name}</div>
+      <input type="number" id="pm-${i}" placeholder="0 €" value="${val}">
+      ${val?`<div class="past-item-val">${(val/1000).toFixed(1)}k €</div>`:''}
+    </div>`;
+  }).join('');
+};
+window.savePastMonths=async()=>{
+  const curMonth=new Date().getMonth();
+  for(let i=0;i<=curMonth;i++){
+    const input=document.getElementById('pm-'+i);
+    if(!input)continue;
+    const v=parseInt(input.value);
+    if(!isNaN(v)&&v>0)RD[i]=v;
+    else if(input.value==='')delete RD[i];
+  }
+  renderRev();updateObjBar();
+  await saveD('revenus/2025',RD);
+  document.getElementById('past-modal').classList.add('hidden');
+};
 initRev();
 
-// ── review ───────────────────────────────────────────────────────────────────
+// ── REVIEW ──
 let RV={};
 async function initReview(){
   RV=await loadD('reviews/'+monthKey());
-  if(RV.win)  document.getElementById('rv-win').value=RV.win;
+  if(RV.win)document.getElementById('rv-win').value=RV.win;
   if(RV.block)document.getElementById('rv-block').value=RV.block;
-  if(RV.next) document.getElementById('rv-next').value=RV.next;
+  if(RV.next)document.getElementById('rv-next').value=RV.next;
   if(RV.soiree!==undefined)renderSoiree(RV.soiree);
 }
 window.saveReview=async()=>{
@@ -1113,194 +1048,13 @@ window.saveReview=async()=>{
   RV.next=document.getElementById('rv-next').value;
   await saveD('reviews/'+monthKey(),RV);
 };
-window.setSoiree=async(n)=>{RV.soiree=n;renderSoiree(n);await saveD('reviews/'+monthKey(),RV);};
+window.setSoiree=async n=>{RV.soiree=n;renderSoiree(n);await saveD('reviews/'+monthKey(),RV);};
 function renderSoiree(n){
   document.querySelectorAll('.soiree-btn').forEach((b,i)=>{
-    const a=i===n;
-    b.style.background=a?(n<=1?'var(--green)':'var(--coral)'):'';
-    b.style.color=a?'#000':'';
-    b.style.borderColor=a?(n<=1?'var(--green)':'var(--coral)'):'';
+    const a=i===n;b.style.background=a?(n<=1?'var(--green)':'var(--coral)'):'';b.style.color=a?'#000':'';b.style.borderColor=a?(n<=1?'var(--green)':'var(--coral)'):'';
   });
 }
 initReview();
-
-// ── SLOT DETAILS ──────────────────────────────────────────────────────────
-const SLOT_DETAILS = [
-  {
-    dur: '~5 min',
-    desc: "Premier geste de la journée : boire un grand verre d'eau avant tout. Ton corps est déshydraté après 7-8h de sommeil.",
-    why: "Réhydrater le corps dès le réveil améliore la clarté mentale et l'énergie dès les premières minutes. Pas de téléphone les 10 premières minutes — tu protèges ton état mental de départ.",
-    tips: ["Prépare le verre d'eau la veille au bord du lit", "10 min sans téléphone = tu choisis ton humeur toi-même", "Ouvre les volets, laisse entrer la lumière naturelle"]
-  },
-  {
-    dur: '~10 min',
-    desc: "Café + éventuellement un pre-workout léger avant la salle. Pas de vrai repas — tu vas t'entraîner à jeun.",
-    why: "La caféine avant le cardio à jeun augmente la lipolyse (brûlage de graisses) et booste les performances. L'entraînement à jeun avec glycogènes bas force le corps à puiser dans les réserves lipidiques.",
-    tips: ["Café noir sans sucre pour maximiser l'effet", "Prépare ta tenue la veille pour pas perdre de temps", "Hydrate-toi bien aussi — eau + café"]
-  },
-  {
-    dur: '~60 min (transport inclus)',
-    desc: "Tapis de marche incliné, 30 minutes, vitesse 3.5. Cardio zone 2 — tu dois pouvoir parler sans être essoufflé.",
-    why: "Le cardio zone 2 à jeun est optimal pour la perte de graisses sans catabolisme musculaire excessif. C'est aussi le meilleur investissement mental de ta journée — clarté, dopamine, discipline.",
-    tips: ["Écoute un podcast business ou de la musique motivante", "Inclinaison entre 8 et 12 — plus c'est incliné, plus tu brûles sans impact articulaire", "Régularité > intensité : 6j/7 à vitesse 3.5 bat 2j/7 à fond"]
-  },
-  {
-    dur: '~15 min',
-    desc: "Douche normale + 30 secondes d'eau froide à la fin. Pas plus, pas moins.",
-    why: "L'eau froide en fin de douche libère de la noradrénaline, réduit l'inflammation musculaire post-effort et te met dans un état d'alerte optimal pour démarrer le travail.",
-    tips: ["Commence tiède, finis froid progressivement", "30 sec froid c'est suffisant — pas besoin d'en faire plus", "Respire lentement pendant le froid pour rester calme"]
-  },
-  {
-    dur: '~5 min',
-    desc: "Shaker de whey protéine dans les 30 minutes post-entraînement. 1 scoop (25-30g) dans 250ml d'eau froide.",
-    why: "La fenêtre anabolique post-effort : ton corps est en phase de reconstruction musculaire. Les protéines stoppent le catabolisme et lancent la synthèse protéique. Sans ça, ton cardio à jeun détruit autant de muscle que de graisse.",
-    tips: ["MyProtein ou Foodspring — whey basique, pas besoin de payer cher", "Bois le shaker avant le café, pas après", "Saveur chocolat ou vanille pour que ce soit pas une corvée"]
-  },
-  {
-    dur: '2h (10h–12h)',
-    desc: "Premier bloc de travail Discord. Focus sur le pilotage (métriques, membres actifs, churn), la création de contenu à valeur ajoutée, et l'acquisition de nouveaux membres.",
-    why: "Le matin c'est ton pic cognitif — réserve ce temps pour les tâches qui demandent de la réflexion et de la créativité. L'acquisition le matin = résultats visibles dans la journée.",
-    tips: ["Lance le bloc sans checker les notifs d'abord", "Une seule tâche prioritaire avant 11h", "Si t'as une idée de contenu qui convertit, note-la immédiatement"]
-  },
-  {
-    dur: '~30 min',
-    desc: "Repas cuisiné, pas de livraison. Idéalement préparé en batch cook le dimanche pour ne pas avoir à réfléchir le midi.",
-    why: "La junk food te plombe l'énergie cognitive pendant 2-3h après le repas. Un repas propre maintient ta glycémie stable et ta concentration pour l'aprèm. Tu économises aussi 400-600€/mois.",
-    tips: ["Riz + poulet + légumes — simple et efficace", "Batch cook le dimanche = zéro effort lundi au vendredi", "Mange loin de ton écran, c'est ta vraie pause"]
-  },
-  {
-    dur: '30 min (12h30–13h)',
-    desc: "Pause libre et déconnectée. Réseaux sociaux, réponses aux amis, musique, sortie rapide. Pose une alarme pour 13h.",
-    why: "Le cerveau a besoin de décompresser entre deux blocs de travail intensifs. Une vraie pause améliore la concentration du bloc suivant. Sans coupure, tu travailles mais tu n'es plus vraiment là.",
-    tips: ["Alarme obligatoire à 13h — sans ça 30 min deviennent 1h30", "Pas de contenu business pendant cette pause — vrai repos", "Si possible, marche 10 min dehors — ça recharge mieux que le scroll"]
-  },
-  {
-    dur: '2h+ (14h–16h ou plus)',
-    desc: "Second bloc Discord — approfondissement des tâches commencées le matin, prospection active, réponses membres. Si Discord est calé, switch OFM directement.",
-    why: "Le Red Bull à 14h30 recharge l'énergie pour ce bloc. C'est le moment où tu peux faire les tâches plus mécaniques — répondre, prospecter, exécuter — sans avoir besoin du pic cognitif du matin.",
-    tips: ["Si Discord tourne bien à 15h30-16h, switch OFM sans hésiter", "Bats-toi contre la procrastination post-déjeuner avec une micro-tâche de 2 min pour démarrer", "Ferme les onglets non nécessaires avant de commencer"]
-  },
-  {
-    dur: '~5 min',
-    desc: "Red Bull classique, 250ml. Pris au début du bloc aprèm pour maximiser l'effet sur la durée du bloc.",
-    why: "La caféine met 20-30 min à agir. En le prenant à 14h30, tu es au pic d'effet à 15h-15h30 — exactement quand la fatigue post-déjeuner commence à peser. Combiné avec le café du matin, surveille l'accumulation de caféine.",
-    tips: ["Bois de l'eau en parallèle — la caféine déshydrate", "Pas de Red Bull après 18h sinon le sommeil est impacté", "Si tu sens que ça devient une dépendance, remplace 2-3 fois/semaine par un café froid"]
-  },
-  {
-    dur: 'Variable (16h–18h)',
-    desc: "Bloc OFM anticipé si Discord est calé avant 16h. Recrutement modèles, optimisation DMs, analytics.",
-    why: "Le timing US : en France à 16h il est 10h à New York, 7h en Californie. Les modèles commencent à être actives, les fans aussi. C'est le meilleur moment pour les DMs avant le pic du soir.",
-    tips: ["Prépare tes scripts DMs à l'avance pour aller vite", "Analyse les performances de la veille avant de commencer", "Focus sur 1-2 modèles max si tu démarres — qualité > quantité"]
-  },
-  {
-    dur: '1h30 (18h–19h30)',
-    desc: "Tu cuisines et tu dînes avec ta mère. Coupure totale des écrans professionnels. Ce créneau est sacré.",
-    why: "C'est ton ancre quotidienne. Un entrepreneur qui tient sur la durée a besoin de rituels humains en dehors du boulot. Ce moment te recentre, te nourrit (au sens propre et figuré) et protège ta santé mentale sur le long terme.",
-    tips: ["Téléphone en silencieux pendant le repas", "Cuisine simple — pas besoin de recettes complexes", "Ce créneau NE SE DÉPLACE PAS même si Discord est chaud"]
-  },
-  {
-    dur: '1h (19h30–20h30)',
-    desc: "Télé avec ta mère. Déconnexion totale. Aucun écran de travail, aucune notification.",
-    why: "Ce n'est pas du temps perdu — c'est de la récupération active. Ton cerveau traite les informations de la journée en mode passif. Tu vas démarrer le bloc OFM bien plus frais qu'en travaillant non-stop.",
-    tips: ["Résiste à l'envie de 'jeter un œil' aux stats pendant la pub", "C'est aussi le moment où tu recharges émotionnellement", "Si tu veux préparer mentalement le bloc OFM, fais-le dans ta tête — pas sur l'écran"]
-  },
-  {
-    dur: '3h (20h30–23h30)',
-    desc: "Bloc OFM principal. DMs avec les fans (heure US optimale), gestion des modèles, contenu PPV, analytics revenus.",
-    why: "20h30 en France = 14h30 New York = 11h30 Los Angeles. C'est le pic d'activité des fans sur OnlyFans. Les DMs envoyés maintenant ont le meilleur taux de réponse et de conversion de la journée.",
-    tips: ["Scripts DMs préparés = 3x plus de volume à qualité égale", "Analyse le taux de conversion par modèle chaque semaine", "Délègue les DMs répétitifs à des chatters dès que possible pour scaler"]
-  },
-  {
-    dur: '~15 min',
-    desc: "Routine skincare complète. Nettoyage, hydratation, contour des yeux si tu en as. Déconnexion totale des écrans business.",
-    why: "Le skincare c'est pas vanité — c'est un signal à ton cerveau que la journée de travail est terminée. Ce rituel de transition est psychologiquement important pour la qualité du sommeil.",
-    tips: ["Garder la routine simple : nettoyant + hydratant = suffit", "Lumière tamisée pendant ce rituel pour préparer le sommeil", "C'est le moment où tu mentalement 'fermes' la journée"]
-  },
-  {
-    dur: '15 min (23h45–0h00)',
-    desc: "15 minutes de lecture, livre physique uniquement. Pas d'écran, pas de podcast. Un vrai livre.",
-    why: "La lecture avant le sommeil réduit le temps d'endormissement de 40% selon les études. Elle remplace le scroll qui maintient le cerveau en état d'alerte. C'est aussi un investissement intellectuel — 15 min/jour = 5-6 livres par an.",
-    tips: ["Livre de chevet — toujours le même endroit pour créer le rituel", "Business, biographie, développement : du contenu qui nourrit", "Si tu t'endors en lisant c'est parfait — le sommeil arrive naturellement"]
-  },
-  {
-    dur: 'Toute la nuit',
-    desc: "Téléphone en charge hors de la chambre ou en mode avion. Objectif : 7h à 7h30 de sommeil.",
-    why: "Le sommeil c'est quand ton cerveau consolide tout ce que t'as appris et décidé dans la journée. Un entrepreneur qui dort mal prend de mauvaises décisions. C'est littéralement ton investissement le plus rentable.",
-    tips: ["Téléphone hors de portée du lit — règle non-négociable", "Chambre fraîche (18-19°C) pour un sommeil plus profond", "Si tu t'endors pas en 20 min, c'est probablement trop de caféine ou d'écran le soir"]
-  },
-];
-
-
-// ── OBJECTIVE BAR ─────────────────────────────────────────────────────────
-function updateObjBar(rd) {
-  const total = Object.values(rd).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0);
-  const target = 50000;
-  const pct = Math.min(100, Math.round((total / target) * 100));
-  document.getElementById('obj-bar').style.width = pct + '%';
-  document.getElementById('obj-pct').textContent = pct + "% de l'objectif annuel";
-  document.getElementById('obj-total').textContent = total.toLocaleString('fr-FR') + ' €';
-}
-
-// ── PAST MONTHS MODAL ─────────────────────────────────────────────────────
-const MONTH_NAMES = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-
-window.openPastModal = () => {
-  const curMonth = new Date().getMonth();
-  const grid = document.getElementById('past-grid');
-  grid.innerHTML = MONTH_NAMES.slice(0, curMonth + 1).map((name, i) => {
-    const val = RD[i] || '';
-    return `<div class="past-item">
-      <div class="past-item-month">${name}</div>
-      <input type="number" id="pm-${i}" placeholder="0 €" value="${val}">
-      ${val ? `<div class="past-item-val">${(val/1000).toFixed(1)}k €</div>` : ''}
-    </div>`;
-  }).join('');
-  document.getElementById('past-modal').classList.remove('hidden');
-};
-
-window.closePastModal = () => document.getElementById('past-modal').classList.add('hidden');
-
-window.savePastMonths = async () => {
-  const curMonth = new Date().getMonth();
-  for (let i = 0; i <= curMonth; i++) {
-    const input = document.getElementById('pm-' + i);
-    if (input) {
-      const v = parseInt(input.value);
-      if (!isNaN(v) && v > 0) RD[i] = v;
-      else if (input.value === '' || v === 0) delete RD[i];
-    }
-  }
-  renderRev();
-  updateObjBar(RD);
-  await saveD('revenus/2025', RD);
-  closePastModal();
-};
-
-window.openSlotModal = idx => {
-  const r = SLOTS[idx];
-  const detail = SLOT_DETAILS[idx];
-  if (!detail || !r) return;
-  const color = r.c;
-
-  document.getElementById('sm-time').textContent = r.t;
-  document.getElementById('sm-time').style.color = color;
-  document.getElementById('sm-title').textContent = r.n;
-  document.getElementById('sm-title').style.color = color;
-  document.getElementById('sm-dur').textContent = '⏱ ' + detail.dur;
-  document.getElementById('sm-desc').textContent = detail.desc;
-  document.getElementById('sm-why').textContent = detail.why;
-  document.getElementById('sm-tips').innerHTML = detail.tips.map(tip =>
-    `<div class="slot-tip"><div class="slot-tip-dot" style="background:${color}"></div><span>${tip}</span></div>`
-  ).join('');
-
-  // Color the header
-  document.querySelector('.slot-modal-header').style.borderBottom = '1px solid ' + color + '33';
-  document.querySelector('.slot-modal-header').style.background = color + '0d';
-
-  document.getElementById('slot-modal').classList.remove('hidden');
-};
-window.closeSlotModal = () => document.getElementById('slot-modal').classList.add('hidden');
-
 </script>
 </body>
 </html>
