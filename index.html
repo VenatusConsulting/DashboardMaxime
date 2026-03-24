@@ -343,6 +343,10 @@ input[type=number]:focus{border-color:var(--teal);}
     <div class="day-stats" id="day-stats"></div>
     <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px">Checks</div>
     <div class="day-checks" id="day-checks"></div>
+    <div id="day-note-wrap" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--b1);">
+      <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px">Note du jour</div>
+      <div id="day-note-text" style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic;background:var(--s2);border-radius:8px;padding:10px 12px;"></div>
+    </div>
   </div>
 </div>
 
@@ -452,6 +456,11 @@ input[type=number]:focus{border-color:var(--teal);}
           <button class="fb" id="fb-ok" onclick="setFood('ok')">🥗<br><span style="font-size:10px">Correct</span></button>
           <button class="fb" id="fb-clean" onclick="setFood('clean')">✅<br><span style="font-size:10px">Propre</span></button>
         </div>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--b1);">
+        <span class="score-lbl" style="display:block;margin-bottom:7px;">📝 Note du jour</span>
+        <textarea id="day-note" rows="3" placeholder="Comment tu te sens ? Ce qui s'est bien passé, ce qui a bloqué, ton état d'esprit..." onblur="saveNote()" style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:11px 13px;resize:none;outline:none;transition:border-color .2s;line-height:1.6;"></textarea>
+        <button onclick="saveNote()" style="margin-top:8px;padding:7px 16px;border-radius:8px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">Sauvegarder la note</button>
       </div>
     </div>
 
@@ -830,7 +839,13 @@ initChecks();
 
 // ── TRACKER ──
 let TD={};
-async function initTracker(){TD=await loadD('trackers/'+todayKey());renderSB('e-btns','energie','#00d4aa');renderSB('m-btns','mental','#b197fc');renderFood();}
+async function initTracker(){
+  TD=await loadD('trackers/'+todayKey());
+  renderSB('e-btns','energie','#00d4aa');
+  renderSB('m-btns','mental','#b197fc');
+  renderFood();
+  if(TD.note) document.getElementById('day-note').value=TD.note;
+}
 function renderSB(id,key,color){
   const v=TD[key];
   document.getElementById(id).innerHTML=Array.from({length:10},(_,i)=>{
@@ -840,6 +855,18 @@ function renderSB(id,key,color){
 }
 window.setScore=async(key,val,color,id)=>{TD[key]=val;renderSB(id,key,color);await saveD('trackers/'+todayKey(),TD);};
 window.setFood=async v=>{TD.food=v;renderFood();await saveD('trackers/'+todayKey(),TD);};
+
+window.saveNote=async()=>{
+  const note=document.getElementById('day-note').value.trim();
+  TD.note=note;
+  await saveD('trackers/'+todayKey(),TD);
+  // Visual feedback
+  const btn=document.querySelector('button[onclick="saveNote()"]');
+  btn.textContent='✓ Sauvegardé';
+  btn.style.background='var(--teal)';
+  btn.style.color='#000';
+  setTimeout(()=>{btn.textContent='Sauvegarder la note';btn.style.background='var(--tdim)';btn.style.color='var(--teal)';},2000);
+};
 function renderFood(){
   const v=TD.food;
   document.getElementById('fb-junk').className='fb'+(v==='junk'?' junk':'');
@@ -912,6 +939,15 @@ window.showDay = idx => {
     const cs=d.checks[c.id],col=cs===true?'var(--green)':cs===false?'var(--coral)':'var(--sub)',ico=cs===true?'✅':cs===false?'❌':'○';
     return`<div class="day-check-row"><span>${ico}</span><span style="color:${col}">${c.label}</span></div>`;
   }).join('');
+  // Show note if exists
+  const noteWrap=document.getElementById('day-note-wrap');
+  const noteText=document.getElementById('day-note-text');
+  if(t.note){
+    noteWrap.style.display='block';
+    noteText.textContent='"'+t.note+'"';
+  } else {
+    noteWrap.style.display='none';
+  }
   document.getElementById('day-modal').classList.remove('hidden');
 };
 loadChart();
