@@ -1263,6 +1263,81 @@ window.savePlanDay = async (tab, idx) => {
 
 initPlanning();
 
+// ── EXPORT GOOGLE SHEETS ──────────────────────────────────────────────────
+async function initExport() {
+  const d = await loadD('settings/sheets');
+  if (d.url) document.getElementById('sheets-url').value = d.url;
+}
+
+window.saveSheetUrl = async () => {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) return;
+  await saveD('settings/sheets', { url });
+  document.getElementById('export-status').textContent = '✓ URL sauvegardée';
+  document.getElementById('export-status').style.color = 'var(--green)';
+};
+
+window.showAppsScript = () => {
+  document.getElementById('apps-modal').classList.remove('hidden');
+};
+
+window.copyAppsScript = () => {
+  const code = document.getElementById('apps-code').textContent;
+  navigator.clipboard.writeText(code).then(() => toast('✓ Code copié'));
+};
+
+window.exportToSheets = async () => {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) {
+    document.getElementById('export-status').textContent = "⚠ Configure d'abord l'URL Apps Script";
+    document.getElementById('export-status').style.color = 'var(--coral)';
+    return;
+  }
+  const btn = document.getElementById('export-btn');
+  btn.textContent = '⏳ Export...';
+  btn.disabled = true;
+  document.getElementById('export-status').textContent = '';
+  try {
+    const today = todayKey(), mk = monthKey();
+    const [tracker, checks, sales, revenus, snusData] = await Promise.all([
+      loadD('trackers/' + today), loadD('checks/' + today),
+      loadD('sales/' + mk), loadD('revenus/2025'), loadD('snus/' + today),
+    ]);
+    const days = [], now = new Date();
+    for (let i = 29; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate()-i); days.push(d.toISOString().slice(0,10)); }
+    const chartResults = await Promise.all(days.map(d => loadD('checks/'+d)));
+    const scores = chartResults.map(data => {
+      if (!data || Object.keys(data).length === 0) return null;
+      return ['sleep','wake','sport','food','discord','ofm'].filter(c => data[c] === true).length;
+    });
+    let streakCur = 0;
+    for (let i = scores.length-1; i >= 0; i--) { if (scores[i] !== null && scores[i] >= 5) streakCur++; else break; }
+    let best = 0, tmp = 0;
+    scores.forEach(s => { if (s !== null && s >= 5) { tmp++; best = Math.max(best, tmp); } else tmp = 0; });
+    const wk = scores.slice(-7).filter(s => s !== null);
+    const weekAvg = wk.length ? Math.round(wk.reduce((a,b)=>a+b,0)/wk.length*10)/10 : null;
+    const monthScore = scores.filter(s => s !== null && s >= 5).length;
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date: today, month: mk, tracker, checks, snus: snusData.count||0, sales, revenus, streak: { cur: streakCur, best, weekAvg, monthScore } }),
+      mode: 'no-cors'
+    });
+    btn.textContent = '📊 Exporter maintenant';
+    btn.disabled = false;
+    document.getElementById('export-status').textContent = '✓ Envoyé — vérifie ton Google Sheet';
+    document.getElementById('export-status').style.color = 'var(--green)';
+    toast('✓ Export envoyé');
+  } catch(e) {
+    btn.textContent = '📊 Exporter maintenant';
+    btn.disabled = false;
+    document.getElementById('export-status').textContent = '⚠ Erreur : ' + e.message;
+    document.getElementById('export-status').style.color = 'var(--coral)';
+  }
+};
+
+initExport();
+
 </script>
 </body>
 </html>
