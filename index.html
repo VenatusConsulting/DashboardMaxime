@@ -584,116 +584,20 @@ input[type=number]:focus{border-color:var(--teal);}
   <!-- EXPORT -->
   <div class="sec"><span>Export données</span></div>
   <div class="card" style="margin-bottom:12px;">
-    <div class="ct"><div class="cdot" style="background:var(--green)"></div>Google Sheets <span style="margin-left:auto;font-size:10px;color:var(--sub)">sync toutes tes métriques</span></div>
-    <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:200px;">
-        <div style="font-size:11px;color:var(--sub);margin-bottom:8px;line-height:1.7">Configure une fois, exporte en un clic.<br>Tracker · Checks · Ventes · Revenus · Streak.</div>
-        <div style="margin-bottom:10px;">
-          <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);display:block;margin-bottom:5px;">URL Apps Script</label>
-          <input type="url" id="sheets-url" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:9px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:9px 12px;outline:none;transition:border-color .2s;">
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn bsm" onclick="saveSheetUrl()" style="border-color:var(--sub);color:var(--sub);background:transparent;">Sauvegarder l'URL</button>
-          <button class="btn bsm" onclick="exportToSheets()" id="export-btn">📊 Exporter maintenant</button>
-        </div>
-        <div id="export-status" style="font-size:11px;color:var(--sub);margin-top:8px;min-height:16px;"></div>
-      </div>
-      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:12px 14px;font-size:11px;line-height:1.8;min-width:200px;">
-        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-bottom:8px;">Setup (1 fois)</div>
-        <div style="color:var(--text)">1. Ouvre <span style="color:var(--teal)">script.google.com</span></div>
-        <div style="color:var(--text)">2. Nouveau projet</div>
-        <div style="color:var(--text)">3. Colle le code Apps Script</div>
-        <div style="color:var(--text)">4. Déployer → Application web</div>
-        <div style="color:var(--text)">5. Copie l'URL ici</div>
-        <button onclick="showAppsScript()" style="margin-top:10px;padding:6px 12px;border-radius:7px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;">Voir le code Apps Script</button>
-      </div>
+    <div class="ct"><div class="cdot" style="background:var(--green)"></div>Export CSV <span style="margin-left:auto;font-size:10px;color:var(--sub)">ouvrir dans Google Sheets</span></div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:14px;line-height:1.7">Télécharge un fichier CSV que tu glisses dans Google Sheets. Zéro configuration.</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+      <button class="btn bsm" onclick="exportCSV('tracker')" style="display:flex;align-items:center;gap:8px;justify-content:center;">📅 Tracker 30j</button>
+      <button class="btn bsm" onclick="exportCSV('ventes')" style="display:flex;align-items:center;gap:8px;justify-content:center;border-color:var(--teal);color:var(--teal);">💰 Ventes du mois</button>
+      <button class="btn bsm" onclick="exportCSV('revenus')" style="display:flex;align-items:center;gap:8px;justify-content:center;border-color:var(--amber);color:var(--amber);">📊 Revenus 2025</button>
+      <button class="btn bsm" onclick="exportCSV('tout')" style="display:flex;align-items:center;gap:8px;justify-content:center;border-color:var(--purple);color:var(--purple);">⬇️ Tout exporter</button>
     </div>
+    <div id="export-status" style="font-size:11px;color:var(--sub);margin-top:10px;min-height:16px;"></div>
   </div>
 
 </div>
 
 
-<!-- APPS SCRIPT MODAL -->
-<div class="overlay hidden" id="apps-modal" onclick="if(event.target===this)this.classList.add('hidden')">
-  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:24px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;position:relative;">
-    <button onclick="document.getElementById('apps-modal').classList.add('hidden')" style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);">×</button>
-    <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Code Apps Script</div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:12px;line-height:1.7">Colle ce code dans <strong style="color:var(--text)">script.google.com</strong> → Nouveau projet → remplace tout le contenu → Déployer → Application web → Accès : Tout le monde → Copie l'URL de déploiement.</div>
-    <pre id="apps-code" style="background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:14px;font-family:'DM Mono',monospace;font-size:10px;line-height:1.6;overflow-x:auto;color:var(--text);white-space:pre-wrap;word-break:break-word;">function doPost(e) {
-  var data = JSON.parse(e.postData.contents);
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // TRACKER sheet
-  var trackerSheet = ss.getSheetByName('Tracker') || ss.insertSheet('Tracker');
-  if (trackerSheet.getLastRow() === 0) {
-    trackerSheet.appendRow(['Date','Energie','Mental','Alimentation','Snus','Score Journee','Checks']);
-  }
-  if (data.tracker) {
-    var checks = data.checks || {};
-    var checkList = ['sleep','wake','sport','food','discord','ofm'];
-    var checkLabels = ['Dodo','Lever','Salle','Manger','Discord','OFM'];
-    var score = checkList.filter(c => checks[c] === true).length;
-    var checkStr = checkLabels.map((l,i) => l + ':' + (checks[checkList[i]]===true?'✓':'✗')).join(' | ');
-    trackerSheet.appendRow([
-      data.date,
-      data.tracker.energie || '',
-      data.tracker.mental || '',
-      data.tracker.food || '',
-      data.snus || 0,
-      score + '/6',
-      checkStr
-    ]);
-  }
-  
-  // VENTES sheet
-  var salesSheet = ss.getSheetByName('Ventes') || ss.insertSheet('Ventes');
-  if (salesSheet.getLastRow() === 0) {
-    salesSheet.appendRow(['Mois','Discord (€)','OFM (€)','Rshield (€)','Total (€)']);
-  }
-  if (data.sales) {
-    var tot = {discord:0, ofm:0, refund:0};
-    (data.sales.sales||[]).forEach(s => { if(tot[s.source]!==undefined) tot[s.source]+=s.amount; });
-    salesSheet.appendRow([
-      data.month,
-      tot.discord,
-      tot.ofm,
-      tot.refund,
-      tot.discord+tot.ofm+tot.refund
-    ]);
-  }
-  
-  // REVENUS sheet
-  var revSheet = ss.getSheetByName('Revenus') || ss.insertSheet('Revenus');
-  if (revSheet.getLastRow() === 0) {
-    revSheet.appendRow(['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec','Total']);
-  }
-  if (data.revenus) {
-    var months = Array.from({length:12}, (_,i) => data.revenus[i] || 0);
-    var total = months.reduce((a,b)=>a+b,0);
-    revSheet.appendRow([...months, total]);
-  }
-  
-  // STREAK sheet
-  var streakSheet = ss.getSheetByName('Streak') || ss.insertSheet('Streak');
-  if (streakSheet.getLastRow() === 0) {
-    streakSheet.appendRow(['Date export','Streak actuel','Meilleur streak','Score semaine','Bonnes journees mois']);
-  }
-  if (data.streak) {
-    streakSheet.appendRow([
-      data.date,
-      data.streak.cur || 0,
-      data.streak.best || 0,
-      data.streak.weekAvg || '',
-      data.streak.monthScore || 0
-    ]);
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
-    .setMimeType(ContentService.MimeType.JSON);
-}</pre>
-    <button onclick="copyAppsScript()" style="margin-top:12px;padding:10px 20px;border-radius:9px;border:1px solid var(--teal);background:var(--tdim);color:var(--teal);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Copier le code</button>
-  </div>
-</div>
 
 <nav class="bnav">
   <button class="bnav-btn active" id="nav-today" onclick="showSection('today')"><span class="bnav-icon">⚡</span>Aujourd'hui</button>
@@ -1263,80 +1167,112 @@ window.savePlanDay = async (tab, idx) => {
 
 initPlanning();
 
-// ── EXPORT GOOGLE SHEETS ──────────────────────────────────────────────────
-async function initExport() {
-  const d = await loadD('settings/sheets');
-  if (d.url) document.getElementById('sheets-url').value = d.url;
+// ── EXPORT CSV ──────────────────────────────────────────────────────────
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(v => {
+    const s = String(v === null || v === undefined ? '' : v);
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
 }
 
-window.saveSheetUrl = async () => {
-  const url = document.getElementById('sheets-url').value.trim();
-  if (!url) return;
-  await saveD('settings/sheets', { url });
-  document.getElementById('export-status').textContent = '✓ URL sauvegardée';
-  document.getElementById('export-status').style.color = 'var(--green)';
-};
+window.exportCSV = async (type) => {
+  const status = document.getElementById('export-status');
+  status.textContent = '⏳ Chargement des données...';
+  status.style.color = 'var(--sub)';
 
-window.showAppsScript = () => {
-  document.getElementById('apps-modal').classList.remove('hidden');
-};
+  const today = todayKey(), mk = monthKey();
 
-window.copyAppsScript = () => {
-  const code = document.getElementById('apps-code').textContent;
-  navigator.clipboard.writeText(code).then(() => toast('✓ Code copié'));
-};
-
-window.exportToSheets = async () => {
-  const url = document.getElementById('sheets-url').value.trim();
-  if (!url) {
-    document.getElementById('export-status').textContent = "⚠ Configure d'abord l'URL Apps Script";
-    document.getElementById('export-status').style.color = 'var(--coral)';
-    return;
-  }
-  const btn = document.getElementById('export-btn');
-  btn.textContent = '⏳ Export...';
-  btn.disabled = true;
-  document.getElementById('export-status').textContent = '';
   try {
-    const today = todayKey(), mk = monthKey();
-    const [tracker, checks, sales, revenus, snusData] = await Promise.all([
-      loadD('trackers/' + today), loadD('checks/' + today),
-      loadD('sales/' + mk), loadD('revenus/2025'), loadD('snus/' + today),
-    ]);
-    const days = [], now = new Date();
-    for (let i = 29; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate()-i); days.push(d.toISOString().slice(0,10)); }
-    const chartResults = await Promise.all(days.map(d => loadD('checks/'+d)));
-    const scores = chartResults.map(data => {
-      if (!data || Object.keys(data).length === 0) return null;
-      return ['sleep','wake','sport','food','discord','ofm'].filter(c => data[c] === true).length;
-    });
-    let streakCur = 0;
-    for (let i = scores.length-1; i >= 0; i--) { if (scores[i] !== null && scores[i] >= 5) streakCur++; else break; }
-    let best = 0, tmp = 0;
-    scores.forEach(s => { if (s !== null && s >= 5) { tmp++; best = Math.max(best, tmp); } else tmp = 0; });
-    const wk = scores.slice(-7).filter(s => s !== null);
-    const weekAvg = wk.length ? Math.round(wk.reduce((a,b)=>a+b,0)/wk.length*10)/10 : null;
-    const monthScore = scores.filter(s => s !== null && s >= 5).length;
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: today, month: mk, tracker, checks, snus: snusData.count||0, sales, revenus, streak: { cur: streakCur, best, weekAvg, monthScore } }),
-      mode: 'no-cors'
-    });
-    btn.textContent = '📊 Exporter maintenant';
-    btn.disabled = false;
-    document.getElementById('export-status').textContent = '✓ Envoyé — vérifie ton Google Sheet';
-    document.getElementById('export-status').style.color = 'var(--green)';
-    toast('✓ Export envoyé');
+    if (type === 'tracker' || type === 'tout') {
+      // Load last 30 days
+      const days = [], now = new Date();
+      for (let i = 29; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate()-i); days.push(d.toISOString().slice(0,10)); }
+      const [trackers, checks, snusList] = await Promise.all([
+        Promise.all(days.map(d => loadD('trackers/'+d))),
+        Promise.all(days.map(d => loadD('checks/'+d))),
+        Promise.all(days.map(d => loadD('snus/'+d))),
+      ]);
+      const checkIds = ['sleep','wake','sport','food','discord','ofm'];
+      const checkLabels = ['Dodo avant 0h30','Levé 7h30','Salle faite','Bien mangé','Discord fait','OFM fait'];
+      const rows = [['Date','Énergie','Mental','Alimentation','Snus','Score /6', ...checkLabels]];
+      days.forEach((day, i) => {
+        const t = trackers[i] || {}, c = checks[i] || {}, s = snusList[i] || {};
+        const score = checkIds.filter(id => c[id] === true).length;
+        rows.push([day, t.energie||'', t.mental||'', t.food||'', s.count||0, score,
+          ...checkIds.map(id => c[id]===true?'✓':c[id]===false?'✗':'')]);
+      });
+      if (type === 'tracker') { downloadCSV('tracker_30j.csv', rows); }
+      if (type === 'tout') {
+        // Store for combined export
+        window._trackerRows = rows;
+      }
+    }
+
+    if (type === 'ventes' || type === 'tout') {
+      const sales = await loadD('sales/' + mk);
+      const list = (sales.sales || []);
+      const rows = [['Date','Source','Montant (€)']];
+      list.forEach(s => rows.push([s.date||'', s.source, s.amount]));
+      // Add totals
+      const tot = {discord:0,ofm:0,refund:0};
+      list.forEach(s => { if(tot[s.source]!==undefined) tot[s.source]+=s.amount; });
+      rows.push(['','','']);
+      rows.push(['TOTAL Discord','',tot.discord]);
+      rows.push(['TOTAL OFM','',tot.ofm]);
+      rows.push(['TOTAL Rshield','',tot.refund]);
+      rows.push(['TOTAL MOIS','',tot.discord+tot.ofm+tot.refund]);
+      if (type === 'ventes') { downloadCSV('ventes_'+mk+'.csv', rows); }
+      if (type === 'tout') { window._ventesRows = rows; }
+    }
+
+    if (type === 'revenus' || type === 'tout') {
+      const rd = await loadD('revenus/2025');
+      const mnames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+      const targets = [3000,5000,7000,8000,9000,10000,15000,20000,28000,35000,42000,50000];
+      const rows = [['Mois','Réalisé (€)','Objectif (€)','Écart (€)','%']];
+      mnames.forEach((m, i) => {
+        const real = rd[i] || 0;
+        const target = targets[i];
+        const ecart = real - target;
+        const pct = real ? Math.round((real/target)*100)+'%' : '';
+        rows.push([m, real||'', target, real ? ecart : '', pct]);
+      });
+      const totalReal = Object.values(rd).reduce((a,b)=>a+(typeof b==='number'?b:0),0);
+      rows.push(['TOTAL',totalReal,50000,totalReal-50000,Math.round((totalReal/50000)*100)+'%']);
+      if (type === 'revenus') { downloadCSV('revenus_2025.csv', rows); }
+      if (type === 'tout') { window._revenusRows = rows; }
+    }
+
+    if (type === 'tout') {
+      // Combine all into one CSV with separators
+      const combined = [
+        ['=== TRACKER 30 JOURS ==='],
+        ...(window._trackerRows || []),
+        [''],
+        ['=== VENTES DU MOIS ==='],
+        ...(window._ventesRows || []),
+        [''],
+        ['=== REVENUS 2025 ==='],
+        ...(window._revenusRows || []),
+      ];
+      downloadCSV('empire_export_'+today+'.csv', combined);
+    }
+
+    status.textContent = '✓ Fichier téléchargé — glisse-le dans Google Sheets';
+    status.style.color = 'var(--green)';
+    toast('✓ CSV téléchargé');
   } catch(e) {
-    btn.textContent = '📊 Exporter maintenant';
-    btn.disabled = false;
-    document.getElementById('export-status').textContent = '⚠ Erreur : ' + e.message;
-    document.getElementById('export-status').style.color = 'var(--coral)';
+    status.textContent = '⚠ Erreur : ' + e.message;
+    status.style.color = 'var(--coral)';
   }
 };
 
-initExport();
+
 
 </script>
 </body>
