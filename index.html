@@ -438,16 +438,14 @@ input[type=number]:focus{border-color:var(--teal);}
   </div>
 
   <!-- OBJECTIF DU JOUR -->
-  <div id="obj-jour-card" style="background:linear-gradient(90deg,rgba(0,212,170,.08),transparent 80%);border:1px solid rgba(0,212,170,.25);border-radius:var(--r);padding:16px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px;">
-    <div style="flex:1;">
-      <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:8px;">🎯 Objectif du jour</div>
+  <div id="obj-jour-card" style="background:linear-gradient(90deg,rgba(0,212,170,.08),transparent 80%);border:1px solid rgba(0,212,170,.25);border-radius:var(--r);padding:16px 20px;margin-bottom:12px;">
+    <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub);margin-bottom:10px;">🎯 Objectif du jour</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div onclick="toggleObjJour()" id="obj-jour-checkbox" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--b2);background:var(--s2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;"></div>
       <input type="text" id="obj-jour-input" placeholder="Aujourd'hui je dois absolument..." maxlength="120"
-        style="width:100%;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;outline:none;line-height:1.4;"
+        style="flex:1;background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;outline:none;line-height:1.4;"
         onblur="saveObjJour()" onkeydown="if(event.key==='Enter'){this.blur();}">
-      <div id="obj-jour-done-label" style="display:none;font-size:11px;color:var(--teal);margin-top:6px;font-family:'Syne',sans-serif;font-weight:600;">✓ Accompli aujourd'hui</div>
     </div>
-    <button onclick="toggleObjJour()" id="obj-jour-btn"
-      style="width:52px;height:52px;border-radius:50%;border:2px solid var(--b2);background:var(--s2);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:all .25s;flex-shrink:0;color:var(--sub);">○</button>
   </div>
 
   <!-- TIMELINE -->
