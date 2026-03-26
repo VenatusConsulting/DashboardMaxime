@@ -1717,8 +1717,52 @@ window.exportCSV = async (type) => {
     status.style.color = 'var(--coral)';
   }
 };
+// ── OBJECTIF DU JOUR ──────────────────────────────────────────────────────
+let objJourDone = false;
 
+async function initObjJour() {
+  const d = await loadD('objjour/' + todayKey());
+  if (d.text) document.getElementById('obj-jour-input').value = d.text;
+  objJourDone = d.done || false;
+  applyObjDone(objJourDone);
+}
 
+function applyObjDone(done) {
+  const cb = document.getElementById('obj-jour-checkbox');
+  const card = document.getElementById('obj-jour-card');
+  const input = document.getElementById('obj-jour-input');
+  if (!cb) return;
+  if (done) {
+    cb.innerHTML = '<svg width="13" height="13" viewBox="0 0 13 13"><polyline points="2,7 5,10 11,3" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    cb.style.background = 'var(--teal)';
+    cb.style.borderColor = 'var(--teal)';
+    card.style.borderColor = 'rgba(0,212,170,.6)';
+    card.style.background = 'linear-gradient(90deg,rgba(0,212,170,.14),transparent 80%)';
+    input.style.textDecoration = 'line-through';
+    input.style.opacity = '.5';
+  } else {
+    cb.innerHTML = '';
+    cb.style.background = 'var(--s2)';
+    cb.style.borderColor = 'var(--b2)';
+    card.style.borderColor = 'rgba(0,212,170,.25)';
+    card.style.background = 'linear-gradient(90deg,rgba(0,212,170,.08),transparent 80%)';
+    input.style.textDecoration = '';
+    input.style.opacity = '1';
+  }
+}
+
+window.saveObjJour = async () => {
+  const text = document.getElementById('obj-jour-input').value.trim();
+  if (!text) return;
+  await saveD('objjour/' + todayKey(), { text, done: objJourDone });
+};
+
+window.toggleObjJour = async () => {
+  objJourDone = !objJourDone;
+  applyObjDone(objJourDone);
+  const text = document.getElementById('obj-jour-input').value;
+  await saveD('objjour/' + todayKey(), { text, done: objJourDone });
+};
 
 </script>
 
