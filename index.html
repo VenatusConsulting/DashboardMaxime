@@ -549,6 +549,15 @@ async function loadDiscipline() {
     diet:     getProp(p, 'Diet'),
     note:     getProp(p, 'Note'),
   })).filter(d => d.date);
+
+  // DEBUG — remove after fix
+  console.log('Sample data:', disciplineData.slice(0,3));
+  if (res.results?.[0]) {
+    const props = res.results[0].properties;
+    console.log('Planning prop raw:', JSON.stringify(props['Planning respecté']));
+    console.log('Sport prop raw:', JSON.stringify(props['Sport']));
+    console.log('Diet prop raw:', JSON.stringify(props['Diet']));
+  }
   renderKPIs();
   renderChart();
 }
