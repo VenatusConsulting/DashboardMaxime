@@ -477,6 +477,7 @@ function getProp(page, name) {
   if (!prop) return null;
   switch(prop.type) {
     case 'number':    return prop.number;
+    case 'checkbox':  return prop.checkbox; // returns true or false
     case 'select':    return prop.select?.name;
     case 'date':      return prop.date?.start;
     case 'formula':   return prop.formula?.number ?? prop.formula?.string;
@@ -574,11 +575,12 @@ function renderKPIs() {
   const d30 = disciplineData.slice(0, 30);
   const n = d30.length || 1;
 
-  const planPct  = d30.length ? Math.round(d30.filter(d => d.planning === 'Oui').length / n * 100) : null;
+  const isTrue = v => v === true || v === 'Oui'; // supports both checkbox and select
+  const planPct  = d30.length ? Math.round(d30.filter(d => isTrue(d.planning)).length / n * 100) : null;
   const dwAvg    = d30.length ? +(d30.reduce((s,d) => s+(d.deepWork||0),0)/n).toFixed(1) : null;
   const rsAvg    = d30.length ? +(d30.reduce((s,d) => s+(d.scrollRS||0),0)/n).toFixed(1) : null;
-  const sportPct = d30.length ? Math.round(d30.filter(d => d.sport === 'Oui').length / n * 100) : null;
-  const dietPct  = d30.length ? Math.round(d30.filter(d => d.diet === 'Oui').length / n * 100) : null;
+  const sportPct = d30.length ? Math.round(d30.filter(d => isTrue(d.sport)).length / n * 100) : null;
+  const dietPct  = d30.length ? Math.round(d30.filter(d => isTrue(d.diet)).length / n * 100) : null;
   const noteAvg  = d30.length ? +(d30.reduce((s,d) => s+(d.note||0),0)/n).toFixed(1) : null;
 
   const kpis = [
@@ -609,12 +611,14 @@ function chartColor(metric, val) {
 }
 
 function getMetricVal(d, metric) {
+  const isT = v => v === true || v === 'Oui';
+  const isF = v => v === false || v === 'Non';
   switch(metric) {
-    case 'planning': return d.planning === 'Oui' ? 100 : d.planning === 'Non' ? 0 : null;
+    case 'planning': return isT(d.planning) ? 100 : isF(d.planning) ? 0 : null;
     case 'deepWork': return d.deepWork;
     case 'scrollRS': return d.scrollRS;
-    case 'sport':    return d.sport === 'Oui' ? 100 : d.sport === 'Non' ? 0 : null;
-    case 'diet':     return d.diet === 'Oui' ? 100 : d.diet === 'Non' ? 0 : null;
+    case 'sport':    return isT(d.sport) ? 100 : isF(d.sport) ? 0 : null;
+    case 'diet':     return isT(d.diet) ? 100 : isF(d.diet) ? 0 : null;
     case 'note':     return d.note;
     default:         return null;
   }
@@ -656,6 +660,7 @@ function renderChart() {
 }
 
 function renderChartSummary() {
+  const isTrue = v => v === true || v === 'Oui';
   const data = disciplineData.slice(0, chartPeriod).reverse();
   const el = document.getElementById('chart-summary');
   if (!data.length) { el.innerHTML = ''; return; }
@@ -698,21 +703,21 @@ function renderChartSummary() {
              stat("Aujourd'hui", fmtVal(todayVal,'scrollRS'), todayColor);
       break;
     case 'planning': {
-      const ok = data.filter(d => d.planning === 'Oui').length;
+      const ok = data.filter(d => isTrue(d.planning)).length;
       const pct = data.length ? Math.round(ok/data.length*100) : 0;
       html = stat('Taux de réussite', pct+'%', chartColor('planning', pct)) +
              stat('Jours respectés', ok+' / '+data.length);
       break;
     }
     case 'sport': {
-      const ok = data.filter(d => d.sport === 'Oui').length;
+      const ok = data.filter(d => isTrue(d.sport)).length;
       const pct = data.length ? Math.round(ok/data.length*100) : 0;
       html = stat('Taux de réussite', pct+'%', chartColor('sport', pct)) +
              stat('Jours de sport', ok+' / '+data.length);
       break;
     }
     case 'diet': {
-      const ok = data.filter(d => d.diet === 'Oui').length;
+      const ok = data.filter(d => isTrue(d.diet)).length;
       const pct = data.length ? Math.round(ok/data.length*100) : 0;
       html = stat('Taux de réussite', pct+'%', chartColor('diet', pct)) +
              stat('Jours respectés', ok+' / '+data.length);
