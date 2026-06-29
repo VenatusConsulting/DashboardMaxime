@@ -631,7 +631,7 @@ const DB_BUSINESS   = '38e2647763f880e9b1dfd67f87b333b8';
 
 // Notion API via proxy to avoid CORS
 // ⚠️ Remplace cette URL par celle de ton proxy Vercel après déploiement
-const PROXY_URL = 'https://notion-proxy-blond.vercel.app/api/notion';
+const PROXY_URL = 'https://notion-proxy-v2.vercel.app/api/notion';
 
 async function notionQuery(dbId, filter = {}, sorts = []) {
   const res = await fetch(PROXY_URL, {
