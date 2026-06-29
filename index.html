@@ -405,7 +405,7 @@ header {
   <div class="sec">Objectif Dubai 2027</div>
 
   <div class="dubai">
-    <div class="dubai-eyebrow">Progression annuelle 2025</div>
+    <div class="dubai-eyebrow" id="dubai-eyebrow">Progression annuelle</div>
     <div class="dubai-amount" id="dubai-amount">—</div>
     <div class="dubai-target">sur 223 000 € · objectif annuel cumulé</div>
     <div class="dubai-bar-wrap">
@@ -461,6 +461,13 @@ const DB_DISCIPLINE = '38e2647763f8804aa32fe3a17cf30c2f';
 const DB_SALES      = '38e2647763f8806987f0d67217bbc374';
 const DB_BUSINESS   = '38e2647763f880e9b1dfd67f87b333b8';
 const PROXY_URL     = 'https://summer-sky-0209.wandering-bird-927c.workers.dev';
+
+// Parse YYYY-MM-DD as local date (not UTC) to avoid timezone shift
+function parseLocalDate(str) {
+  if (!str) return new Date();
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
 
 async function notionQuery(dbId, filter = {}, sorts = []) {
   const res = await fetch(PROXY_URL, {
@@ -634,7 +641,7 @@ function getMetricVal(d, metric) {
 }
 
 function renderChart() {
-  const data = disciplineData.slice(0, chartPeriod).reverse();
+  const data = disciplineData.slice(0, chartPeriod).reverse(); // exactly chartPeriod days
   const el = document.getElementById('chart-area');
   const xlbl = document.getElementById('chart-xlabels');
 
@@ -651,7 +658,7 @@ function renderChart() {
     const val = vals[i];
     const h   = val !== null ? Math.max(3, Math.round((val/max)*86)) : 3;
     const col = val !== null ? chartColor(chartMetric, val) : 'var(--s3)';
-    const dateStr = new Date(d.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const dateStr = parseLocalDate(d.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
     const tipVal  = val !== null ? (chartMetric === 'note' ? val+'/10' : chartMetric === 'deepWork' || chartMetric === 'scrollRS' ? val+'h' : val+'%') : '—';
     return `<div class="cbar" style="height:${h}px;background:${col};opacity:${val !== null ? 0.85 : 0.2};">
       <span class="ctip">${dateStr} · ${tipVal}</span>
@@ -664,13 +671,13 @@ function renderChart() {
   const step = Math.max(1, Math.ceil(data.length / 5));
   xlbl.innerHTML = data.map((d, i) => {
     if (i % step !== 0 && i !== data.length-1) return `<span></span>`;
-    return `<span>${new Date(d.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>`;
+    return `<span>${parseLocalDate(d.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>`;
   }).join('');
 }
 
 function renderChartSummary() {
   const isTrue = v => v === true || v === 'Oui';
-  const data = disciplineData.slice(0, chartPeriod).reverse();
+  const data = disciplineData.slice(0, chartPeriod).reverse(); // exactly chartPeriod days
   const el = document.getElementById('chart-summary');
   if (!data.length) { el.innerHTML = ''; return; }
 
@@ -815,6 +822,7 @@ async function loadBusiness() {
   const annualTotal   = annualDiscord + annualOFM;
   const pct = Math.min(100, (annualTotal/TARGET)*100);
 
+  document.getElementById('dubai-eyebrow').textContent = 'Progression annuelle ' + now.getFullYear();
   document.getElementById('dubai-amount').textContent   = fmt(annualTotal);
   document.getElementById('dubai-fill').style.width     = pct.toFixed(1)+'%';
   document.getElementById('dubai-pct').textContent      = pct.toFixed(1)+'%';
