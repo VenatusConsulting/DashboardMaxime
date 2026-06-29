@@ -350,12 +350,12 @@ header {
   <div class="card chart-card">
     <div class="chart-header">
       <div class="metric-tabs" id="metric-tabs">
-        <button class="metric-tab active" data-metric="note" onclick="setMetric('note',this)">Note</button>
+        <button class="metric-tab active" data-metric="planning" onclick="setMetric('planning',this)">Planning</button>
         <button class="metric-tab" data-metric="deepWork" onclick="setMetric('deepWork',this)">Deep Work</button>
         <button class="metric-tab" data-metric="scrollRS" onclick="setMetric('scrollRS',this)">Scroll RS</button>
-        <button class="metric-tab" data-metric="planning" onclick="setMetric('planning',this)">Planning</button>
         <button class="metric-tab" data-metric="sport" onclick="setMetric('sport',this)">Sport</button>
         <button class="metric-tab" data-metric="diet" onclick="setMetric('diet',this)">Diet</button>
+        <button class="metric-tab" data-metric="note" onclick="setMetric('note',this)">Note</button>
       </div>
       <div class="period-tabs">
         <button class="period-tab active" onclick="setPeriod(7,this)">7j</button>
@@ -567,7 +567,7 @@ window.loadAll = async () => {
 
 // ── DISCIPLINE ─────────────────────────────────────────────────────────────
 let disciplineData = [];
-let chartMetric = 'note';
+let chartMetric = 'planning';
 let chartPeriod = 7;
 
 async function loadDiscipline() {
