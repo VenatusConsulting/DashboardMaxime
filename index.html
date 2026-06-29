@@ -401,6 +401,31 @@ header {
     </div>
   </div>
 
+  <!-- ── SALES TRACKER ── -->
+  <div class="sec">Ventes du mois</div>
+
+  <div class="card" style="margin-bottom:40px;" id="sales-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="display:flex;gap:20px;">
+        <div>
+          <div style="font-size:24px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;" id="sales-total-val">—</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:4px;">Total encaissé</div>
+        </div>
+        <div style="border-left:1px solid var(--b);padding-left:20px;">
+          <div style="font-size:24px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;color:var(--discord);" id="sales-discord-val">—</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:4px;">Discord</div>
+        </div>
+        <div style="border-left:1px solid var(--b);padding-left:20px;">
+          <div style="font-size:24px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;color:var(--ofm);" id="sales-ofm-val">—</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:4px;">OFM</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--t3);" id="sales-count">—</div>
+    </div>
+    <div id="sales-list" style="display:flex;flex-direction:column;gap:1px;"></div>
+    <div id="sales-empty" style="font-size:12px;color:var(--t3);padding:8px 0;display:none;">Aucune vente ce mois</div>
+  </div>
+
   <!-- ── DUBAI 2027 ── -->
   <div class="sec">Objectif Dubai 2027</div>
 
@@ -530,7 +555,7 @@ function setSync(s) {
 window.loadAll = async () => {
   setSync('loading');
   try {
-    await Promise.all([loadDiscipline(), loadBusiness()]);
+    await Promise.all([loadDiscipline(), loadBusiness(), loadSales()]);
     setSync('live');
     const now = new Date();
     document.getElementById('last-sync').textContent = '· ' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
@@ -573,11 +598,11 @@ async function loadDiscipline() {
 function kpiClass(metric, val) {
   if (val === null) return '';
   switch(metric) {
-    case 'planning': return val >= 95 ? 'c-green' : val >= 80 ? 'c-orange' : 'c-red';
+    case 'planning': return val >= 85 ? 'c-green' : val >= 75 ? 'c-orange' : 'c-red';
     case 'deepWork': return val >= 7  ? 'c-green' : val >= 5  ? 'c-orange' : 'c-red';
     case 'scrollRS': return val <= 1.5? 'c-green' : val <= 2.5? 'c-orange' : 'c-red';
-    case 'sport':    return val >= 100? 'c-green' : val >= 80  ? 'c-orange' : 'c-red';
-    case 'diet':     return val >= 100? 'c-green' : val >= 80  ? 'c-orange' : 'c-red';
+    case 'sport':    return val >= 85  ? 'c-green' : val >= 75 ? 'c-orange' : 'c-red';
+    case 'diet':     return val >= 85  ? 'c-green' : val >= 75 ? 'c-orange' : 'c-red';
     case 'note':     return val >= 8  ? 'c-green' : val >= 6  ? 'c-orange' : 'c-red';
     default:         return '';
   }
@@ -831,6 +856,65 @@ async function loadBusiness() {
   document.getElementById('dubai-ofm').textContent      = fmt(annualOFM);
   document.getElementById('dubai-total').textContent    = fmt(annualTotal);
 }
+
+// ── SALES TRACKER ──────────────────────────────────────────────────────────
+async function loadSales() {
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
+  const monthEnd   = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().slice(0,10);
+
+  const res = await notionQuery(DB_SALES, {}, [
+    { property: 'Date', direction: 'descending' }
+  ]);
+
+  const pages = res.results || [];
+  // Filter current month
+  const thisMonth = pages.filter(p => {
+    const d = getProp(p, 'Date');
+    return d && d >= monthStart && d <= monthEnd;
+  });
+
+  const totals = { discord: 0, ofm: 0 };
+  thisMonth.forEach(p => {
+    const biz    = (getProp(p, 'Business') || '').toLowerCase();
+    const amount = getProp(p, 'Montant') || 0;
+    if (biz.includes('discord')) totals.discord += amount;
+    else if (biz.includes('ofm')) totals.ofm += amount;
+  });
+  const total = totals.discord + totals.ofm;
+
+  document.getElementById('sales-total-val').textContent  = fmt(total);
+  document.getElementById('sales-discord-val').textContent = fmt(totals.discord);
+  document.getElementById('sales-ofm-val').textContent     = fmt(totals.ofm);
+  document.getElementById('sales-count').textContent       = thisMonth.length + ' vente' + (thisMonth.length > 1 ? 's' : '') + ' ce mois';
+
+  const bizColors = { discord: 'var(--discord)', ofm: 'var(--ofm)' };
+
+  if (thisMonth.length === 0) {
+    document.getElementById('sales-list').innerHTML = '';
+    document.getElementById('sales-empty').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('sales-empty').style.display = 'none';
+  document.getElementById('sales-list').innerHTML = thisMonth.map(p => {
+    const date   = getProp(p, 'Date');
+    const biz    = getProp(p, 'Business') || '—';
+    const amount = getProp(p, 'Montant') || 0;
+    const notes  = getProp(p, 'Notes') || '';
+    const bizLow = biz.toLowerCase();
+    const col    = bizLow.includes('discord') ? 'var(--discord)' : bizLow.includes('ofm') ? 'var(--ofm)' : 'var(--t2)';
+    const dateStr = date ? parseLocalDate(date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) : '—';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--b);">
+      <div style="font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace;min-width:52px;">${dateStr}</div>
+      <div style="width:5px;height:5px;border-radius:50%;background:${col};flex-shrink:0;"></div>
+      <div style="font-size:12px;font-weight:500;color:${col};flex-shrink:0;">${biz}</div>
+      ${notes ? `<div style="font-size:11px;color:var(--t3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${notes}</div>` : '<div style="flex:1;"></div>'}
+      <div style="font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;margin-left:auto;">${fmt(amount)}</div>
+    </div>`;
+  }).join('');
+}
+
 </script>
 </body>
 </html>
