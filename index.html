@@ -291,6 +291,11 @@ header {
 .dubai-line-label { color: var(--t2); display: flex; align-items: center; gap: 7px; }
 .dubai-line-val { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
 
+/* ── CHART SUMMARY ── */
+.csumm-item { flex: 1; }
+.csumm-val { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1; }
+.csumm-lbl { font-size: 11px; color: var(--t3); margin-top: 5px; }
+
 /* ── EMPTY / ERROR ── */
 .empty-state { font-size: 12px; color: var(--t3); padding: 10px 0; }
 </style>
@@ -358,6 +363,7 @@ header {
         <button class="period-tab" onclick="setPeriod(90,this)">90j</button>
       </div>
     </div>
+    <div id="chart-summary" style="display:flex;gap:24px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--b);"></div>
     <div class="chart-area" id="chart-area"></div>
     <div class="chart-xlabels" id="chart-xlabels"></div>
   </div>
@@ -639,12 +645,88 @@ function renderChart() {
     </div>`;
   }).join('');
 
+  renderChartSummary();
+
   // Labels — show only a few
   const step = Math.max(1, Math.ceil(data.length / 5));
   xlbl.innerHTML = data.map((d, i) => {
     if (i % step !== 0 && i !== data.length-1) return `<span></span>`;
     return `<span>${new Date(d.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>`;
   }).join('');
+}
+
+function renderChartSummary() {
+  const data = disciplineData.slice(0, chartPeriod).reverse();
+  const el = document.getElementById('chart-summary');
+  if (!data.length) { el.innerHTML = ''; return; }
+
+  const vals = data.map(d => getMetricVal(d, chartMetric)).filter(v => v !== null);
+  const today = data[data.length - 1];
+  const todayVal = today ? getMetricVal(today, chartMetric) : null;
+
+  function stat(label, value, color) {
+    const col = color || 'var(--text)';
+    return `<div class="csumm-item">
+      <div class="csumm-val" style="color:${col}">${value}</div>
+      <div class="csumm-lbl">${label}</div>
+    </div>`;
+  }
+
+  function fmtVal(v, metric) {
+    if (v === null || v === undefined) return '—';
+    if (metric === 'deepWork' || metric === 'scrollRS') return v+'h';
+    if (metric === 'note') return v+'/10';
+    if (metric === 'planning' || metric === 'sport' || metric === 'diet') return v+'%';
+    return v;
+  }
+
+  let html = '';
+  const avg = vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : null;
+  const todayColor = todayVal !== null ? chartColor(chartMetric, todayVal) : 'var(--t3)';
+
+  switch(chartMetric) {
+    case 'deepWork':
+      const maxDW = vals.length ? Math.max(...vals) : null;
+      html = stat('Moyenne', fmtVal(avg,'deepWork')) +
+             stat('Meilleur jour', fmtVal(maxDW,'deepWork'), 'var(--green-light)') +
+             stat("Aujourd'hui", fmtVal(todayVal,'deepWork'), todayColor);
+      break;
+    case 'scrollRS':
+      const minRS = vals.length ? Math.min(...vals) : null;
+      html = stat('Moyenne', fmtVal(avg,'scrollRS')) +
+             stat('Minimum', fmtVal(minRS,'scrollRS'), 'var(--green-light)') +
+             stat("Aujourd'hui", fmtVal(todayVal,'scrollRS'), todayColor);
+      break;
+    case 'planning': {
+      const ok = data.filter(d => d.planning === 'Oui').length;
+      const pct = data.length ? Math.round(ok/data.length*100) : 0;
+      html = stat('Taux de réussite', pct+'%', chartColor('planning', pct)) +
+             stat('Jours respectés', ok+' / '+data.length);
+      break;
+    }
+    case 'sport': {
+      const ok = data.filter(d => d.sport === 'Oui').length;
+      const pct = data.length ? Math.round(ok/data.length*100) : 0;
+      html = stat('Taux de réussite', pct+'%', chartColor('sport', pct)) +
+             stat('Jours de sport', ok+' / '+data.length);
+      break;
+    }
+    case 'diet': {
+      const ok = data.filter(d => d.diet === 'Oui').length;
+      const pct = data.length ? Math.round(ok/data.length*100) : 0;
+      html = stat('Taux de réussite', pct+'%', chartColor('diet', pct)) +
+             stat('Jours respectés', ok+' / '+data.length);
+      break;
+    }
+    case 'note':
+      const maxNote = vals.length ? Math.max(...vals) : null;
+      html = stat('Moyenne', fmtVal(avg,'note')) +
+             stat('Meilleure note', fmtVal(maxNote,'note'), 'var(--green-light)') +
+             stat("Aujourd'hui", fmtVal(todayVal,'note'), todayColor);
+      break;
+  }
+
+  el.innerHTML = html;
 }
 
 window.setMetric = (metric, btn) => {
